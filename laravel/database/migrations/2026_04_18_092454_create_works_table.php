@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('works', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('category');
+            $table->text('description');
+            $table->string('tech_stack');
+            $table->string('thumbnail')->nullable();
+            $table->string('url')->nullable();
+            $table->string('github_url')->nullable();
+            $table->date('published_at')->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->integer('sort_order')->default(0);
             $table->timestamps();
         });
     }
