@@ -26,6 +26,8 @@ class CreateWorkUseCase
             githubUrl: $githubUrl,
             publishedAt: $publishedAt,
             isFeatured: $isFeatured,
+            createdAt: null,
+            updatedAt: null
         );
         return $this->workRepository->save($work);
     }
