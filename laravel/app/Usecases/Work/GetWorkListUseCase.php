@@ -1,19 +1,16 @@
 <?php
-namespace App\UseCases\Contact;
-use App\Domain\Repositories\ContactRepositoryInterface;
-use App\Domain\ValueObjects\Category;
+namespace App\UseCases\Work;
+
+use App\Domain\Repositories\WorkRepositoryInterface;
 
 class GetWorkListUseCase
 {
     public function __construct(
-        private readonly ContactRepositoryInterface $contactRepository
-    ){}
+        private readonly WorkRepositoryInterface $workRepository
+    ) {}
 
-    public function execute(?Category $category = null): array
+    public function execute(): array
     {
-        if ($category) {
-            return $this->contactRepository->findByCategory($category);
-        }
-        return $this->contactRepository->findAll();
+        return $this->workRepository->findAll();
     }
 }

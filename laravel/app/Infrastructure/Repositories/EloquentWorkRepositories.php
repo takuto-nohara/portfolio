@@ -19,8 +19,10 @@ class EloquentWorkRepositories implements WorkRepositoryInterface
             thumbnail: $model->thumbnail,
             url: $model->url,
             githubUrl: $model->github_url,
-            publishedAt: $model->published_at,
+            publishedAt: $model->published_at?->toDateTimeString(),
             sortOrder: $model->sort_order,
+            createdAt: $model->created_at?->toDateTimeString(),
+            updatedAt: $model->updated_at?->toDateTimeString(),
         );
     }
 
