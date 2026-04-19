@@ -27,12 +27,6 @@
         <div class="max-w-4xl mx-auto">
             {{-- カテゴリタグ --}}
             <span class="inline-block bg-surface-card text-accent-primary text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded">
-                {{--
-                    🎓【穴埋め問題 6】Enum のプロパティアクセス
-                    ──────────────────────────────────
-                    $workDetail->category は Category enum です。
-                    ->value で enum の文字列値（'app', 'web' 等）を取得できます。
-                --}}
                 output.{{ $workDetail->category->value }}
             </span>
 
@@ -58,13 +52,6 @@
             <div class="mt-10">
                 <h2 class="text-foreground-primary text-lg font-semibold mb-4">&gt; tech_stack</h2>
                 <div class="flex flex-wrap gap-2">
-                    {{--
-                        🎓【穴埋め問題 7】explode() と @foreach
-                        ──────────────────────────────────
-                        $workDetail->techStack は "PHP, Laravel, Tailwind" のようなカンマ区切り文字列です。
-                        explode(',', $string) で配列に分割し、
-                        trim() で前後の空白を除去しています。
-                    --}}
                     @foreach (explode(',', $workDetail->techStack) as $tech)
                         <span class="bg-surface-card text-foreground-secondary text-xs px-3 py-1 rounded border border-border-subtle">
                             {{ trim($tech) }}
@@ -75,12 +62,6 @@
 
             {{-- リンクボタン --}}
             <div class="flex gap-4 mt-10">
-                {{--
-                    🎓【穴埋め問題 8】@if による条件付きレンダリング
-                    ──────────────────────────────────
-                    @if はPHPの if 文をBladeで書く方法です。
-                    $workDetail->githubUrl が null でない場合のみリンクを表示します。
-                --}}
                 @if ($workDetail->githubUrl)
                     <a href="{{ $workDetail->githubUrl }}" target="_blank" rel="noopener noreferrer"
                        class="bg-foreground-primary text-surface-primary text-sm font-medium px-6 py-3 rounded hover:bg-foreground-secondary transition-colors">

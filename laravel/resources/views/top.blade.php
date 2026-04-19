@@ -21,14 +21,7 @@
             あらゆるアウトプットを通じて学びを深めています。
         </p>
         <div class="flex gap-4 mt-10">
-            {{--
-                🎓【穴埋め問題 1】route() ヘルパー
-                ──────────────────────────────────
-                route() は名前付きルートからURLを生成するLaravelヘルパーです。
-                下のリンクの href を完成させてください。
 
-                ヒント: 作品一覧ページのルート名は 'works.index' です。
-            --}}
             <a href="{{ route('works.index') }}"
                class="bg-accent-primary text-surface-primary text-sm font-medium px-8 py-3 rounded hover:bg-accent-secondary transition-colors">
                 &gt; view_all_works
@@ -52,15 +45,6 @@
                 </a>
             </div>
 
-            {{--
-                🎓【穴埋め問題 2】@forelse ディレクティブ
-                ──────────────────────────────────
-                @forelse は @foreach と似ていますが、
-                配列が空のときに @empty ブロックが実行されます。
-
-                ヒント: $featuredWorks を $work として繰り返します。
-                完成形: @forelse ($featuredWorks as $work)
-            --}}
             <div class="grid grid-cols-3 gap-8">
                 @forelse (($featuredWorks ?? []) as $work)
                     <a href="{{ route('works.show', $work->id) }}" class="group block">

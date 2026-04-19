@@ -17,16 +17,6 @@
         </a>
 
         <div class="bg-surface-primary rounded-lg border border-border-subtle p-8">
-            {{--
-                🎓【穴埋め問題 12】old() の第2引数
-                ──────────────────────────────────
-                old('フィールド名', デフォルト値) は:
-                1. バリデーションエラー時 → 前回の入力値を返す
-                2. 初回表示時 → 第2引数（デフォルト値）を返す
-
-                編集画面では $workDetail のプロパティをデフォルト値に指定し、
-                既存データを表示しつつ、バリデーションエラー時は入力値を保持します。
-            --}}
             <form action="{{ route('admin.works.update', $workDetail->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')

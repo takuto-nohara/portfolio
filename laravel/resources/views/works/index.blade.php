@@ -19,15 +19,6 @@
     {{-- ==================== Category Filter ==================== --}}
     <section class="bg-surface-primary px-20 pt-12 pb-4">
         <div class="max-w-6xl mx-auto">
-            {{--
-                🎓【穴埋め問題 4】クエリパラメータと条件付きクラス
-                ──────────────────────────────────
-                request()->get('category') で URL の ?category=xxx パラメータを取得できます。
-                下のフィルタータブでは、現在選択中のカテゴリに
-                アクティブスタイル（bg-accent-primary text-surface-primary）を適用しています。
-
-                三項演算子: 条件 ? 真の値 : 偽の値
-            --}}
             <div class="flex gap-3">
                 <a href="{{ route('works.index') }}"
                    class="px-4 py-2 rounded text-xs font-medium transition-colors
@@ -48,14 +39,6 @@
     {{-- ==================== Works Grid ==================== --}}
     <section class="bg-surface-primary px-20 py-12">
         <div class="max-w-6xl mx-auto">
-            {{--
-                🎓【穴埋め問題 5】@forelse と @empty
-                ──────────────────────────────────
-                @forelse は配列をループし、空の場合は @empty ブロックを表示します。
-                @foreach との違いは、空配列のハンドリングが組み込まれている点です。
-
-                構文: @forelse ($配列 as $変数) ... @empty ... @endforelse
-            --}}
             <div class="grid grid-cols-3 gap-8">
                 @forelse ($workList as $work)
                     <a href="{{ route('works.show', $work->id) }}" class="group block">

@@ -64,14 +64,6 @@
                                    class="text-accent-primary text-xs hover:text-accent-secondary transition-colors">
                                     edit
                                 </a>
-                                {{--
-                                    🎓【穴埋め問題 11】@method ディレクティブ
-                                    ──────────────────────────────────
-                                    HTMLフォームは GET と POST しかサポートしていません。
-                                    Laravel では @method('DELETE') で擬似的に
-                                    DELETE リクエストを送信できます。
-                                    これは隠しフィールド _method=DELETE を追加します。
-                                --}}
                                 <form action="{{ route('admin.works.destroy', $work->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')

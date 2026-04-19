@@ -20,16 +20,6 @@
     <section class="bg-surface-primary px-20 py-16">
         <div class="max-w-xl mx-auto">
 
-            {{--
-                🎓【穴埋め問題 9】フォームの基本構造
-                ──────────────────────────────────
-                LaravelのフォームではPOSTメソッドを使い、
-                @csrf ディレクティブでCSRFトークンを自動挿入します。
-                これはセキュリティ対策（クロスサイトリクエストフォージェリ防止）です。
-
-                action属性には route('contact.store') を指定し、
-                ContactController@store メソッドにデータを送信します。
-            --}}
             <form method="POST" action="{{ route('contact.store') }}" class="space-y-8">
                 @csrf
 
@@ -39,15 +29,6 @@
                         {{ session('success') }}
                     </div>
                 @endif
-
-                {{--
-                    🎓【穴埋め問題 10】バリデーションエラーの表示
-                    ──────────────────────────────────
-                    @error('フィールド名') で、バリデーションエラーを検出し
-                    $message 変数でエラーメッセージを表示できます。
-
-                    構文: @error('name') <p>{{ $message }}</p> @enderror
-                --}}
 
                 {{-- Name フィールド --}}
                 <div>

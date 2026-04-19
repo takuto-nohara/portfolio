@@ -51,18 +51,6 @@
                         languages
                     </h3>
                     <ul class="space-y-3">
-                        {{--
-                            🎓【穴埋め問題 3】Tailwind CSS ユーティリティクラス
-                            ──────────────────────────────────
-                            Tailwind では小さなクラスを組み合わせてスタイルを構築します。
-
-                            例: text-sm = font-size: 0.875rem
-                                 text-foreground-secondary = カスタムカラー変数で文字色指定
-                                 font-mono = font-family にモノスペースを使用（@theme で定義済み）
-
-                            下のリストアイテムには既にクラスが適用されています。
-                            同じパターンで新しいスキルを追加してみてください。
-                        --}}
                         <li class="text-foreground-secondary text-sm font-mono">PHP</li>
                         <li class="text-foreground-secondary text-sm font-mono">JavaScript</li>
                         <li class="text-foreground-secondary text-sm font-mono">TypeScript</li>
