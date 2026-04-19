@@ -4,8 +4,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Admin\WorkController as AdminWorkController;
+use App\UseCases\Work\GetFeaturedWorksUseCase;
 
-Route::get('/', function () {return view('welcome');});
+Route::get('/', function (GetFeaturedWorksUseCase $getFeaturedWorksUseCase) {
+    $featuredWorks = $getFeaturedWorksUseCase->execute();
+    return view('top', compact('featuredWorks'));
+})->name('top');
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
 Route::get('/works', [WorkController::class, 'index'])->name('works.index');
 Route::get('/works/{id}', [WorkController::class, 'show'])->name('works.show');
 

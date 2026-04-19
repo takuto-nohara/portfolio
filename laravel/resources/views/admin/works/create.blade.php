@@ -1,62 +1,122 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作品作成</title>
-</head>
-<body>
-    <h1>作品作成</h1>
-    <form action="{{ route('admin.works.store') }}" method="POST">
-        @csrf
-        <div>
-            <label for="title">タイトル</label>
-            <input type="text" id="title" name="title" value="{{ old('title') }}">
+{{--
+    ============================================================
+    📄 管理画面 - 作品新規作成
+    ============================================================
+--}}
+
+@extends('layouts.admin')
+@section('title', '作品作成 - Admin')
+@section('header', '&gt; 新規作品作成')
+
+@section('content')
+
+    <div class="max-w-3xl">
+        <a href="{{ route('admin.works.index') }}"
+           class="text-accent-primary text-xs hover:text-accent-secondary transition-colors mb-6 inline-block">
+            &lt; back_to_list
+        </a>
+
+        <div class="bg-surface-primary rounded-lg border border-border-subtle p-8">
+            <form action="{{ route('admin.works.store') }}" method="POST" class="space-y-6">
+                @csrf
+
+                {{-- タイトル --}}
+                <div>
+                    <label for="title" class="block text-foreground-primary text-sm font-medium mb-2">&gt; title</label>
+                    <input type="text" id="title" name="title" value="{{ old('title') }}" required
+                           class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                  focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                    @error('title') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- カテゴリ --}}
+                <div>
+                    <label for="category" class="block text-foreground-primary text-sm font-medium mb-2">&gt; category</label>
+                    <select id="category" name="category" required
+                            class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                   focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                        <option value="">select_category</option>
+                        <option value="app" {{ old('category') == 'app' ? 'selected' : '' }}>output.app</option>
+                        <option value="web" {{ old('category') == 'web' ? 'selected' : '' }}>output.web</option>
+                        <option value="video" {{ old('category') == 'video' ? 'selected' : '' }}>output.video</option>
+                        <option value="graphic" {{ old('category') == 'graphic' ? 'selected' : '' }}>output.graphic</option>
+                    </select>
+                    @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- 説明 --}}
+                <div>
+                    <label for="description" class="block text-foreground-primary text-sm font-medium mb-2">&gt; description</label>
+                    <textarea id="description" name="description" rows="4" required
+                              class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono resize-none
+                                     focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">{{ old('description') }}</textarea>
+                    @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- 技術スタック --}}
+                <div>
+                    <label for="tech_stack" class="block text-foreground-primary text-sm font-medium mb-2">&gt; tech_stack</label>
+                    <input type="text" id="tech_stack" name="tech_stack" value="{{ old('tech_stack') }}"
+                           placeholder="PHP, Laravel, Tailwind CSS"
+                           class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                  focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                    @error('tech_stack') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    {{-- URL --}}
+                    <div>
+                        <label for="url" class="block text-foreground-primary text-sm font-medium mb-2">&gt; url</label>
+                        <input type="url" id="url" name="url" value="{{ old('url') }}"
+                               class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                      focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                    </div>
+                    {{-- GitHub URL --}}
+                    <div>
+                        <label for="github_url" class="block text-foreground-primary text-sm font-medium mb-2">&gt; github_url</label>
+                        <input type="url" id="github_url" name="github_url" value="{{ old('github_url') }}"
+                               class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                      focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-6">
+                    {{-- 公開日 --}}
+                    <div>
+                        <label for="published_at" class="block text-foreground-primary text-sm font-medium mb-2">&gt; published_at</label>
+                        <input type="date" id="published_at" name="published_at" value="{{ old('published_at') }}"
+                               class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                      focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                    </div>
+                    {{-- Featured --}}
+                    <div>
+                        <label class="block text-foreground-primary text-sm font-medium mb-2">&gt; is_featured</label>
+                        <div class="flex items-center gap-3 h-11.5">
+                            <input type="checkbox" id="is_featured" name="is_featured" value="1"
+                                   {{ old('is_featured') ? 'checked' : '' }}
+                                   class="w-4 h-4 accent-accent-primary">
+                            <label for="is_featured" class="text-foreground-secondary text-sm">トップに表示</label>
+                        </div>
+                    </div>
+                    {{-- 表示順 --}}
+                    <div>
+                        <label for="sort_order" class="block text-foreground-primary text-sm font-medium mb-2">&gt; sort_order</label>
+                        <input type="number" id="sort_order" name="sort_order" value="{{ old('sort_order', 0) }}"
+                               class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
+                                      focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                    </div>
+                </div>
+
+                {{-- 送信 --}}
+                <div class="pt-4">
+                    <button type="submit"
+                            class="bg-accent-primary text-surface-primary text-sm font-medium px-8 py-3 rounded hover:bg-accent-secondary transition-colors">
+                        &gt; create_work
+                    </button>
+                </div>
+            </form>
         </div>
-        <div>
-            <label for="category">カテゴリ</label>
-            <select id="category" name="category">
-                <option value="" {{ old('category') == '' ? 'selected' : '' }}>選択してください</option>
-                <option value="app" {{ old('category') == 'app' ? 'selected' : '' }}>アプリ</option>
-                <option value="web" {{ old('category') == 'web' ? 'selected' : '' }}>Web</option>
-                <option value="video" {{ old('category') == 'video' ? 'selected' : '' }}>動画</option>
-                <option value="graphic" {{ old('category') == 'graphic' ? 'selected' : '' }}>グラフィック</option>
-            </select>
-        </div>
-        <div>
-            <label for="description">説明</label>
-            <textarea id="description" name="description">{{ old('description') }}</textarea>
-        </div>
-        <div>
-            <label for="tech_stack">技術スタック</label>
-            <input type="text" id="tech_stack" name="tech_stack" value="{{ old('tech_stack') }}">
-        </div>
-        <div>
-            <label for="thumbnail">サムネイル</label>
-            <input type="text" id="thumbnail" name="thumbnail" value="{{ old('thumbnail') }}">
-        </div>
-        <div>
-            <label for="url">URL</label>
-            <input type="text" id="url" name="url" value="{{ old('url') }}">
-        </div>
-        <div>
-            <label for="github_url">GitHub URL</label>
-            <input type="text" id="github_url" name="github_url" value="{{ old('github_url') }}">
-        </div>
-        <div>
-            <label for="published_at">公開日</label>
-            <input type="date" id="published_at" name="published_at" value="{{ old('published_at') }}">
-        </div>
-        <div>
-            <label for="is_featured">公開</label>
-            <input type="checkbox" id="is_featured" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}>
-        </div>
-        <div>
-            <label for="sort_order">表示順</label>
-            <input type="number" id="sort_order" name="sort_order" value="{{ old('sort_order') }}">
-        </div>
-        <button type="submit">作成</button>
-    </form>
-</body>
-</html>
+    </div>
+
+@endsection
 

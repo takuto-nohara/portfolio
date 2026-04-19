@@ -8,4 +8,18 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Design Tokens from design.pen */
+    --color-accent-primary: #0EA5E9;
+    --color-accent-secondary: #0284C7;
+    --color-accent-tertiary: #38BDF8;
+    --color-surface-primary: #FFFFFF;
+    --color-surface-secondary: #F0F9FF;
+    --color-surface-card: #E0F2FE;
+    --color-foreground-primary: #0C4A6E;
+    --color-foreground-secondary: #0369A1;
+    --color-foreground-muted: #7DD3FC;
+    --color-border-subtle: #BAE6FD;
+    --color-border-accent: #0EA5E933;
 }

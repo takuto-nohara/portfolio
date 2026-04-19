@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\UseCases\Work\GetWorkListUseCase;
 use App\UseCases\Work\GetWorkDetailUseCase;
+use App\Domain\ValueObjects\Category;
 
 class WorkController extends Controller
 {
@@ -13,9 +14,12 @@ class WorkController extends Controller
         private GetWorkDetailUseCase $getWorkDetailUseCase
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $workList = $this->getWorkListUseCase->execute();
+        $categoryValue = $request->get('category');
+        $category = $categoryValue ? Category::tryFrom($categoryValue) : null;
+
+        $workList = $this->getWorkListUseCase->execute($category);
 
         return view('works.index', compact('workList'));
     }

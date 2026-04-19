@@ -2,6 +2,7 @@
 namespace App\UseCases\Work;
 
 use App\Domain\Repositories\WorkRepositoryInterface;
+use App\Domain\ValueObjects\Category;
 
 class GetWorkListUseCase
 {
@@ -9,8 +10,12 @@ class GetWorkListUseCase
         private readonly WorkRepositoryInterface $workRepository
     ) {}
 
-    public function execute(): array
+    public function execute(?Category $category = null): array
     {
+        if ($category !== null) {
+            return $this->workRepository->findByCategory($category);
+        }
+
         return $this->workRepository->findAll();
     }
 }
