@@ -17,7 +17,7 @@
         </a>
 
         <div class="bg-surface-primary rounded-lg border border-border-subtle p-8">
-            <form action="{{ route('admin.works.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.works.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
 
                 {{-- タイトル --}}
@@ -64,6 +64,15 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-6">
+                    {{-- サムネイル --}}
+                    <div>
+                        <label for="thumbnail" class="block text-foreground-primary text-sm font-medium mb-2">&gt; thumbnail</label>
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*"
+                               class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
+                        <p class="text-foreground-muted text-xs mt-2">一覧と詳細のメイン画像になります。</p>
+                        @error('thumbnail') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
                     {{-- URL --}}
                     <div>
                         <label for="url" class="block text-foreground-primary text-sm font-medium mb-2">&gt; url</label>
@@ -105,6 +114,15 @@
                                class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
                                       focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
                     </div>
+                </div>
+
+                <div>
+                    <label for="images" class="block text-foreground-primary text-sm font-medium mb-2">&gt; gallery_images</label>
+                    <input type="file" id="images" name="images[]" accept="image/*" multiple
+                           class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
+                    <p class="text-foreground-muted text-xs mt-2">複数選択でギャラリー画像を追加できます。</p>
+                    @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('images.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- 送信 --}}

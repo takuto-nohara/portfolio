@@ -27,4 +27,18 @@ class EloquentContactRepositories implements ContactRepositoryInterface
         $model->save();
         return $this->toEntity($model);
     }
+
+    public function findAll(): array
+    {
+        return ContactModel::query()
+            ->latest()
+            ->get()
+            ->map(fn (ContactModel $model): ContactEntity => $this->toEntity($model))
+            ->all();
+    }
+
+    public function delete(int $id): void
+    {
+        ContactModel::destroy($id);
+    }
 }

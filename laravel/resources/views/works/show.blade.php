@@ -80,11 +80,15 @@
             <div class="mt-16">
                 <h2 class="text-foreground-primary text-lg font-semibold mb-6">&gt; gallery</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    @for ($i = 0; $i < 3; $i++)
-                        <div class="aspect-video bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center">
-                            <span class="text-foreground-muted text-xs">screenshot_{{ $i + 1 }}</span>
+                    @forelse ($workDetail->images as $image)
+                        <div class="aspect-video bg-surface-card rounded-lg border border-border-subtle overflow-hidden">
+                            <img src="{{ asset('storage/' . $image->imagePath) }}" alt="{{ $workDetail->title }} gallery image" class="w-full h-full object-cover">
                         </div>
-                    @endfor
+                    @empty
+                        <div class="aspect-video bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center md:col-span-3">
+                            <span class="text-foreground-muted text-xs">gallery_images_not_found</span>
+                        </div>
+                    @endforelse
                 </div>
             </div>
         </div>

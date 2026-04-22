@@ -17,7 +17,7 @@
         </a>
 
         <div class="bg-surface-primary rounded-lg border border-border-subtle p-8">
-            <form action="{{ route('admin.works.update', $workDetail->id) }}" method="POST" class="space-y-6">
+            <form action="{{ route('admin.works.update', $workDetail->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
@@ -65,6 +65,20 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-6">
+                    {{-- サムネイル --}}
+                    <div>
+                        <label for="thumbnail" class="block text-foreground-primary text-sm font-medium mb-2">&gt; thumbnail</label>
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*"
+                               class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
+                        @if ($workDetail->thumbnail)
+                            <div class="mt-3 flex items-center gap-3">
+                                <img src="{{ asset('storage/' . $workDetail->thumbnail) }}" alt="{{ $workDetail->title }}" class="w-20 h-20 rounded object-cover border border-border-subtle">
+                                <span class="text-foreground-muted text-xs break-all">{{ $workDetail->thumbnail }}</span>
+                            </div>
+                        @endif
+                        @error('thumbnail') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
                     {{-- URL --}}
                     <div>
                         <label for="url" class="block text-foreground-primary text-sm font-medium mb-2">&gt; url</label>
@@ -106,6 +120,40 @@
                                class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
                                       focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
                     </div>
+                </div>
+
+                <div>
+                    <label for="images" class="block text-foreground-primary text-sm font-medium mb-2">&gt; add_gallery_images</label>
+                    <input type="file" id="images" name="images[]" accept="image/*" multiple
+                           class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
+                    @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('images.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <h2 class="text-foreground-primary text-sm font-medium mb-3">&gt; current_gallery</h2>
+
+                    @if (count($workDetail->images) > 0)
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            @foreach ($workDetail->images as $image)
+                                <div class="bg-surface-secondary border border-border-subtle rounded-lg p-4 space-y-3">
+                                    <img src="{{ asset('storage/' . $image->imagePath) }}" alt="{{ $workDetail->title }} gallery image" class="w-full aspect-video object-cover rounded">
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-foreground-muted text-xs">order: {{ $image->sortOrder }}</span>
+                                        <form action="{{ route('admin.works.images.destroy', ['workId' => $workDetail->id, 'imageId' => $image->id]) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 text-xs hover:text-red-700 transition-colors" onclick="return confirm('この画像を削除しますか？')">
+                                                delete_image
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-foreground-muted text-xs">gallery_images_not_found</p>
+                    @endif
                 </div>
 
                 {{-- 送信 --}}

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\WorkController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\WorkController as AdminWorkController;
 use App\UseCases\Work\GetFeaturedWorksUseCase;
 
@@ -30,6 +31,10 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::get('/works/{id}/edit', [AdminWorkController::class, 'edit'])->name('works.edit');
     Route::put('/works/{id}', [AdminWorkController::class, 'update'])->name('works.update');
     Route::delete('/works/{id}', [AdminWorkController::class, 'destroy'])->name('works.destroy');
+    Route::delete('/works/{workId}/images/{imageId}', [AdminWorkController::class, 'destroyImage'])->name('works.images.destroy');
+
+    Route::get('/contacts', [AdminContactController::class, 'index'])->name('contacts.index');
+    Route::delete('/contacts/{id}', [AdminContactController::class, 'destroy'])->name('contacts.destroy');
 });
 
 require __DIR__.'/auth.php';

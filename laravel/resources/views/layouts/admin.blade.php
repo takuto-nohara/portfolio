@@ -26,11 +26,10 @@
                       {{ request()->routeIs('admin.works.*') ? 'bg-surface-primary/10 text-surface-primary' : '' }}">
                 &gt; 制作物管理
             </a>
-            <a href="#" class="text-surface-primary/70 text-sm px-3 py-2 rounded hover:bg-surface-primary/10 hover:text-surface-primary transition-colors">
+            <a href="{{ route('admin.contacts.index') }}"
+               class="text-surface-primary/70 text-sm px-3 py-2 rounded hover:bg-surface-primary/10 hover:text-surface-primary transition-colors
+                      {{ request()->routeIs('admin.contacts.*') ? 'bg-surface-primary/10 text-surface-primary' : '' }}">
                 &gt; お問い合わせ
-            </a>
-            <a href="#" class="text-surface-primary/70 text-sm px-3 py-2 rounded hover:bg-surface-primary/10 hover:text-surface-primary transition-colors">
-                &gt; 設定
             </a>
         </nav>
 

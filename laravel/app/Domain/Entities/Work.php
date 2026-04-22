@@ -1,5 +1,6 @@
 <?php
 namespace App\Domain\Entities;
+
 use App\Domain\ValueObjects\Category;
 
 final class Work
@@ -18,6 +19,8 @@ final class Work
         public readonly int $sortOrder,
         public readonly ?string $createdAt,
         public readonly ?string $updatedAt,
+        /** @var WorkImage[] */
+        public readonly array $images = [],
     ) {
     }
 }
