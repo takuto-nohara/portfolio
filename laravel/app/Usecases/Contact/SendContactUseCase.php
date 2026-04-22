@@ -3,6 +3,8 @@ namespace App\UseCases\Contact;
 
 use App\Domain\Entities\Contact;
 use App\Domain\Repositories\ContactRepositoryInterface;
+use App\Infrastructure\Mail\ContactMail;
+use Illuminate\Support\Facades\Mail;
 
 class SendContactUseCase
 {
@@ -20,6 +22,11 @@ class SendContactUseCase
             createdAt: null,
             updatedAt: null
         );
-        return $this->contactRepository->save($contact);
+
+        $saved = $this->contactRepository->save($contact);
+
+        Mail::to(config('mail.from.address'))->send(new ContactMail($saved));
+
+        return $saved;
     }
 }
