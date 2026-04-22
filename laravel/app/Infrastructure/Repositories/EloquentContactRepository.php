@@ -1,10 +1,12 @@
 <?php
-namespace App\Infrastructure\Repositories;
-use App\Domain\Entities\Contact as ContactEntity;
-use App\Models\Contact as ContactModel;
-use App\Domain\Repositories\ContactRepositoryInterface;
 
-class EloquentContactRepositories implements ContactRepositoryInterface
+namespace App\Infrastructure\Repositories;
+
+use App\Domain\Entities\Contact as ContactEntity;
+use App\Domain\Repositories\ContactRepositoryInterface;
+use App\Models\Contact as ContactModel;
+
+class EloquentContactRepository implements ContactRepositoryInterface
 {
     private function toEntity(ContactModel $model): ContactEntity
     {
@@ -25,6 +27,7 @@ class EloquentContactRepositories implements ContactRepositoryInterface
         $model->email = $contact->email;
         $model->message = $contact->message;
         $model->save();
+
         return $this->toEntity($model);
     }
 

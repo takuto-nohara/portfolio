@@ -37,10 +37,11 @@
                             class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono
                                    focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
                         <option value="">select_category</option>
-                        <option value="app" {{ old('category', $workDetail->category->value) == 'app' ? 'selected' : '' }}>output.app</option>
-                        <option value="web" {{ old('category', $workDetail->category->value) == 'web' ? 'selected' : '' }}>output.web</option>
-                        <option value="video" {{ old('category', $workDetail->category->value) == 'video' ? 'selected' : '' }}>output.video</option>
-                        <option value="graphic" {{ old('category', $workDetail->category->value) == 'graphic' ? 'selected' : '' }}>output.graphic</option>
+                        @foreach (\App\Domain\ValueObjects\Category::cases() as $category)
+                            <option value="{{ $category->value }}" {{ old('category', $workDetail->category->value) == $category->value ? 'selected' : '' }}>
+                                output.{{ $category->value }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>

@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Infrastructure\Repositories;
+
 use App\Domain\Entities\Work as WorkEntity;
 use App\Domain\Entities\WorkImage as WorkImageEntity;
+use App\Domain\Repositories\WorkRepositoryInterface;
+use App\Domain\ValueObjects\Category;
 use App\Models\Work as WorkModel;
 use App\Models\WorkImage as WorkImageModel;
-use App\Domain\ValueObjects\Category;
-use App\Domain\Repositories\WorkRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 
-class EloquentWorkRepositories implements WorkRepositoryInterface
+class EloquentWorkRepository implements WorkRepositoryInterface
 {
     private function toImageEntity(WorkImageModel $model): WorkImageEntity
     {
@@ -48,21 +50,21 @@ class EloquentWorkRepositories implements WorkRepositoryInterface
 
     public function findAll(): array
     {
-        return WorkModel::with('images')->get()->map(function($model) {
+        return WorkModel::with('images')->get()->map(function ($model) {
             return $this->toEntity($model);
         })->all();
     }
 
     public function findByCategory(Category $category): array
     {
-        return WorkModel::with('images')->where('category', $category->value)->get()->map(function($model) {
+        return WorkModel::with('images')->where('category', $category->value)->get()->map(function ($model) {
             return $this->toEntity($model);
         })->all();
     }
 
     public function findFeatured(): array
     {
-        return WorkModel::with('images')->where('is_featured', true)->get()->map(function($model) {
+        return WorkModel::with('images')->where('is_featured', true)->get()->map(function ($model) {
             return $this->toEntity($model);
         })->all();
     }
@@ -70,6 +72,7 @@ class EloquentWorkRepositories implements WorkRepositoryInterface
     public function findById(int $id): ?WorkEntity
     {
         $model = WorkModel::with('images')->find($id);
+
         return $model ? $this->toEntity($model) : null;
     }
 

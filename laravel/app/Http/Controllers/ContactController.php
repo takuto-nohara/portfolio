@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\UseCases\Contact\SendContactUseCase;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreContactRequest;
 
 class ContactController extends Controller
 {
@@ -16,18 +16,14 @@ class ContactController extends Controller
         return view('contact.index');
     }
 
-    public function store(Request $request)
+    public function store(StoreContactRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email:rfc,dns|max:255',
-            'message' => 'required|string',
-        ]);
+        $validated = $request->validated();
 
         $this->sendContactUseCase->execute(
-            name: $request->input('name'),
-            email: $request->input('email'),
-            message: $request->input('message')
+            name: $validated['name'],
+            email: $validated['email'],
+            message: $validated['message']
         );
 
         return redirect()->route('contact.index')->with('success', 'お問い合わせを送信しました。');

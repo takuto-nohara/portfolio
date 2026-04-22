@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StoreWorkRequest;
+use App\Http\Requests\Admin\UpdateWorkRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\UseCases\Work\GetWorkListUseCase;
@@ -37,36 +38,23 @@ class WorkController extends Controller
         return view('admin.works.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreWorkRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|in:app,web,video,graphic',
-            'description' => 'required|string',
-            'tech_stack' => 'required|string|max:255',
-            'sort_order' => 'required|integer|min:0',
-            'thumbnail' => 'nullable|image|max:2048',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'image|max:4096',
-            'url' => 'nullable|url|max:2048',
-            'github_url' => 'nullable|url|max:2048',
-            'published_at' => 'nullable|date',
-            'is_featured' => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
         $thumbnailPath = $request->file('thumbnail')?->store('works/thumbnails', 'public');
 
         $work = $this->createWorkUseCase->execute(
-            title: $request->title,
-            description: $request->description,
-            category: $request->category,
-            techStack: $request->tech_stack,
-            sortOrder: (int) $request->input('sort_order'),
+            title: $validated['title'],
+            description: $validated['description'],
+            category: $validated['category'],
+            techStack: $validated['tech_stack'],
+            sortOrder: (int) $validated['sort_order'],
             thumbnail: $thumbnailPath,
-            url: $request->url,
-            githubUrl: $request->github_url,
-            publishedAt: $request->published_at,
-            isFeatured: (bool) $request->boolean('is_featured')
+            url: $validated['url'] ?? null,
+            githubUrl: $validated['github_url'] ?? null,
+            publishedAt: $validated['published_at'] ?? null,
+            isFeatured: (bool) ($validated['is_featured'] ?? false)
         );
 
         foreach ($request->file('images', []) as $image) {
@@ -88,7 +76,7 @@ class WorkController extends Controller
         return view('admin.works.edit', compact('workDetail'));
     }
 
-    public function update(Request $request, int $id)
+    public function update(UpdateWorkRequest $request, int $id)
     {
         $workDetail = $this->getWorkDetailUseCase->execute($id);
 
@@ -96,20 +84,7 @@ class WorkController extends Controller
             abort(404);
         }
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string|in:app,web,video,graphic',
-            'description' => 'required|string',
-            'tech_stack' => 'required|string|max:255',
-            'sort_order' => 'required|integer|min:0',
-            'thumbnail' => 'nullable|image|max:2048',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'image|max:4096',
-            'url' => 'nullable|url|max:2048',
-            'github_url' => 'nullable|url|max:2048',
-            'published_at' => 'nullable|date',
-            'is_featured' => 'nullable|boolean',
-        ]);
+        $validated = $request->validated();
 
         $thumbnailPath = $workDetail->thumbnail;
 
@@ -123,16 +98,16 @@ class WorkController extends Controller
 
         $this->updateWorkUseCase->execute(
             id: $id,
-            title: $request->title,
-            description: $request->description,
-            category: $request->category,
-            techStack: $request->tech_stack,
-            sortOrder: (int) $request->input('sort_order'),
+            title: $validated['title'],
+            description: $validated['description'],
+            category: $validated['category'],
+            techStack: $validated['tech_stack'],
+            sortOrder: (int) $validated['sort_order'],
             thumbnail: $thumbnailPath,
-            url: $request->url,
-            githubUrl: $request->github_url,
-            publishedAt: $request->published_at,
-            isFeatured: (bool) $request->boolean('is_featured')
+            url: $validated['url'] ?? null,
+            githubUrl: $validated['github_url'] ?? null,
+            publishedAt: $validated['published_at'] ?? null,
+            isFeatured: (bool) ($validated['is_featured'] ?? false)
         );
 
         foreach ($request->file('images', []) as $image) {

@@ -13,12 +13,12 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             \App\Domain\Repositories\WorkRepositoryInterface::class,
-            \App\Infrastructure\Repositories\EloquentWorkRepositories::class,
+            \App\Infrastructure\Repositories\EloquentWorkRepository::class,
         );
 
         $this->app->bind(
             \App\Domain\Repositories\ContactRepositoryInterface::class,
-            \App\Infrastructure\Repositories\EloquentContactRepositories::class,
+            \App\Infrastructure\Repositories\EloquentContactRepository::class,
         );
     }
 
