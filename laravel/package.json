@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "start": "php artisan serve",
         "dev": "vite",
         "install": "npm install && composer install"
     },
