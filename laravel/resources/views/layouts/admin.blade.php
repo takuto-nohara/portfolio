@@ -35,9 +35,12 @@
         </nav>
 
         {{-- ログアウト --}}
-        <a href="{{ url('/') }}" class="text-surface-primary/50 text-xs px-3 py-2 hover:text-surface-primary transition-colors">
-            &gt; logout
-        </a>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="text-surface-primary/50 text-xs px-3 py-2 hover:text-surface-primary transition-colors">
+                &gt; logout
+            </button>
+        </form>
     </aside>
 
     {{-- ==================== Main Content ==================== --}}
