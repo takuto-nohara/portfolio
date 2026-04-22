@@ -12,15 +12,15 @@
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}
-    <section class="bg-surface-secondary px-20 py-20 text-center">
+    <section class="bg-surface-secondary px-6 sm:px-20 py-12 sm:py-20 text-center">
         <h1 class="text-foreground-primary text-[40px] font-bold">&gt; About Me</h1>
     </section>
 
     {{-- ==================== Bio Section ==================== --}}
-    <section class="bg-surface-primary px-20 py-20">
-        <div class="max-w-4xl mx-auto flex items-start gap-16">
+    <section class="bg-surface-primary px-6 sm:px-20 py-12 sm:py-20">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-start gap-8 sm:gap-16">
             {{-- プロフィール画像 --}}
-            <div class="w-64 h-64 bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
+            <div class="w-48 h-48 sm:w-64 sm:h-64 bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
                 <span class="text-foreground-muted text-xs">profile_photo</span>
             </div>
             {{-- 自己紹介テキスト --}}
@@ -38,13 +38,13 @@
     </section>
 
     {{-- ==================== Skills / Rendering Pipeline Section ==================== --}}
-    <section class="bg-surface-secondary px-20 py-20">
+    <section class="bg-surface-secondary px-6 sm:px-20 py-12 sm:py-20">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-foreground-primary text-2xl font-semibold mb-12 text-center">
                 &gt; rendering_pipeline
             </h2>
 
-            <div class="grid grid-cols-3 gap-12">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
                 {{-- Languages --}}
                 <div>
                     <h3 class="text-foreground-primary text-base font-semibold mb-6 pb-3 border-b border-border-subtle">
@@ -88,7 +88,7 @@
     </section>
 
     {{-- ==================== Experience Timeline Section ==================== --}}
-    <section class="bg-surface-primary px-20 py-20">
+    <section class="bg-surface-primary px-6 sm:px-20 py-12 sm:py-20">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-foreground-primary text-2xl font-semibold mb-12 text-center">
                 &gt; experience_log

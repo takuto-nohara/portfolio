@@ -12,7 +12,7 @@
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}
-    <section class="bg-surface-primary px-20 pt-24 pb-20 flex flex-col items-center text-center">
+    <section class="bg-surface-primary px-6 sm:px-20 pt-16 sm:pt-24 pb-12 sm:pb-20 flex flex-col items-center text-center">
         <h1 class="text-foreground-primary text-[56px] font-bold leading-tight tracking-tight">
             Rendering Ideas<br>into Reality
         </h1>
@@ -34,7 +34,7 @@
     </section>
 
     {{-- ==================== Featured Works Section ==================== --}}
-    <section class="bg-surface-secondary px-20 py-20">
+    <section class="bg-surface-secondary px-6 sm:px-20 py-12 sm:py-20">
         <div class="max-w-6xl mx-auto">
             <div class="flex items-baseline justify-between mb-12">
                 <h2 class="text-foreground-primary text-2xl font-semibold">
@@ -45,7 +45,7 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                 @forelse (($featuredWorks ?? []) as $work)
                     <a href="{{ route('works.show', $work->id) }}" class="group block">
                         <div class="bg-surface-card rounded-lg overflow-hidden border border-border-subtle hover:border-accent-primary transition-colors">
@@ -81,10 +81,10 @@
     </section>
 
     {{-- ==================== About Teaser Section ==================== --}}
-    <section class="bg-surface-primary px-20 py-20">
-        <div class="max-w-6xl mx-auto flex items-center gap-16">
+    <section class="bg-surface-primary px-6 sm:px-20 py-12 sm:py-20">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-8 sm:gap-16">
             {{-- プロフィール画像プレースホルダー --}}
-            <div class="w-80 h-80 bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
+            <div class="w-48 h-48 sm:w-80 sm:h-80 bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
                 <span class="text-foreground-muted text-xs">profile_image</span>
             </div>
             {{-- テキスト --}}

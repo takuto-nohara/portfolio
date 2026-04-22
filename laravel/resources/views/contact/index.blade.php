@@ -12,12 +12,12 @@
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}
-    <section class="bg-surface-secondary px-20 py-20 text-center">
+    <section class="bg-surface-secondary px-6 sm:px-20 py-12 sm:py-20 text-center">
         <h1 class="text-foreground-primary text-[40px] font-bold">&gt; Get in Touch</h1>
     </section>
 
     {{-- ==================== Contact Form Section ==================== --}}
-    <section class="bg-surface-primary px-20 py-16">
+    <section class="bg-surface-primary px-6 sm:px-20 py-10 sm:py-16">
         <div class="max-w-xl mx-auto">
 
             <form method="POST" action="{{ route('contact.store') }}" class="space-y-8">

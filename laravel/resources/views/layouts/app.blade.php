@@ -17,7 +17,7 @@
 <body class="bg-surface-primary text-foreground-primary font-mono min-h-screen flex flex-col">
 
     {{-- ナビゲーションバー --}}
-    <header class="bg-surface-primary h-20 flex items-center justify-between px-20 sticky top-0 z-50 border-b border-border-subtle/0 backdrop-blur-sm">
+    <header class="bg-surface-primary h-20 flex items-center justify-between px-6 sm:px-20 sticky top-0 z-50 border-b border-border-subtle/0 backdrop-blur-sm">
         <a href="{{ url('/') }}" class="text-foreground-primary text-[22px] font-medium tracking-wide hover:text-accent-primary transition-colors">
             &gt; TN_
         </a>
@@ -34,7 +34,7 @@
     </main>
 
     {{-- フッター --}}
-    <footer class="bg-surface-secondary py-15 px-20 flex flex-col items-center gap-6">
+    <footer class="bg-surface-secondary py-15 px-6 sm:px-20 flex flex-col items-center gap-6">
         <span class="text-foreground-primary text-lg font-medium">&gt; TN_</span>
         <div class="flex items-center gap-8">
             <a href="#" class="text-foreground-muted text-xs hover:text-accent-primary transition-colors">github</a>

@@ -12,14 +12,14 @@
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}
-    <section class="bg-surface-secondary px-20 py-20 text-center">
+    <section class="bg-surface-secondary px-6 sm:px-20 py-12 sm:py-20 text-center">
         <h1 class="text-foreground-primary text-[40px] font-bold">&gt; All Works</h1>
     </section>
 
     {{-- ==================== Category Filter ==================== --}}
-    <section class="bg-surface-primary px-20 pt-12 pb-4">
+    <section class="bg-surface-primary px-6 sm:px-20 pt-8 sm:pt-12 pb-4">
         <div class="max-w-6xl mx-auto">
-            <div class="flex gap-3">
+            <div class="flex flex-wrap gap-3">
                 <a href="{{ route('works.index') }}"
                    class="px-4 py-2 rounded text-xs font-medium transition-colors
                           {{ !request()->get('category') ? 'bg-accent-primary text-surface-primary' : 'bg-surface-card text-foreground-secondary hover:bg-border-subtle' }}">
@@ -37,9 +37,9 @@
     </section>
 
     {{-- ==================== Works Grid ==================== --}}
-    <section class="bg-surface-primary px-20 py-12">
+    <section class="bg-surface-primary px-6 sm:px-20 py-8 sm:py-12">
         <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                 @forelse ($workList as $work)
                     <a href="{{ route('works.show', $work->id) }}" class="group block">
                         <div class="bg-surface-primary rounded-lg overflow-hidden border border-border-subtle hover:border-accent-primary transition-colors">

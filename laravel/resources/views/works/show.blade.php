@@ -23,7 +23,7 @@
     </section>
 
     {{-- ==================== Work Info Section ==================== --}}
-    <section class="bg-surface-primary px-20 py-16">
+    <section class="bg-surface-primary px-6 sm:px-20 py-10 sm:py-16">
         <div class="max-w-4xl mx-auto">
             {{-- カテゴリタグ --}}
             <span class="inline-block bg-surface-card text-accent-primary text-[10px] font-medium uppercase tracking-widest px-3 py-1 rounded">
@@ -79,7 +79,7 @@
             {{-- ギャラリーセクション --}}
             <div class="mt-16">
                 <h2 class="text-foreground-primary text-lg font-semibold mb-6">&gt; gallery</h2>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     @for ($i = 0; $i < 3; $i++)
                         <div class="aspect-video bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center">
                             <span class="text-foreground-muted text-xs">screenshot_{{ $i + 1 }}</span>
