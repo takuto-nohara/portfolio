@@ -4,6 +4,7 @@ namespace App\UseCases\Contact;
 use App\Domain\Entities\Contact;
 use App\Domain\Repositories\ContactRepositoryInterface;
 use App\Infrastructure\Mail\ContactMail;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Mail;
 
 class SendContactUseCase
@@ -25,7 +26,7 @@ class SendContactUseCase
 
         $saved = $this->contactRepository->save($contact);
 
-        Mail::to(config('mail.from.address'))->send(new ContactMail($saved));
+        Mail::to(Setting::get('contact_email', config('mail.from.address')))->send(new ContactMail($saved));
 
         return $saved;
     }

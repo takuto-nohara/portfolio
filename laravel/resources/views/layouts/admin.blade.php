@@ -31,6 +31,11 @@
                       {{ request()->routeIs('admin.contacts.*') ? 'bg-surface-primary/10 text-surface-primary' : '' }}">
                 &gt; お問い合わせ
             </a>
+            <a href="{{ route('admin.settings.edit') }}"
+               class="text-surface-primary/70 text-sm px-3 py-2 rounded hover:bg-surface-primary/10 hover:text-surface-primary transition-colors
+                      {{ request()->routeIs('admin.settings.*') ? 'bg-surface-primary/10 text-surface-primary' : '' }}">
+                &gt; サイト設定
+            </a>
         </nav>
 
         {{-- ログアウト --}}

@@ -37,8 +37,8 @@
     <footer class="bg-surface-secondary py-15 px-6 sm:px-20 flex flex-col items-center gap-6">
         <span class="text-foreground-primary text-lg font-medium">&gt; TN_</span>
         <div class="flex items-center gap-8">
-            <a href="{{ config('app.github_url') }}" target="_blank" rel="noopener noreferrer" class="text-foreground-muted text-xs hover:text-accent-primary transition-colors">github</a>
-            <a href="mailto:{{ config('mail.from.address') }}" class="text-foreground-muted text-xs hover:text-accent-primary transition-colors">email</a>
+            <a href="{{ \App\Models\Setting::get('github_url', '#') }}" target="_blank" rel="noopener noreferrer" class="text-foreground-muted text-xs hover:text-accent-primary transition-colors">github</a>
+            <a href="mailto:{{ \App\Models\Setting::get('contact_email', '') }}" class="text-foreground-muted text-xs hover:text-accent-primary transition-colors">email</a>
         </div>
         <p class="text-foreground-muted text-[11px]">&copy; 2025 Takuto Nohara. All rights reserved.</p>
     </footer>
