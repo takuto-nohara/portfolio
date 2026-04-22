@@ -3,129 +3,66 @@
 @section('title', '管理画面ログイン - TN_ Portfolio')
 
 @section('content')
-	{{--
-		Pencil 座標（cjjHQ 内相対）:
-		  TN         y=48   h=48   → gap=32 →
-		  タイトル   y=128  h=32   → gap=32 →
-		  説明文     y=192  h=20   → gap=32 →
-		  loginForm  y=244  h=197  → gap=32 →
-		  loginBtn   y=473  h=48   → gap=32 →
-		  footer     y=553  h=19   → padding-bottom=48
-		card total h=620
-	--}}
-	<section
-		class="w-full flex flex-col items-center rounded-lg border border-border-subtle bg-surface-primary py-12"
-		style="max-width: 440px; padding-left: 40px; padding-right: 40px; gap: 32px;"
-	>
-		{{-- ロゴ --}}
-		<p
-			class="font-bold text-accent-primary"
-			style="font-family: 'Playfair Display', serif; font-size: 36px; line-height: 1.333; letter-spacing: 2px;"
-		>TN</p>
+    <section class="flex w-full max-w-[440px] flex-col items-center gap-8 rounded-2xl border border-border-subtle bg-surface-primary px-10 py-12 shadow-[0_30px_80px_rgba(15,23,42,0.08)]">
+        <p class="[font-family:'Playfair_Display',serif] text-4xl font-bold leading-none tracking-[0.12em] text-accent-primary">TN</p>
 
-		{{-- タイトル --}}
-		<h1
-			class="font-semibold text-foreground-primary"
-			style="font-family: 'Geist', sans-serif; font-size: 22px; line-height: 1.455;"
-		>管理画面ログイン</h1>
+        <div class="space-y-3 text-center [font-family:'Geist',sans-serif]">
+            <h1 class="text-[22px] font-semibold leading-8 text-foreground-primary">管理画面ログイン</h1>
+            <p class="text-sm leading-6 text-foreground-secondary">メールアドレスとパスワードを入力してください</p>
+        </div>
 
-		{{-- 説明文 --}}
-		<p
-			class="text-center font-normal text-foreground-secondary"
-			style="font-family: 'Geist', sans-serif; font-size: 14px; line-height: 1.429;"
-		>メールアドレスとパスワードを入力してください</p>
+        @if (session('status'))
+            <div class="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-secondary [font-family:'Geist',sans-serif]">
+                {{ session('status') }}
+            </div>
+        @endif
 
-		{{-- ステータスメッセージ --}}
-		@if (session('status'))
-			<div
-				class="w-full border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-secondary"
-				style="font-family: 'Geist', sans-serif; border-radius: 2px;"
-			>{{ session('status') }}</div>
-		@endif
+        <form id="login-form" method="POST" action="{{ route('login') }}" class="flex w-full flex-col gap-5 [font-family:'Geist',sans-serif]">
+            @csrf
 
-		{{-- フォーム (emailGroup + passGroup + rememberRow のみ) --}}
-		<form
-			id="login-form"
-			method="POST"
-			action="{{ route('login') }}"
-			class="w-full flex flex-col"
-			style="gap: 20px;"
-		>
-			@csrf
+            <div class="flex flex-col gap-1.5">
+                <label for="email" class="text-[13px] font-medium text-foreground-primary">メールアドレス</label>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value="{{ old('email') }}"
+                    required
+                    autocomplete="username"
+                    class="h-11 rounded border border-border-subtle bg-surface-primary px-3.5 text-sm text-foreground-primary outline-none transition-colors focus:border-accent-primary"
+                    placeholder="admin@example.com"
+                >
+                @error('email')
+                    <p class="text-xs text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
-			{{-- メールアドレス --}}
-			<div class="flex flex-col gap-1.5">
-				<label
-					for="email"
-					class="font-medium text-foreground-primary"
-					style="font-family: 'Geist', sans-serif; font-size: 13px;"
-				>メールアドレス</label>
-				<input
-					id="email"
-					name="email"
-					type="email"
-					value="{{ old('email') }}"
-					required
-					autocomplete="username"
-					class="border border-border-subtle bg-surface-primary px-3.5 text-foreground-primary outline-none ring-0 focus:border-border-subtle focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
-					style="font-family: 'Geist', sans-serif; font-size: 14px; border-radius: 4px; height: 44px; box-shadow: none;"
-					placeholder="admin@example.com"
-				>
-				@error('email')
-					<p class="text-[12px] text-red-500" style="font-family: 'Geist', sans-serif;">{{ $message }}</p>
-				@enderror
-			</div>
+            <div class="flex flex-col gap-1.5">
+                <label for="password" class="text-[13px] font-medium text-foreground-primary">パスワード</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                    class="h-11 rounded border border-border-subtle bg-surface-primary px-3.5 text-sm text-foreground-primary outline-none transition-colors focus:border-accent-primary"
+                    placeholder="••••••••"
+                >
+                @error('password')
+                    <p class="text-xs text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
 
-			{{-- パスワード --}}
-			<div class="flex flex-col gap-1.5">
-				<label
-					for="password"
-					class="font-medium text-foreground-primary"
-					style="font-family: 'Geist', sans-serif; font-size: 13px;"
-				>パスワード</label>
-				<input
-					id="password"
-					name="password"
-					type="password"
-					required
-					autocomplete="current-password"
-					class="border border-border-subtle bg-surface-primary px-3.5 text-foreground-primary outline-none ring-0 focus:border-border-subtle focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
-					style="font-family: 'Geist', sans-serif; font-size: 14px; border-radius: 4px; height: 44px; box-shadow: none;"
-					placeholder="••••••••"
-				>
-				@error('password')
-					<p class="text-[12px] text-red-500" style="font-family: 'Geist', sans-serif;">{{ $message }}</p>
-				@enderror
-			</div>
+            <label class="flex w-full items-center gap-2 text-[13px] text-foreground-secondary">
+                <input type="checkbox" name="remember" class="h-[18px] w-[18px] rounded border border-border-subtle bg-surface-primary text-accent-primary focus:ring-accent-primary">
+                <span>ログイン状態を保持する</span>
+            </label>
+        </form>
 
-			{{-- ログイン状態を保持する --}}
-			<label
-				class="flex w-full items-center gap-2 text-foreground-secondary"
-				style="font-family: 'Geist', sans-serif; font-size: 13px;"
-			>
-				<input
-					type="checkbox"
-					name="remember"
-					class="border border-border-subtle bg-surface-primary text-accent-primary outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
-					style="border-radius: 4px; width: 18px; height: 18px;"
-				>
-				<span>ログイン状態を保持する</span>
-			</label>
-		</form>
+        <button type="submit" form="login-form" class="flex h-12 w-full items-center justify-center rounded bg-accent-primary text-[15px] font-semibold text-surface-primary transition-colors hover:bg-accent-secondary [font-family:'Geist',sans-serif]">
+            ログイン
+        </button>
 
-		{{-- ログインボタン (フォームの外 → gap=32 で区切られる) --}}
-		<button
-			type="submit"
-			form="login-form"
-			class="flex w-full items-center justify-center bg-accent-primary text-surface-primary transition-colors hover:bg-accent-secondary"
-			style="font-family: 'Geist', sans-serif; border-radius: 4px; height: 48px; font-size: 15px; font-weight: 600;"
-		>ログイン</button>
-
-		{{-- フッターリンク --}}
-		<a
-			href="{{ route('top') }}"
-			class="text-accent-primary hover:text-accent-secondary"
-			style="font-family: 'Geist', sans-serif; font-size: 13px;"
-		>← サイトに戻る</a>
-	</section>
+        <a href="{{ route('top') }}" class="text-[13px] text-accent-primary transition-colors hover:text-accent-secondary [font-family:'Geist',sans-serif]">← サイトに戻る</a>
+    </section>
 @endsection

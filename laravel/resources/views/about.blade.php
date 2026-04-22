@@ -19,10 +19,7 @@
     {{-- ==================== Bio Section ==================== --}}
     <section class="bg-surface-primary px-6 sm:px-20 py-12 sm:py-20">
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-start gap-8 sm:gap-16">
-            {{-- プロフィール画像 --}}
-            <div class="w-48 h-48 sm:w-64 sm:h-64 bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
-                <span class="text-foreground-muted text-xs">profile_photo</span>
-            </div>
+            <x-profile-avatar size-class="w-48 h-48 sm:w-64 sm:h-64" />
             {{-- 自己紹介テキスト --}}
             <div>
                 <h2 class="text-foreground-primary text-2xl font-semibold mb-2">野原 拓人</h2>

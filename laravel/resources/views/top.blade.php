@@ -83,10 +83,7 @@
     {{-- ==================== About Teaser Section ==================== --}}
     <section class="bg-surface-primary px-6 sm:px-20 py-12 sm:py-20">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-8 sm:gap-16">
-            {{-- プロフィール画像プレースホルダー --}}
-            <div class="w-48 h-48 sm:w-80 sm:h-80 bg-surface-card rounded-lg border border-border-subtle flex items-center justify-center shrink-0">
-                <span class="text-foreground-muted text-xs">profile_image</span>
-            </div>
+            <x-profile-avatar size-class="w-48 h-48 sm:w-80 sm:h-80" />
             {{-- テキスト --}}
             <div>
                 <h2 class="text-foreground-primary text-2xl font-semibold mb-4">
