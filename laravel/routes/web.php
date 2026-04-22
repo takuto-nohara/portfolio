@@ -19,9 +19,11 @@ Route::get('/works', [WorkController::class, 'index'])->name('works.index');
 Route::get('/works/{id}', [WorkController::class, 'show'])->name('works.show');
 
 Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
-Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('contact.store');
 
-Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(function () {
     Route::get('/works', [AdminWorkController::class, 'index'])->name('works.index');
     Route::get('/works/create', [AdminWorkController::class, 'create'])->name('works.create');
     Route::post('/works', [AdminWorkController::class, 'store'])->name('works.store');
