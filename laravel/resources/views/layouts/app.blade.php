@@ -13,6 +13,7 @@
         'resources/css/app.css',
         'resources/js/app.js'
     ])
+    @stack('styles')
 
     {{-- ターミナルアニメーション用スタイル --}}
     <style>
