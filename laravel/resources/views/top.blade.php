@@ -17,7 +17,7 @@
             Rendering Ideas<br>into Reality
         </h1>
         <p class="text-foreground-secondary text-base mt-6 max-w-xl leading-relaxed">
-            コードで思考を形に。アプリ、Web、映像、グラフィック——<br>
+            思考を目に見える形に。アプリ、Web、映像、グラフィック——<br>
             あらゆるアウトプットを通じて学びを深めています。
         </p>
         <div class="flex gap-4 mt-10">
@@ -90,8 +90,8 @@
                     &gt; about_me
                 </h2>
                 <p class="text-foreground-secondary text-sm leading-relaxed mb-6">
-                    野原拓人。独学でプログラミングを学び、さまざまなアウトプットを<br>
-                    通じてスキルを磨いています。コードを書くことは、思考を形にすること。
+                    『欲しいものが見当たらない？ならば作ってしまえばいい！』を<br>
+                    モットーに様々なコンテンツの制作を行っています。
                 </p>
                 <a href="{{ route('about') }}"
                    class="text-accent-primary text-sm font-medium hover:text-accent-secondary transition-colors">
