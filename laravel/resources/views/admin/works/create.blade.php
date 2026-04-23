@@ -71,6 +71,7 @@
                         <input type="file" id="thumbnail" name="thumbnail" accept="image/*"
                                class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
                         <p class="text-foreground-muted text-xs mt-2">一覧と詳細のメイン画像になります。</p>
+                        <span id="thumbnail-name" class="text-foreground-muted text-xs font-mono mt-1 hidden"></span>
                         @error('thumbnail') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -142,6 +143,18 @@
 
 @push('scripts')
 <script>
+    document.getElementById('thumbnail').addEventListener('change', function () {
+        const span = document.getElementById('thumbnail-name');
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            const sizeKB = (file.size / 1024).toFixed(1);
+            span.textContent = '+ ' + file.name + ' (' + sizeKB + ' KB)';
+            span.classList.remove('hidden');
+        } else {
+            span.classList.add('hidden');
+        }
+    });
+
     document.getElementById('images').addEventListener('change', function () {
         const preview = document.getElementById('images-preview');
         preview.innerHTML = '';
