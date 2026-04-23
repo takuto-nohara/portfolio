@@ -18,6 +18,7 @@ class EloquentWorkRepository implements WorkRepositoryInterface
             id: $model->id,
             workId: $model->work_id,
             imagePath: $model->image_path,
+            caption: $model->caption,
             sortOrder: $model->sort_order,
             createdAt: $model->created_at?->toDateTimeString(),
             updatedAt: $model->updated_at?->toDateTimeString(),
@@ -115,17 +116,23 @@ class EloquentWorkRepository implements WorkRepositoryInterface
         $model->delete();
     }
 
-    public function addImage(int $workId, string $imagePath): WorkImageEntity
+    public function addImage(int $workId, string $imagePath, ?string $caption = null): WorkImageEntity
     {
         $sortOrder = (int) WorkImageModel::where('work_id', $workId)->max('sort_order') + 1;
 
         $model = WorkImageModel::create([
             'work_id' => $workId,
             'image_path' => $imagePath,
+            'caption' => $caption,
             'sort_order' => $sortOrder,
         ]);
 
         return $this->toImageEntity($model);
+    }
+
+    public function updateImageCaption(int $imageId, ?string $caption): void
+    {
+        WorkImageModel::where('id', $imageId)->update(['caption' => $caption]);
     }
 
     public function deleteImage(int $imageId): void

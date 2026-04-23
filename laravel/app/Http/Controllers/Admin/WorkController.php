@@ -13,6 +13,7 @@ use App\UseCases\Work\UpdateWorkUseCase;
 use App\UseCases\Work\DeleteWorkUseCase;
 use App\UseCases\Work\AddWorkImageUseCase;
 use App\UseCases\Work\DeleteWorkImageUseCase;
+use App\UseCases\Work\UpdateWorkImageCaptionUseCase;
 
 class WorkController extends Controller
 {
@@ -24,6 +25,7 @@ class WorkController extends Controller
         private DeleteWorkUseCase $deleteWorkUseCase,
         private AddWorkImageUseCase $addWorkImageUseCase,
         private DeleteWorkImageUseCase $deleteWorkImageUseCase,
+        private UpdateWorkImageCaptionUseCase $updateWorkImageCaptionUseCase,
     ) {}
 
     public function index()
@@ -57,9 +59,10 @@ class WorkController extends Controller
             isFeatured: (bool) ($validated['is_featured'] ?? false)
         );
 
-        foreach ($request->file('images', []) as $image) {
+        foreach ($request->file('images', []) as $index => $image) {
             $imagePath = $image->store('works/gallery', 'public');
-            $this->addWorkImageUseCase->execute($work->id, $imagePath);
+            $caption = $validated['captions'][$index] ?? null;
+            $this->addWorkImageUseCase->execute($work->id, $imagePath, $caption ?: null);
         }
 
         return redirect()->route('admin.works.index')->with('success', 'Work created successfully.');
@@ -110,12 +113,35 @@ class WorkController extends Controller
             isFeatured: (bool) ($validated['is_featured'] ?? false)
         );
 
-        foreach ($request->file('images', []) as $image) {
+        foreach ($request->file('images', []) as $index => $image) {
             $imagePath = $image->store('works/gallery', 'public');
-            $this->addWorkImageUseCase->execute($id, $imagePath);
+            $caption = $validated['captions'][$index] ?? null;
+            $this->addWorkImageUseCase->execute($id, $imagePath, $caption ?: null);
         }
 
         return redirect()->route('admin.works.index')->with('success', 'Work updated successfully.');
+    }
+
+    public function updateImage(int $workId, int $imageId)
+    {
+        $workDetail = $this->getWorkDetailUseCase->execute($workId);
+
+        if (!$workDetail) {
+            abort(404);
+        }
+
+        $imageExists = collect($workDetail->images)->contains(fn ($image) => $image->id === $imageId);
+
+        if (!$imageExists) {
+            abort(404);
+        }
+
+        $caption = request()->validate([
+            'caption' => ['nullable', 'string', 'max:255'],
+        ])['caption'] ?? null;
+        $this->updateWorkImageCaptionUseCase->execute($imageId, $caption ?: null);
+
+        return redirect()->route('admin.works.edit', $workId)->with('success', 'キャプションを更新しました。');
     }
 
     public function destroy(int $id)

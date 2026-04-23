@@ -204,10 +204,14 @@
             }
 
             document.addEventListener('DOMContentLoaded', async () => {
+                const mainEl = document.querySelector('main');
 
                 /* ---- ページ入場アニメーション ---- */
-                if (!prefersReducedMotion) {
-                    document.querySelector('main')?.classList.add('page-enter');
+                if (!prefersReducedMotion && mainEl) {
+                    mainEl.classList.add('page-enter');
+                    mainEl.addEventListener('animationend', () => {
+                        mainEl.classList.remove('page-enter');
+                    }, { once: true });
                 }
 
                 /* ---- スタートアニメーション (セッション初回のみ) ---- */
@@ -293,6 +297,8 @@
             });
         })();
     </script>
+
+    @stack('scripts')
 
 </body>
 </html>

@@ -14,7 +14,8 @@ interface WorkRepositoryInterface
     public function findById(int $id): ?Work;
     public function save(Work $work): Work;
     public function delete(int $id): void;
-    public function addImage(int $workId, string $imagePath): WorkImage;
+    public function addImage(int $workId, string $imagePath, ?string $caption = null): WorkImage;
+    public function updateImageCaption(int $imageId, ?string $caption): void;
     public function deleteImage(int $imageId): void;
 
     /** @return WorkImage[] */

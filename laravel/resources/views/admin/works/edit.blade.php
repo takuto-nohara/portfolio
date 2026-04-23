@@ -129,9 +129,10 @@
                     <input type="file" id="images" name="images[]" accept="image/*" multiple
                            class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
                     <p class="text-foreground-muted text-xs mt-2">Ctrl/Cmd を押しながらクリックで複数選択できます。</p>
-                    <ul id="images-preview" class="mt-2 space-y-1 hidden"></ul>
+                    <ul id="images-preview" class="mt-3 space-y-2 hidden"></ul>
                     @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     @error('images.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('captions.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- 送信 --}}
@@ -152,8 +153,23 @@
                         @foreach ($workDetail->images as $image)
                             <div class="bg-surface-secondary border border-border-subtle rounded-lg p-4 space-y-3">
                                 <img src="{{ asset('storage/' . $image->imagePath) }}" alt="{{ $workDetail->title }} gallery image" class="w-full aspect-video object-cover rounded">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="text-foreground-muted text-xs">order: {{ $image->sortOrder }}</span>
+                                <form action="{{ route('admin.works.images.update', ['workId' => $workDetail->id, 'imageId' => $image->id]) }}" method="POST" class="space-y-3">
+                                    @csrf
+                                    @method('PATCH')
+                                    <div>
+                                        <label for="caption-{{ $image->id }}" class="block text-foreground-primary text-xs font-medium mb-2">caption</label>
+                                        <input type="text" id="caption-{{ $image->id }}" name="caption" value="{{ old('caption', $image->caption) }}"
+                                               placeholder="画像説明を入力"
+                                               class="w-full bg-surface-primary border border-border-subtle rounded px-3 py-2 text-foreground-primary text-xs font-mono focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors">
+                                    </div>
+                                    <div class="flex items-center justify-between gap-3">
+                                        <span class="text-foreground-muted text-xs">order: {{ $image->sortOrder }}</span>
+                                        <button type="submit" class="text-accent-primary text-xs hover:text-accent-secondary transition-colors">
+                                            save_caption
+                                        </button>
+                                    </div>
+                                </form>
+                                <div class="flex items-center justify-end gap-3">
                                     <form action="{{ route('admin.works.images.destroy', ['workId' => $workDetail->id, 'imageId' => $image->id]) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
@@ -200,9 +216,21 @@
         preview.classList.remove('hidden');
         Array.from(this.files).forEach(function (file) {
             const li = document.createElement('li');
-            li.className = 'text-foreground-muted text-xs font-mono flex items-center gap-2';
+            li.className = 'bg-surface-secondary border border-border-subtle rounded p-3 space-y-2';
+
+            const nameRow = document.createElement('p');
+            nameRow.className = 'text-foreground-muted text-xs font-mono';
             const sizeKB = (file.size / 1024).toFixed(1);
-            li.textContent = '+ ' + file.name + ' (' + sizeKB + ' KB)';
+            nameRow.textContent = '+ ' + file.name + ' (' + sizeKB + ' KB)';
+            li.appendChild(nameRow);
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'captions[]';
+            input.placeholder = 'caption (任意)';
+            input.className = 'w-full bg-surface-primary border border-border-subtle rounded px-3 py-2 text-foreground-primary text-xs font-mono focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-colors';
+            li.appendChild(input);
+
             preview.appendChild(li);
         });
     });

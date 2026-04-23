@@ -56,6 +56,8 @@ class UpdateWorkRequest extends FormRequest
             'thumbnail' => 'nullable|image|max:2048',
             'images' => 'nullable|array|max:10',
             'images.*' => 'nullable|image|max:2048',
+            'captions' => 'nullable|array',
+            'captions.*' => 'nullable|string|max:255',
             'url' => 'nullable|url|max:2048',
             'github_url' => 'nullable|url|max:2048',
             'published_at' => 'nullable|date',

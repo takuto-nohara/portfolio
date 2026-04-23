@@ -33,6 +33,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->name('admin.')->group(fun
     Route::put('/works/{id}', [AdminWorkController::class, 'update'])->name('works.update');
     Route::delete('/works/{id}', [AdminWorkController::class, 'destroy'])->name('works.destroy');
     Route::delete('/works/{workId}/images/{imageId}', [AdminWorkController::class, 'destroyImage'])->name('works.images.destroy');
+    Route::patch('/works/{workId}/images/{imageId}', [AdminWorkController::class, 'updateImage'])->name('works.images.update');
 
     Route::get('/contacts', [AdminContactController::class, 'index'])->name('contacts.index');
     Route::delete('/contacts/{id}', [AdminContactController::class, 'destroy'])->name('contacts.destroy');
