@@ -71,7 +71,7 @@
                 @if ($workDetail->url)
                     <a href="{{ $workDetail->url }}" target="_blank" rel="noopener noreferrer"
                        class="border border-accent-primary text-accent-primary text-sm font-medium px-6 py-3 rounded hover:bg-accent-primary hover:text-surface-primary transition-colors">
-                        &gt; live_demo
+                        &gt; visit_site
                     </a>
                 @endif
             </div>
