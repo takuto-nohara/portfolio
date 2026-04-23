@@ -23,7 +23,7 @@ class StoreWorkRequest extends FormRequest
             'sort_order' => 'required|integer|min:0',
             'thumbnail' => 'nullable|image|max:2048',
             'images' => 'nullable|array|max:10',
-            'images.*' => 'image|max:4096',
+            'images.*' => 'nullable|image|max:4096',
             'url' => 'nullable|url|max:2048',
             'github_url' => 'nullable|url|max:2048',
             'published_at' => 'nullable|date',

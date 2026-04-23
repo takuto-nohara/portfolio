@@ -121,7 +121,8 @@
                     <label for="images" class="block text-foreground-primary text-sm font-medium mb-2">&gt; gallery_images</label>
                     <input type="file" id="images" name="images[]" accept="image/*" multiple
                            class="w-full bg-surface-secondary border border-border-subtle rounded px-4 py-3 text-foreground-primary text-sm font-mono file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary">
-                    <p class="text-foreground-muted text-xs mt-2">複数選択でギャラリー画像を追加できます。</p>
+                    <p class="text-foreground-muted text-xs mt-2">Ctrl/Cmd を押しながらクリックで複数選択できます。</p>
+                    <ul id="images-preview" class="mt-2 space-y-1 hidden"></ul>
                     @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     @error('images.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
@@ -138,4 +139,27 @@
     </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('images').addEventListener('change', function () {
+        const preview = document.getElementById('images-preview');
+        preview.innerHTML = '';
+
+        if (this.files.length === 0) {
+            preview.classList.add('hidden');
+            return;
+        }
+
+        preview.classList.remove('hidden');
+        Array.from(this.files).forEach(function (file) {
+            const li = document.createElement('li');
+            li.className = 'text-foreground-muted text-xs font-mono flex items-center gap-2';
+            const sizeKB = (file.size / 1024).toFixed(1);
+            li.textContent = '+ ' + file.name + ' (' + sizeKB + ' KB)';
+            preview.appendChild(li);
+        });
+    });
+</script>
+@endpush
 
