@@ -23,3 +23,14 @@
     --color-border-subtle: #BAE6FD;
     --color-border-accent: #0EA5E933;
 }
+
+/* Responsive 4-column skills grid */
+.skills-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media screen and (min-width: 640px) {
+    .skills-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
