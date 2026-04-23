@@ -12,8 +12,8 @@ class AddWorkImageUseCase
     ) {
     }
 
-    public function execute(int $workId, string $imagePath): WorkImage
+    public function execute(int $workId, string $imagePath, ?string $caption = null): WorkImage
     {
-        return $this->workRepository->addImage($workId, $imagePath);
+        return $this->workRepository->addImage($workId, $imagePath, $caption);
     }
 }

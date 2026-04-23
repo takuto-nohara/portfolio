@@ -10,6 +10,7 @@ class WorkImage extends Model
     protected $fillable = [
         'work_id',
         'image_path',
+        'caption',
         'sort_order',
     ];
 
