@@ -2,9 +2,9 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": [
     "src/app/**/*.{ts,tsx}",
-    "src/domain/publicApi.ts",
-    "src/application/publicApi.ts",
-    "src/infrastructure/publicApi.ts",
+    "src/app/domain/publicApi.ts",
+    "src/app/application/publicApi.ts",
+    "src/app/infrastructure/publicApi.ts",
     "open-next.config.ts"
   ],
   "project": [
