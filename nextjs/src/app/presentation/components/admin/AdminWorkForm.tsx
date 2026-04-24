@@ -50,7 +50,7 @@ export function AdminWorkForm({ mode, work, status }: AdminWorkFormProps) {
 
   const isVideo = category === "video";
   const youtubeVideoId = isVideo ? extractYouTubeVideoId(youtubeUrl) : null;
-  const youtubeThumbnailPreview = youtubeVideoId ? `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg` : null;
+  const youtubeThumbnailPreview = youtubeVideoId ? `https://img.youtube.com/vi/${youtubeVideoId}/maxresdefault.jpg` : null;
 
   return (
     <div className="max-w-3xl">

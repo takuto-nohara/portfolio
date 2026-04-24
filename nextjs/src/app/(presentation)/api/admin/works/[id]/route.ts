@@ -46,7 +46,7 @@ function extractYouTubeVideoId(url: string): string | null {
 }
 
 function getYouTubeThumbnailUrl(videoId: string): string {
-  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 }
 
 function getCheckbox(formData: FormData, key: string): boolean {
