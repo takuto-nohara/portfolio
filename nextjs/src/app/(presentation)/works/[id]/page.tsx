@@ -144,10 +144,12 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
             </div>
           ) : null}
 
-          <div className="mt-16">
-            <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> gallery"}</h2>
-            <WorkGalleryModal title={workDetail.title} images={workDetail.images} />
-          </div>
+          {workDetail.images.length > 0 ? (
+            <div className="mt-16">
+              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> gallery"}</h2>
+              <WorkGalleryModal title={workDetail.title} images={workDetail.images} />
+            </div>
+          ) : null}
 
           <nav className="mt-16 flex items-center justify-between border-t border-border-subtle pt-8">
             {prevWork?.id != null ? (

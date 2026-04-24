@@ -60,13 +60,7 @@ export function WorkGalleryModal({ title, images }: WorkGalleryModalProps) {
   }, [currentIndex, images.length]);
 
   if (images.length === 0) {
-    return (
-      <div className="aspect-video rounded-lg border border-border-subtle bg-surface-card md:col-span-3">
-        <div className="flex h-full items-center justify-center">
-          <span className="text-xs text-foreground-muted">gallery_images_not_found</span>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   const activeImage = currentIndex === null ? null : images[activeIndex];
