@@ -63,15 +63,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     <SiteShell settings={settings}>
       <section className="bg-surface-card">
         <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden">
-          {videoId ? (
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}`}
-              title={workDetail.title}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="h-full w-full"
-            />
-          ) : thumbnailUrl ? (
+          {thumbnailUrl ? (
             <Image src={thumbnailUrl} alt={workDetail.title} fill className="object-cover" sizes="(min-width: 1152px) 1152px, 100vw" />
           ) : (
             <span className="text-sm text-foreground-muted">hero_image</span>
@@ -136,6 +128,21 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
               </a>
             ) : null}
           </div>
+
+          {videoId ? (
+            <div className="mt-16">
+              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> video"}</h2>
+              <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                <iframe
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  title={workDetail.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="h-full w-full"
+                />
+              </div>
+            </div>
+          ) : null}
 
           <div className="mt-16">
             <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> gallery"}</h2>
