@@ -9,6 +9,7 @@
   ],
   "project": [
     "src/**/*.{ts,tsx}",
+    "worker/**/*.ts",
     "scripts/**/*.{js,mjs,ts}",
     "*.config.{js,mjs,ts}"
   ],

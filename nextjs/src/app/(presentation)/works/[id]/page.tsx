@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -61,7 +62,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
   return (
     <SiteShell settings={settings}>
       <section className="bg-surface-card">
-        <div className="mx-auto flex aspect-[16/7] max-w-6xl items-center justify-center overflow-hidden">
+        <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden">
           {videoId ? (
             <iframe
               src={`https://www.youtube.com/embed/${videoId}`}
@@ -71,7 +72,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
               className="h-full w-full"
             />
           ) : thumbnailUrl ? (
-            <img src={thumbnailUrl} alt={workDetail.title} className="h-full w-full object-cover" />
+            <Image src={thumbnailUrl} alt={workDetail.title} fill className="object-cover" sizes="(min-width: 1152px) 1152px, 100vw" />
           ) : (
             <span className="text-sm text-foreground-muted">hero_image</span>
           )}
