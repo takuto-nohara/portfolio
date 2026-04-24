@@ -57,21 +57,6 @@ export function SiteShell({ settings, children }: SiteShellProps) {
         <p className="text-[11px] text-foreground-muted">&copy; 2025 Takuto Nohara. All rights reserved.</p>
       </footer>
 
-      <div id="intro-overlay" aria-hidden="true">
-        <div className="intro-terminal">
-          <div className="intro-prompt">
-            <span id="intro-line-1" className="intro-line" />
-          </div>
-          <div className="intro-prompt">
-            <span id="intro-line-2" className="intro-line" />
-          </div>
-          <div className="intro-prompt">
-            <span id="intro-line-3" className="intro-line" />
-          </div>
-        </div>
-        <p className="intro-skip">click or press any key to skip</p>
-      </div>
-
       <div id="transition-overlay" aria-hidden="true">
         <span id="transition-text" />
       </div>

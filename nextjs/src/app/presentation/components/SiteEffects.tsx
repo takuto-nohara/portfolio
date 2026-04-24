@@ -201,16 +201,36 @@ export function SiteEffects() {
       return element.isConnected ? cursor : null;
     };
 
+    const createIntroOverlay = () => {
+      const overlay = document.createElement("div");
+      overlay.id = "intro-overlay";
+      overlay.setAttribute("aria-hidden", "true");
+      overlay.innerHTML = `
+        <div class="intro-terminal">
+          <div class="intro-prompt">
+            <span id="intro-line-1" class="intro-line"></span>
+          </div>
+          <div class="intro-prompt">
+            <span id="intro-line-2" class="intro-line"></span>
+          </div>
+          <div class="intro-prompt">
+            <span id="intro-line-3" class="intro-line"></span>
+          </div>
+        </div>
+        <p class="intro-skip">click or press any key to skip</p>
+      `;
+      document.body.appendChild(overlay);
+      return overlay;
+    };
+
     const mainElement = document.querySelector<HTMLElement>("main[data-site-main='true']");
     initHeroCanvas();
 
     const isTransitionArrival =
       !prefersReducedMotion && !!window.sessionStorage.getItem("portfolio-transition-active");
-    if (isTransitionArrival) {
-      window.sessionStorage.removeItem("portfolio-transition-active");
-    }
+    window.sessionStorage.removeItem("portfolio-transition-active");
 
-    if (!prefersReducedMotion && mainElement) {
+    if (isTransitionArrival && mainElement) {
       const addPageEnter = () => {
         mainElement.classList.add("page-enter");
         const onAnimationEnd = () => {
@@ -220,36 +240,31 @@ export function SiteEffects() {
         cleanupCallbacks.push(() => mainElement.removeEventListener("animationend", onAnimationEnd));
       };
 
-      if (isTransitionArrival) {
-        const transitionOverlayEl = document.getElementById("transition-overlay");
-        if (transitionOverlayEl) {
-          // transition なしで即座に opacity:1 の状態にする
-          transitionOverlayEl.style.transition = "none";
-          transitionOverlayEl.classList.add("active");
-          window.requestAnimationFrame(() => {
-            // transition を元に戻し、フェードアウトを開始
-            transitionOverlayEl.style.transition = "";
-            schedule(() => {
-              transitionOverlayEl.classList.remove("active");
-            }, 30);
-            // overlay フェードアウトと重ねてコンテンツをフェードイン
-            schedule(addPageEnter, 120);
-          });
-        } else {
-          addPageEnter();
-        }
+      const transitionOverlayEl = document.getElementById("transition-overlay");
+      if (transitionOverlayEl) {
+        // transition なしで即座に opacity:1 の状態にする
+        transitionOverlayEl.style.transition = "none";
+        transitionOverlayEl.classList.add("active");
+        window.requestAnimationFrame(() => {
+          // transition を元に戻し、フェードアウトを開始
+          transitionOverlayEl.style.transition = "";
+          schedule(() => {
+            transitionOverlayEl.classList.remove("active");
+          }, 30);
+          // overlay フェードアウトと重ねてコンテンツをフェードイン
+          schedule(addPageEnter, 120);
+        });
       } else {
         addPageEnter();
       }
     }
 
-    const introOverlay = document.getElementById("intro-overlay");
+    const shouldSkipIntro = prefersReducedMotion || !!window.sessionStorage.getItem("portfolio-intro-shown");
+    const introOverlay = shouldSkipIntro ? null : createIntroOverlay();
 
-    if (introOverlay) {
-      if (prefersReducedMotion || window.sessionStorage.getItem("portfolio-intro-shown")) {
-        introOverlay.remove();
-        triggerHeroItems();
-      } else {
+    if (shouldSkipIntro) {
+      triggerHeroItems();
+    } else if (introOverlay) {
         window.sessionStorage.setItem("portfolio-intro-shown", "1");
         const line1Element = document.getElementById("intro-line-1");
         const line2Element = document.getElementById("intro-line-2");
@@ -306,7 +321,6 @@ export function SiteEffects() {
           await sleep(480);
           dismiss();
         })();
-      }
     }
 
     if (!prefersReducedMotion) {
