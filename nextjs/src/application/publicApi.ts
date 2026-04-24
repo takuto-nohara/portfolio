@@ -13,5 +13,6 @@ export { UpdateWorkUseCase } from "./usecases/work/UpdateWorkUseCase";
 export { DeleteContactUseCase } from "./usecases/contact/DeleteContactUseCase";
 export { GetContactListUseCase } from "./usecases/contact/GetContactListUseCase";
 export { SendContactUseCase } from "./usecases/contact/SendContactUseCase";
+export { GetPublicSettingsUseCase } from "./usecases/setting/GetPublicSettingsUseCase";
 export { GetSettingsUseCase } from "./usecases/setting/GetSettingsUseCase";
 export { UpdateSettingsUseCase } from "./usecases/setting/UpdateSettingsUseCase";

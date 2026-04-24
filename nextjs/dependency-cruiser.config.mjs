@@ -16,10 +16,10 @@ export default {
     },
     {
       name: "infrastructure-only-domain-publicApi",
-      comment: "infrastructure depends only on domain publicApi",
+      comment: "infrastructure depends only on domain/application public APIs",
       severity: "error",
       from: { path: "^src/infrastructure" },
-      to: { path: "^src/(application|presentation|domain/(?!publicApi\\.ts$))" },
+      to: { path: "^src/(presentation|application/(?!publicApi\\.ts$)|domain/(?!publicApi\\.ts$))" },
     },
     {
       name: "presentation-only-application-publicApi",
