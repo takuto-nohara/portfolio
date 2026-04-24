@@ -24,6 +24,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const formData = await request.formData();
     const services = await getAdminServices();
+    const oauthToken = await services.repositories.oAuthTokenRepository.findByProvider("google");
+    const linkedEmail = oauthToken?.email ?? null;
 
     await services.useCases.updateSettings.execute([
       {
@@ -34,13 +36,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       {
         key: "contact_email",
-        value: getText(formData, "contact_email"),
+        value: linkedEmail ?? getText(formData, "contact_email"),
         createdAt: null,
         updatedAt: null,
       },
       {
         key: "gmail_from_email",
-        value: getText(formData, "gmail_from_email"),
+        value: linkedEmail ?? getText(formData, "gmail_from_email"),
         createdAt: null,
         updatedAt: null,
       },

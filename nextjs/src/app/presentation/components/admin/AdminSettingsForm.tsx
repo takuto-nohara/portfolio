@@ -44,15 +44,31 @@ export function AdminSettingsForm({ settings, token, status }: AdminSettingsForm
 
           <div>
             <label htmlFor="contact_email" className="mb-2 block text-sm font-medium text-foreground-primary">{"> contact_email"}</label>
-            <input
-              type="email"
-              id="contact_email"
-              name="contact_email"
-              defaultValue={getSetting(settings, "contact_email")}
-              placeholder="you@example.com"
-              className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
-            />
-            <p className="mt-1 text-xs text-foreground-muted">お問い合わせメールの送信先として使用されます。フッターの email リンク先にもなります。</p>
+            {token?.email ? (
+              <>
+                <input type="hidden" name="contact_email" value={token.email} />
+                <input
+                  type="email"
+                  id="contact_email"
+                  value={token.email}
+                  disabled
+                  className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-2.5 text-sm text-foreground-muted opacity-60 cursor-not-allowed"
+                />
+                <p className="mt-1 text-xs text-foreground-muted">連携中の Google アカウント ({token.email}) を自動使用します。</p>
+              </>
+            ) : (
+              <>
+                <input
+                  type="email"
+                  id="contact_email"
+                  name="contact_email"
+                  defaultValue={getSetting(settings, "contact_email")}
+                  placeholder="you@example.com"
+                  className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
+                />
+                <p className="mt-1 text-xs text-foreground-muted">お問い合わせメールの送信先として使用されます。フッターの email リンク先にもなります。</p>
+              </>
+            )}
           </div>
 
           <div className="rounded border border-border-subtle bg-surface-secondary p-5">
@@ -78,15 +94,31 @@ export function AdminSettingsForm({ settings, token, status }: AdminSettingsForm
             <div className="space-y-4">
               <div>
                 <label htmlFor="gmail_from_email" className="mb-1 block text-xs font-medium text-foreground-secondary">{"from_email"}</label>
-                <input
-                  type="email"
-                  id="gmail_from_email"
-                  name="gmail_from_email"
-                  defaultValue={getSetting(settings, "gmail_from_email")}
-                  placeholder="your-gmail@gmail.com"
-                  className="w-full rounded border border-border-subtle bg-surface-primary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
-                />
-                <p className="mt-1 text-xs text-foreground-muted">Gmail の送信元アドレス（連携した Google アカウントのメールアドレス）。</p>
+                {token?.email ? (
+                  <>
+                    <input type="hidden" name="gmail_from_email" value={token.email} />
+                    <input
+                      type="email"
+                      id="gmail_from_email"
+                      value={token.email}
+                      disabled
+                      className="w-full rounded border border-border-subtle bg-surface-primary px-4 py-2.5 text-sm text-foreground-muted opacity-60 cursor-not-allowed"
+                    />
+                    <p className="mt-1 text-xs text-foreground-muted">連携中の Google アカウントのアドレスを自動使用します。</p>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="email"
+                      id="gmail_from_email"
+                      name="gmail_from_email"
+                      defaultValue={getSetting(settings, "gmail_from_email")}
+                      placeholder="your-gmail@gmail.com"
+                      className="w-full rounded border border-border-subtle bg-surface-primary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
+                    />
+                    <p className="mt-1 text-xs text-foreground-muted">Gmail の送信元アドレス（連携した Google アカウントのメールアドレス）。</p>
+                  </>
+                )}
               </div>
               <div>
                 <label htmlFor="gmail_sender_name" className="mb-1 block text-xs font-medium text-foreground-secondary">{"sender_name"}</label>
