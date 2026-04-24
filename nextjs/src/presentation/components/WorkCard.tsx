@@ -1,28 +1,18 @@
 import Link from "next/link";
 
 import type { Work } from "@/domain/publicApi";
+import { resolveWorkAssetUrl } from "@/lib/work-assets";
 
 interface WorkCardProps {
   readonly work: Work;
 }
 
-function resolveThumbnailUrl(thumbnail: string | null): string | null {
-  if (!thumbnail) {
-    return null;
-  }
-
-  if (thumbnail.startsWith("http://") || thumbnail.startsWith("https://") || thumbnail.startsWith("/")) {
-    return thumbnail;
-  }
-
-  return null;
-}
-
 export function WorkCard({ work }: WorkCardProps) {
-  const thumbnailUrl = resolveThumbnailUrl(work.thumbnail);
+  const thumbnailUrl = resolveWorkAssetUrl(work.thumbnail);
+  const href = work.id === null ? "/works" : `/works/${work.id}`;
 
   return (
-    <Link href={`/works/${work.id ?? ""}`} className="group block">
+    <Link href={href} className="group block">
       <div className="overflow-hidden rounded-lg border border-border-subtle bg-surface-card transition-colors hover:border-accent-primary">
         <div
           className="flex aspect-video items-center justify-center bg-border-subtle"
