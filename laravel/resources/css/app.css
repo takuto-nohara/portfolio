@@ -34,3 +34,146 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* ============================================================
+   Terminal Animations
+   ============================================================ */
+
+/* --- スタートアニメーション オーバーレイ --- */
+#intro-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: #0C4A6E;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+#intro-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.intro-terminal {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: min(480px, 85vw);
+}
+
+.intro-prompt {
+    min-height: 1.7em;
+    display: flex;
+    align-items: baseline;
+}
+
+.intro-line {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(13px, 1.8vw, 15px);
+    line-height: 1.7;
+    color: #e0f2fe;
+}
+
+.intro-line.is-command {
+    color: #0EA5E9;
+}
+
+.intro-skip {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: #7DD3FC;
+    opacity: 0.65;
+    letter-spacing: 0.05em;
+}
+
+/* --- ページ遷移オーバーレイ --- */
+#transition-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: #0C4A6E;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+#transition-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#transition-text {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(15px, 2.5vw, 20px);
+    color: #0EA5E9;
+}
+
+/* --- ブロックカーソル (点滅) --- */
+.terminal-cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.05em;
+    background-color: #0EA5E9;
+    vertical-align: text-bottom;
+    margin-left: 1px;
+    animation: terminal-cursor-blink 1s step-end infinite;
+}
+
+@keyframes terminal-cursor-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+/* --- ページ入場アニメーション --- */
+@keyframes page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0);   }
+}
+
+.page-enter {
+    animation: page-enter 0.35s ease forwards;
+}
+
+/* --- ヒーロー要素入場アニメーション --- */
+@keyframes hero-item-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+.hero-item {
+    opacity: 0;
+    transform: translateY(16px);
+}
+
+.hero-item.is-visible {
+    animation: hero-item-in 0.65s ease forwards;
+}
+
+/* --- ヒーローセクション背景 --- */
+.hero-bg {
+    background: radial-gradient(ellipse 110% 80% at 50% 50%, #ffffff 30%, #e0f2fe 70%, #bae6fd 100%);
+}
+
+/* --- prefers-reduced-motion 対応 --- */
+@media (prefers-reduced-motion: reduce) {
+    #intro-overlay,
+    #transition-overlay,
+    .terminal-cursor,
+    .page-enter {
+        animation: none !important;
+        transition: none !important;
+    }
+    .hero-item {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+    }
+}

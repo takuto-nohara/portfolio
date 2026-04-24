@@ -9,19 +9,6 @@
 @extends('layouts.app')
 @section('title', 'About - TN_ Portfolio')
 
-@push('styles')
-<style>
-.skills-grid {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-}
-@media screen and (min-width: 640px) {
-    .skills-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-}
-</style>
-@endpush
-
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}

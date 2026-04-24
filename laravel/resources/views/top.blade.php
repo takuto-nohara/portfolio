@@ -12,10 +12,9 @@
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}
-    <section class="px-6 sm:px-20 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[calc(100vh-5rem)]"
-             style="background: radial-gradient(ellipse 110% 80% at 50% 50%, #ffffff 30%, #e0f2fe 70%, #bae6fd 100%);">
+    <section class="px-6 sm:px-20 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[calc(100vh-5rem)] hero-bg">
         {{-- パーティクルキャンバス背景 --}}
-        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full z-0" aria-hidden="true" style="pointer-events:none;"></canvas>
+        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none" aria-hidden="true"></canvas>
         {{-- コンテンツ --}}
         <div class="relative z-10 flex flex-col items-center text-center">
             <h1 class="hero-item text-foreground-primary text-[56px] font-bold leading-tight tracking-tight" data-delay="0">
