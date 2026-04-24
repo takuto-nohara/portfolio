@@ -18,8 +18,8 @@ export function AdminShell({ session, title, activePath, children }: AdminShellP
 
   return (
     <div className="flex min-h-screen bg-surface-secondary text-foreground-primary">
-      <aside className="flex min-h-screen w-64 shrink-0 flex-col bg-foreground-primary px-6 py-8">
-        <Link href="/" className="mb-12 text-lg font-medium tracking-wide text-surface-primary">
+      <aside className="flex min-h-screen w-64 shrink-0 flex-col bg-foreground-primary px-6 py-8 text-white">
+        <Link href="/" className="mb-12 text-lg font-medium tracking-wide" style={{ color: "white" }}>
           {"> TN_"}
         </Link>
 
@@ -28,17 +28,18 @@ export function AdminShell({ session, title, activePath, children }: AdminShellP
             <Link
               key={item.key}
               href={item.href}
-              className={`rounded px-3 py-2 text-sm transition-colors ${activePath === item.key ? "bg-surface-primary/10 text-surface-primary" : "text-surface-primary/70 hover:bg-surface-primary/10 hover:text-surface-primary"}`}
+              className={`rounded px-3 py-2 text-sm transition-colors ${activePath === item.key ? "bg-white/10" : "bg-white/0 hover:bg-white/10"}`}
+              style={{ color: activePath === item.key ? "white" : "rgba(255,255,255,0.7)" }}
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="mb-4 px-3 text-xs text-surface-primary/50">{session.email}</div>
+        <div className="mb-4 px-3 text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>{session.email}</div>
 
         <form action="/api/auth/logout" method="post">
-          <button type="submit" className="px-3 py-2 text-left text-xs text-surface-primary/50 transition-colors hover:text-surface-primary">
+          <button type="submit" className="px-3 py-2 text-left text-xs transition-colors" style={{ color: "rgba(255,255,255,0.5)" }}>
             {"> logout"}
           </button>
         </form>
