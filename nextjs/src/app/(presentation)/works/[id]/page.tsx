@@ -64,7 +64,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
       <section className="bg-surface-card">
         <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden">
           {thumbnailUrl ? (
-            <Image src={thumbnailUrl} alt={workDetail.title} fill className="object-cover" sizes="(min-width: 1152px) 1152px, 100vw" />
+            <Image src={thumbnailUrl} alt={workDetail.title} fill className="object-contain" sizes="(min-width: 1152px) 1152px, 100vw" />
           ) : (
             <span className="text-sm text-foreground-muted">hero_image</span>
           )}
