@@ -106,7 +106,7 @@ export default async function AboutPage() {
       <section className="bg-surface-secondary px-6 py-12 sm:px-20 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-12 text-center text-2xl font-semibold text-foreground-primary">{"> skills / tech_stack"}</h2>
-          <div className="skills-grid gap-8">
+          <div className="grid skills-grid gap-8">
             {skillColumns.map((column) => (
               <div key={column.title}>
                 <h3 className="mb-6 border-b border-border-subtle pb-3 text-base font-semibold text-foreground-primary">
