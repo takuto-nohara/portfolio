@@ -365,6 +365,11 @@ export function SiteEffects() {
           }
 
           const onClick = (event: MouseEvent) => {
+            const nextUrl = new URL(link.href);
+            if (nextUrl.pathname === window.location.pathname) {
+              return;
+            }
+
             event.preventDefault();
             transitionTextElement.textContent = "";
             transitionOverlay.classList.add("active");
@@ -373,7 +378,6 @@ export function SiteEffects() {
               await typeInElement(transitionTextElement, `$ cd ${getLabel(link.href)}`, 28);
               await sleep(80);
               window.sessionStorage.setItem("portfolio-transition-active", "1");
-              const nextUrl = new URL(link.href);
               router.push(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
             })();
           };
