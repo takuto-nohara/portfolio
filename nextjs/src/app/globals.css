@@ -126,7 +126,7 @@ select {
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.12s ease;
+  transition: opacity 0.32s ease;
 }
 
 #transition-overlay.active {

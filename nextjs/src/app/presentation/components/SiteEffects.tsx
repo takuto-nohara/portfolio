@@ -204,14 +204,43 @@ export function SiteEffects() {
     const mainElement = document.querySelector<HTMLElement>("main[data-site-main='true']");
     initHeroCanvas();
 
+    const isTransitionArrival =
+      !prefersReducedMotion && !!window.sessionStorage.getItem("portfolio-transition-active");
+    if (isTransitionArrival) {
+      window.sessionStorage.removeItem("portfolio-transition-active");
+    }
+
     if (!prefersReducedMotion && mainElement) {
-      mainElement.classList.add("page-enter");
-      const onAnimationEnd = () => {
-        mainElement.classList.remove("page-enter");
+      const addPageEnter = () => {
+        mainElement.classList.add("page-enter");
+        const onAnimationEnd = () => {
+          mainElement.classList.remove("page-enter");
+        };
+        mainElement.addEventListener("animationend", onAnimationEnd, { once: true });
+        cleanupCallbacks.push(() => mainElement.removeEventListener("animationend", onAnimationEnd));
       };
 
-      mainElement.addEventListener("animationend", onAnimationEnd, { once: true });
-      cleanupCallbacks.push(() => mainElement.removeEventListener("animationend", onAnimationEnd));
+      if (isTransitionArrival) {
+        const transitionOverlayEl = document.getElementById("transition-overlay");
+        if (transitionOverlayEl) {
+          // transition なしで即座に opacity:1 の状態にする
+          transitionOverlayEl.style.transition = "none";
+          transitionOverlayEl.classList.add("active");
+          window.requestAnimationFrame(() => {
+            // transition を元に戻し、フェードアウトを開始
+            transitionOverlayEl.style.transition = "";
+            schedule(() => {
+              transitionOverlayEl.classList.remove("active");
+            }, 30);
+            // overlay フェードアウトと重ねてコンテンツをフェードイン
+            schedule(addPageEnter, 120);
+          });
+        } else {
+          addPageEnter();
+        }
+      } else {
+        addPageEnter();
+      }
     }
 
     const introOverlay = document.getElementById("intro-overlay");
@@ -325,6 +354,7 @@ export function SiteEffects() {
             void (async () => {
               await typeInElement(transitionTextElement, `$ cd ${getLabel(link.href)}`, 28);
               await sleep(80);
+              window.sessionStorage.setItem("portfolio-transition-active", "1");
               window.location.href = link.href;
             })();
           };
