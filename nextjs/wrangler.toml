@@ -14,7 +14,7 @@ service = "portfolio-nextjs"
 [[d1_databases]]
 binding = "DB"
 database_name = "portfolio-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "a333c614-859b-4740-8291-4c40a84a32a1"
 migrations_dir = "worker/migrations"
 
 [[r2_buckets]]

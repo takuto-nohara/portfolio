@@ -17,8 +17,9 @@
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
-    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
-    "db:migrate": "wrangler migrate apply --local"
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv worker/cloudflare-env.d.ts",
+    "db:migrate:local": "wrangler d1 migrations apply portfolio-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply portfolio-db --remote"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.8.0",
