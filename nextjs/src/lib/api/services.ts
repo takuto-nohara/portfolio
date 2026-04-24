@@ -1,11 +1,21 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 import {
+  AddWorkImageUseCase,
+  CreateWorkUseCase,
+  DeleteContactUseCase,
+  DeleteWorkImageUseCase,
+  DeleteWorkUseCase,
   GetFeaturedWorksUseCase,
+  GetContactListUseCase,
   GetPublicSettingsUseCase,
+  GetSettingsUseCase,
   GetWorkDetailUseCase,
   GetWorkListUseCase,
   SendContactUseCase,
+  UpdateSettingsUseCase,
+  UpdateWorkImageCaptionUseCase,
+  UpdateWorkUseCase,
 } from "@/application/publicApi";
 import {
   D1ContactRepository,
@@ -44,7 +54,7 @@ function parseScopes(value: string | undefined): readonly string[] {
     .filter((scope) => scope.length > 0);
 }
 
-export async function getAppServices() {
+async function getBaseServices() {
   const { env } = await getCloudflareContext({ async: true });
   const database = requireBinding(env.DB, "DB");
   const bucket = requireBinding(env.R2_BUCKET, "R2_BUCKET");
@@ -53,6 +63,53 @@ export async function getAppServices() {
   const contactRepository = new D1ContactRepository(database);
   const settingRepository = new D1SettingRepository(database);
   const oAuthTokenRepository = new D1OAuthTokenRepository(database);
+  const storagePort = new R2StorageAdapter(bucket, {
+    publicBaseUrl: env.R2_PUBLIC_BASE_URL ?? "/api/assets",
+  });
+
+  return {
+    env,
+    repositories: {
+      workRepository,
+      contactRepository,
+      settingRepository,
+      oAuthTokenRepository,
+    },
+    ports: {
+      storagePort,
+    },
+    useCases: {
+      addWorkImage: new AddWorkImageUseCase(workRepository),
+      createWork: new CreateWorkUseCase(workRepository),
+      deleteContact: new DeleteContactUseCase(contactRepository),
+      deleteWork: new DeleteWorkUseCase(workRepository),
+      deleteWorkImage: new DeleteWorkImageUseCase(workRepository),
+      getContactList: new GetContactListUseCase(contactRepository),
+      getFeaturedWorks: new GetFeaturedWorksUseCase(workRepository),
+      getPublicSettings: new GetPublicSettingsUseCase(settingRepository),
+      getSettings: new GetSettingsUseCase(settingRepository),
+      getWorkDetail: new GetWorkDetailUseCase(workRepository),
+      getWorkList: new GetWorkListUseCase(workRepository),
+      updateSettings: new UpdateSettingsUseCase(settingRepository),
+      updateWork: new UpdateWorkUseCase(workRepository),
+      updateWorkImageCaption: new UpdateWorkImageCaptionUseCase(workRepository),
+    },
+  };
+}
+
+export async function getAdminServices() {
+  const baseServices = await getBaseServices();
+
+  return {
+    repositories: baseServices.repositories,
+    ports: baseServices.ports,
+    useCases: baseServices.useCases,
+  };
+}
+
+export async function getAppServices() {
+  const baseServices = await getBaseServices();
+  const { env } = await getCloudflareContext({ async: true });
   const oAuthPort = new GoogleOAuthAdapter({
     clientId: requireEnv(env.GOOGLE_OAUTH_CLIENT_ID, "GOOGLE_OAUTH_CLIENT_ID"),
     clientSecret: requireEnv(env.GOOGLE_OAUTH_CLIENT_SECRET, "GOOGLE_OAUTH_CLIENT_SECRET"),
@@ -65,31 +122,24 @@ export async function getAppServices() {
       senderName: env.GMAIL_SENDER_NAME,
       subjectPrefix: env.GMAIL_SUBJECT_PREFIX,
     },
-    oAuthTokenRepository,
+    baseServices.repositories.oAuthTokenRepository,
     oAuthPort,
   );
-  const storagePort = new R2StorageAdapter(bucket, {
-    publicBaseUrl: requireEnv(env.R2_PUBLIC_BASE_URL, "R2_PUBLIC_BASE_URL"),
-  });
 
   return {
-    repositories: {
-      workRepository,
-      contactRepository,
-      settingRepository,
-      oAuthTokenRepository,
-    },
+    repositories: baseServices.repositories,
     ports: {
+      ...baseServices.ports,
       emailPort,
       oAuthPort,
-      storagePort,
     },
     useCases: {
-      getFeaturedWorks: new GetFeaturedWorksUseCase(workRepository),
-      getPublicSettings: new GetPublicSettingsUseCase(settingRepository),
-      getWorkDetail: new GetWorkDetailUseCase(workRepository),
-      getWorkList: new GetWorkListUseCase(workRepository),
-      sendContact: new SendContactUseCase(contactRepository, emailPort, settingRepository),
+      ...baseServices.useCases,
+      sendContact: new SendContactUseCase(
+        baseServices.repositories.contactRepository,
+        emailPort,
+        baseServices.repositories.settingRepository,
+      ),
     },
   };
 }

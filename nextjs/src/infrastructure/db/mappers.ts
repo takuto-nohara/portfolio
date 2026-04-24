@@ -2,6 +2,7 @@ import type {
   Contact,
   OAuthToken,
   Setting,
+  User,
   Work,
   WorkImage,
 } from "@/domain/publicApi";
@@ -30,6 +31,15 @@ export interface OAuthTokenRow {
 export interface SettingRow {
   readonly key: string;
   readonly value: string | null;
+  readonly created_at: string | null;
+  readonly updated_at: string | null;
+}
+
+export interface UserRow {
+  readonly id: number;
+  readonly name: string;
+  readonly email: string;
+  readonly password: string;
   readonly created_at: string | null;
   readonly updated_at: string | null;
 }
@@ -89,6 +99,17 @@ export function mapSettingRow(row: SettingRow): Setting {
   return {
     key: row.key,
     value: row.value,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+export function mapUserRow(row: UserRow): User {
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    passwordHash: row.password,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

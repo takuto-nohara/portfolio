@@ -11,6 +11,8 @@ declare global {
     GMAIL_FROM_EMAIL?: string;
     GMAIL_SENDER_NAME?: string;
     GMAIL_SUBJECT_PREFIX?: string;
+    ADMIN_EMAILS?: string;
+    ADMIN_SESSION_SECRET?: string;
     R2_PUBLIC_BASE_URL?: string;
   }
 }
