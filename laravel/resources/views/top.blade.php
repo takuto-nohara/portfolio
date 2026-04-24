@@ -12,24 +12,28 @@
 @section('content')
 
     {{-- ==================== Hero Section ==================== --}}
-    <section class="bg-surface-primary px-6 sm:px-20 pt-16 sm:pt-24 pb-12 sm:pb-20 flex flex-col items-center text-center">
-        <h1 class="text-foreground-primary text-[56px] font-bold leading-tight tracking-tight">
-            Rendering Ideas<br>into Reality
-        </h1>
-        <p class="text-foreground-secondary text-base mt-6 max-w-xl leading-relaxed">
-            思考を目に見える形に。アプリ、Web、映像、グラフィック——<br>
-            あらゆるアウトプットを通じて学びを深めています。
-        </p>
-        <div class="flex gap-4 mt-10">
-
-            <a href="{{ route('works.index') }}"
-               class="bg-accent-primary text-surface-primary text-sm font-medium px-8 py-3 rounded hover:bg-accent-secondary transition-colors">
-                &gt; view_all_works
-            </a>
-            <a href="{{ route('contact.index') }}"
-               class="border border-accent-primary text-accent-primary text-sm font-medium px-8 py-3 rounded hover:bg-accent-primary hover:text-surface-primary transition-colors">
-                &gt; contact_me
-            </a>
+    <section class="px-6 sm:px-20 flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[calc(100vh-5rem)] hero-bg">
+        {{-- パーティクルキャンバス背景 --}}
+        <canvas id="hero-canvas" class="absolute inset-0 w-full h-full z-0 pointer-events-none" aria-hidden="true"></canvas>
+        {{-- コンテンツ --}}
+        <div class="relative z-10 flex flex-col items-center text-center">
+            <h1 class="hero-item text-foreground-primary text-[56px] font-bold leading-tight tracking-tight" data-delay="0">
+                Rendering Ideas<br>into Reality
+            </h1>
+            <p class="hero-item text-foreground-secondary text-base mt-6 max-w-xl leading-relaxed" data-delay="150">
+                思考を目に見える形に。アプリ、Web、映像、グラフィック——<br>
+                あらゆるアウトプットを通じて学びを深めています。
+            </p>
+            <div class="hero-item flex gap-4 mt-10" data-delay="300">
+                <a href="{{ route('works.index') }}"
+                   class="bg-accent-primary text-surface-primary text-sm font-medium px-8 py-3 rounded hover:bg-accent-secondary transition-colors">
+                    &gt; view_all_works
+                </a>
+                <a href="{{ route('contact.index') }}"
+                   class="border border-accent-primary text-accent-primary text-sm font-medium px-8 py-3 rounded hover:bg-accent-primary hover:text-surface-primary transition-colors">
+                    &gt; contact_me
+                </a>
+            </div>
         </div>
     </section>
 
