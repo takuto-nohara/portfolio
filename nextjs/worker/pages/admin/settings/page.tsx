@@ -15,7 +15,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
   const session = await requireAdminPageSession("/admin/settings");
   const services = await getAdminServices();
   const [settings, token] = await Promise.all([
-    services.useCases.getPublicSettings.execute(),
+    services.useCases.getSettings.execute(),
     services.repositories.oAuthTokenRepository.findByProvider("google"),
   ]);
   const { status } = await searchParams;

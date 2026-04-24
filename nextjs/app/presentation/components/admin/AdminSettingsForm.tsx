@@ -1,11 +1,15 @@
 import Link from "next/link";
 
-import type { OAuthToken, PublicSettings } from "@/domain/publicApi";
+import type { OAuthToken, Setting } from "@/domain/publicApi";
 
 interface AdminSettingsFormProps {
-  readonly settings: PublicSettings;
+  readonly settings: readonly Setting[];
   readonly token: OAuthToken | null;
   readonly status?: string;
+}
+
+function getSetting(settings: readonly Setting[], key: string): string {
+  return settings.find((s) => s.key === key)?.value ?? "";
 }
 
 export function AdminSettingsForm({ settings, token, status }: AdminSettingsFormProps) {
@@ -31,7 +35,7 @@ export function AdminSettingsForm({ settings, token, status }: AdminSettingsForm
               type="url"
               id="github_url"
               name="github_url"
-              defaultValue={settings.githubUrl ?? ""}
+              defaultValue={getSetting(settings, "github_url")}
               placeholder="https://github.com/yourname"
               className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
             />
@@ -44,7 +48,7 @@ export function AdminSettingsForm({ settings, token, status }: AdminSettingsForm
               type="email"
               id="contact_email"
               name="contact_email"
-              defaultValue={settings.contactEmail ?? ""}
+              defaultValue={getSetting(settings, "contact_email")}
               placeholder="you@example.com"
               className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
             />
@@ -65,6 +69,49 @@ export function AdminSettingsForm({ settings, token, status }: AdminSettingsForm
               >
                 {token?.email ? "Google アカウントを再連携" : "Google アカウントを連携"}
               </Link>
+            </div>
+          </div>
+
+          <div className="rounded border border-border-subtle bg-surface-secondary p-5">
+            <h2 className="mb-4 text-sm font-medium text-foreground-primary">{"> gmail_settings"}</h2>
+            <p className="mb-4 text-xs text-foreground-muted">Google アカウント連携後、メール送信に使用する設定を入力してください。</p>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="gmail_from_email" className="mb-1 block text-xs font-medium text-foreground-secondary">{"from_email"}</label>
+                <input
+                  type="email"
+                  id="gmail_from_email"
+                  name="gmail_from_email"
+                  defaultValue={getSetting(settings, "gmail_from_email")}
+                  placeholder="your-gmail@gmail.com"
+                  className="w-full rounded border border-border-subtle bg-surface-primary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
+                />
+                <p className="mt-1 text-xs text-foreground-muted">Gmail の送信元アドレス（連携した Google アカウントのメールアドレス）。</p>
+              </div>
+              <div>
+                <label htmlFor="gmail_sender_name" className="mb-1 block text-xs font-medium text-foreground-secondary">{"sender_name"}</label>
+                <input
+                  type="text"
+                  id="gmail_sender_name"
+                  name="gmail_sender_name"
+                  defaultValue={getSetting(settings, "gmail_sender_name")}
+                  placeholder="Your Name"
+                  className="w-full rounded border border-border-subtle bg-surface-primary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
+                />
+                <p className="mt-1 text-xs text-foreground-muted">メールの送信者として表示される名前（省略可）。</p>
+              </div>
+              <div>
+                <label htmlFor="gmail_subject_prefix" className="mb-1 block text-xs font-medium text-foreground-secondary">{"subject_prefix"}</label>
+                <input
+                  type="text"
+                  id="gmail_subject_prefix"
+                  name="gmail_subject_prefix"
+                  defaultValue={getSetting(settings, "gmail_subject_prefix")}
+                  placeholder="[portfolio]"
+                  className="w-full rounded border border-border-subtle bg-surface-primary px-4 py-2.5 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none"
+                />
+                <p className="mt-1 text-xs text-foreground-muted">メール件名の先頭に付与するプレフィックス（省略可）。</p>
+              </div>
             </div>
           </div>
 

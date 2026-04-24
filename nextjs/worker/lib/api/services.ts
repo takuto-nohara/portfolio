@@ -107,20 +107,30 @@ export async function getAdminServices() {
   };
 }
 
-export async function getAppServices() {
+export async function getAppServices(redirectUri?: string) {
   const baseServices = await getBaseServices();
   const { env } = await getCloudflareContext({ async: true });
+
+  // Gmail 設定は管理者画面から DB に保存されたものを使用する
+  const { settingRepository } = baseServices.repositories;
+  const [gmailFromEmail, gmailSenderName, gmailSubjectPrefix] = await Promise.all([
+    settingRepository.findByKey("gmail_from_email"),
+    settingRepository.findByKey("gmail_sender_name"),
+    settingRepository.findByKey("gmail_subject_prefix"),
+  ]);
+
   const oAuthPort = new GoogleOAuthAdapter({
-    clientId: requireEnv(env.GOOGLE_OAUTH_CLIENT_ID, "GOOGLE_OAUTH_CLIENT_ID"),
-    clientSecret: requireEnv(env.GOOGLE_OAUTH_CLIENT_SECRET, "GOOGLE_OAUTH_CLIENT_SECRET"),
-    redirectUri: requireEnv(env.GOOGLE_OAUTH_REDIRECT_URI, "GOOGLE_OAUTH_REDIRECT_URI"),
+    clientId: requireEnv(env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID"),
+    clientSecret: requireEnv(env.GOOGLE_CLIENT_SECRET, "GOOGLE_CLIENT_SECRET"),
+    // redirectUri は OAuth フロー開始時にリクエスト URL から動的に決定する
+    redirectUri: redirectUri ?? "",
     scopes: parseScopes(env.GOOGLE_OAUTH_SCOPES),
   });
   const emailPort = new GmailEmailAdapter(
     {
-      fromEmail: requireEnv(env.GMAIL_FROM_EMAIL, "GMAIL_FROM_EMAIL"),
-      senderName: env.GMAIL_SENDER_NAME,
-      subjectPrefix: env.GMAIL_SUBJECT_PREFIX,
+      fromEmail: gmailFromEmail?.value ?? "",
+      senderName: gmailSenderName?.value ?? undefined,
+      subjectPrefix: gmailSubjectPrefix?.value ?? undefined,
     },
     baseServices.repositories.oAuthTokenRepository,
     oAuthPort,

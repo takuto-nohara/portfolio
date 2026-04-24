@@ -38,6 +38,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         createdAt: null,
         updatedAt: null,
       },
+      {
+        key: "gmail_from_email",
+        value: getText(formData, "gmail_from_email"),
+        createdAt: null,
+        updatedAt: null,
+      },
+      {
+        key: "gmail_sender_name",
+        value: getText(formData, "gmail_sender_name"),
+        createdAt: null,
+        updatedAt: null,
+      },
+      {
+        key: "gmail_subject_prefix",
+        value: getText(formData, "gmail_subject_prefix"),
+        createdAt: null,
+        updatedAt: null,
+      },
     ]);
 
     return redirectWithStatus(request, "saved");

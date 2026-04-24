@@ -6,8 +6,8 @@ import { getAppServices } from "@worker/lib/api/services";
 const STATE_COOKIE_NAME = "google_oauth_state";
 
 function createRedirectResponse(request: NextRequest, status: "success" | "error"): NextResponse {
-  const url = new URL("/", request.url);
-  url.searchParams.set("google_oauth", status);
+  const url = new URL("/admin/settings", request.url);
+  url.searchParams.set("status", status === "success" ? "oauth-success" : "oauth-error");
   return NextResponse.redirect(url);
 }
 
@@ -25,7 +25,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return badRequest("Google OAuth state validation failed.");
     }
 
-    const services = await getAppServices();
+    const redirectUri = new URL("/api/auth/google/callback", request.url).toString();
+    const services = await getAppServices(redirectUri);
     const token = await services.ports.oAuthPort.exchangeCode(code);
 
     await services.repositories.oAuthTokenRepository.save(token);

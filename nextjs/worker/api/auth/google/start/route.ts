@@ -7,7 +7,8 @@ const STATE_COOKIE_NAME = "google_oauth_state";
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const services = await getAppServices();
+    const redirectUri = new URL("/api/auth/google/callback", request.url).toString();
+    const services = await getAppServices(redirectUri);
     const state = crypto.randomUUID();
     const authorizationUrl = services.ports.oAuthPort.createAuthorizationUrl(state);
     const response = NextResponse.redirect(authorizationUrl);
