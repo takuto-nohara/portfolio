@@ -1,6 +1,7 @@
 import type { StoragePort, StorageUploadInput } from "@/application/publicApi";
 
 export interface R2BucketLike {
+  get(key: string): Promise<R2ObjectLike | null>;
   put(
     key: string,
     value: ArrayBuffer | ArrayBufferView | string,
@@ -11,6 +12,15 @@ export interface R2BucketLike {
     },
   ): Promise<unknown>;
   delete(key: string): Promise<void>;
+}
+
+interface R2ObjectLike {
+  readonly body: ReadableStream | null;
+  readonly httpMetadata?: {
+    readonly contentType?: string;
+    readonly cacheControl?: string;
+    readonly contentDisposition?: string;
+  };
 }
 
 export interface R2StorageConfig {
