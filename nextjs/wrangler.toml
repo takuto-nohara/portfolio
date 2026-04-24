@@ -1,0 +1,29 @@
+name = "portfolio-nextjs"
+main = ".open-next/worker.js"
+compatibility_date = "2026-04-25"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "portfolio-nextjs"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "portfolio-db"
+database_id = "a333c614-859b-4740-8291-4c40a84a32a1"
+migrations_dir = "worker/migrations"
+
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "portfolio-images"
+
+[[r2_buckets]]
+binding = "NEXT_INC_CACHE_R2_BUCKET"
+bucket_name = "portfolio-nextjs-cache"
+
+[observability.logs]
+enabled = true

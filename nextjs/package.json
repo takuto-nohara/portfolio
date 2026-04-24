@@ -1,0 +1,50 @@
+{
+  "name": "nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "check:layers": "node scripts/analyze_deps.js && dependency-cruiser --config dependency-cruiser.config.mjs src",
+    "check:dup": "jscpd --config .jscpd.json",
+    "check:lines": "node scripts/check-file-lines.js",
+    "check:api": "node scripts/check-api.js",
+    "check:sync": "node scripts/check-sync.js",
+    "knip": "knip --config knip.json",
+    "ci": "node scripts/ci.js",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv worker/cloudflare-env.d.ts",
+    "db:migrate:local": "wrangler d1 migrations apply portfolio-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply portfolio-db --remote"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "^1.8.0",
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.2",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260424.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/parser": "^8.32.1",
+    "dependency-cruiser": "^16.10.4",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "jscpd": "^4.0.5",
+    "knip": "^5.62.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "wrangler": "^4.13.2"
+  }
+}

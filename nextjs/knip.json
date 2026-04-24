@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/app/**/*.{ts,tsx}",
+    "src/app/domain/publicApi.ts",
+    "src/app/application/publicApi.ts",
+    "src/app/infrastructure/publicApi.ts",
+    "open-next.config.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "worker/**/*.ts",
+    "scripts/**/*.{js,mjs,ts}",
+    "*.config.{js,mjs,ts}"
+  ],
+  "ignore": [
+    "scripts/print-dups.js"
+  ],
+  "ignoreDependencies": [
+    "^tailwindcss$"
+  ]
+}
