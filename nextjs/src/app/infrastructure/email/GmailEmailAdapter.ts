@@ -78,9 +78,9 @@ export class GmailEmailAdapter implements EmailPort {
   private buildRawMessage(contact: Contact, toEmail: string): string {
     const subjectPrefix = this.config.subjectPrefix ? `${this.config.subjectPrefix} ` : "";
     const fromHeader = this.config.senderName
-      ? `"${this.escapeHeader(this.config.senderName)}" <${this.config.fromEmail}>`
+      ? `${this.encodeRfc2047(this.config.senderName)} <${this.config.fromEmail}>`
       : this.config.fromEmail;
-    const subject = `${subjectPrefix}ポートフォリオサイトからのお問い合わせ`;
+    const subject = this.encodeRfc2047(`${subjectPrefix}ポートフォリオサイトからのお問い合わせ`);
     const body = [
       `名前: ${contact.name}`,
       `メールアドレス: ${contact.email}`,
@@ -104,8 +104,14 @@ export class GmailEmailAdapter implements EmailPort {
     return this.encodeBase64Url(message);
   }
 
-  private escapeHeader(value: string): string {
-    return value.replace(/"/g, "'");
+  /** RFC 2047 encoded-word: =?UTF-8?B?<base64>?= */
+  private encodeRfc2047(value: string): string {
+    const bytes = new TextEncoder().encode(value);
+    let binary = "";
+    for (const byte of bytes) {
+      binary += String.fromCharCode(byte);
+    }
+    return `=?UTF-8?B?${btoa(binary)}?=`;
   }
 
   private encodeBase64Url(value: string): string {
