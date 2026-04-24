@@ -64,7 +64,25 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
       <section className="bg-surface-card">
         <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden">
           {thumbnailUrl ? (
-            <Image src={thumbnailUrl} alt={workDetail.title} fill className="object-contain" sizes="(min-width: 1152px) 1152px, 100vw" />
+            <>
+              {/* ブラー背景：黒帯や余白部分を補完する */}
+              <Image
+                src={thumbnailUrl}
+                alt=""
+                fill
+                aria-hidden="true"
+                className="scale-110 object-cover blur-2xl brightness-50"
+                sizes="(min-width: 1152px) 1152px, 100vw"
+              />
+              {/* メイン画像：見切れないよう object-contain */}
+              <Image
+                src={thumbnailUrl}
+                alt={workDetail.title}
+                fill
+                className="object-contain"
+                sizes="(min-width: 1152px) 1152px, 100vw"
+              />
+            </>
           ) : (
             <span className="text-sm text-foreground-muted">hero_image</span>
           )}
