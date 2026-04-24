@@ -124,6 +124,21 @@
             animation: page-enter 0.35s ease forwards;
         }
 
+        /* --- ヒーロー要素入場アニメーション --- */
+        @keyframes hero-item-in {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0);    }
+        }
+
+        .hero-item {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+
+        .hero-item.is-visible {
+            animation: hero-item-in 0.65s ease forwards;
+        }
+
         /* --- prefers-reduced-motion 対応 --- */
         @media (prefers-reduced-motion: reduce) {
             #intro-overlay,
@@ -132,6 +147,11 @@
             .page-enter {
                 animation: none !important;
                 transition: none !important;
+            }
+            .hero-item {
+                opacity: 1 !important;
+                transform: none !important;
+                animation: none !important;
             }
         }
     </style>
@@ -187,6 +207,111 @@
             const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+            /* ---- ヒーロー要素 stagger 入場 ---- */
+            function triggerHeroItems() {
+                if (prefersReducedMotion) return;
+                document.querySelectorAll('.hero-item').forEach((el) => {
+                    const delay = parseInt(el.dataset.delay ?? '0');
+                    setTimeout(() => el.classList.add('is-visible'), delay);
+                });
+            }
+
+            /* ---- ヒーローキャンバス : パーティクル星座アニメーション ---- */
+            function initHeroCanvas() {
+                const canvas = document.getElementById('hero-canvas');
+                if (!canvas || prefersReducedMotion) return;
+
+                const ctx = canvas.getContext('2d');
+                const LINE_RGB   = '14, 165, 233';
+                const DOT_COLORS = [
+                    [14, 165, 233],
+                    [2, 132, 199],
+                    [56, 189, 248],
+                    [125, 211, 252],
+                ];
+                const MAX_DIST   = 170;
+                const BASE_SPEED = 0.42;
+                let particles = [], W, H, rafId;
+
+                function resize() {
+                    const dpr = window.devicePixelRatio || 1;
+                    W = canvas.offsetWidth;
+                    H = canvas.offsetHeight;
+                    canvas.width  = W * dpr;
+                    canvas.height = H * dpr;
+                    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                }
+
+                function makeParticle() {
+                    const color = DOT_COLORS[Math.floor(Math.random() * DOT_COLORS.length)];
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = BASE_SPEED * (0.5 + Math.random());
+                    return {
+                        x: Math.random() * W, y: Math.random() * H,
+                        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+                        r: Math.random() * 2.8 + 1.4,
+                        color, alpha: 0.55 + Math.random() * 0.35,
+                    };
+                }
+
+                function init() {
+                    resize();
+                    const count = Math.max(45, Math.floor((W * H) / 12000));
+                    particles = Array.from({ length: Math.min(count, 100) }, makeParticle);
+                }
+
+                function drawFrame() {
+                    ctx.clearRect(0, 0, W, H);
+                    // 接続線
+                    for (let i = 0; i < particles.length; i++) {
+                        for (let j = i + 1; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const d2 = dx * dx + dy * dy;
+                            if (d2 < MAX_DIST * MAX_DIST) {
+                                const ratio = 1 - Math.sqrt(d2) / MAX_DIST;
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.strokeStyle = `rgba(${LINE_RGB}, ${(ratio * 0.38).toFixed(3)})`;
+                                ctx.lineWidth = 1.0;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    // ドット
+                    for (const p of particles) {
+                        const [r, g, b] = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${p.alpha})`;
+                        ctx.fill();
+                    }
+                }
+
+                function tick() {
+                    for (const p of particles) {
+                        p.x += p.vx; p.y += p.vy;
+                        if (p.x < -8) p.x = W + 8; else if (p.x > W + 8) p.x = -8;
+                        if (p.y < -8) p.y = H + 8; else if (p.y > H + 8) p.y = -8;
+                    }
+                }
+
+                function loop() { tick(); drawFrame(); rafId = requestAnimationFrame(loop); }
+
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        cancelAnimationFrame(rafId);
+                        init(); loop();
+                    }, 200);
+                });
+
+                init();
+                loop();
+            }
+
             /**
              * 要素内にテキストをタイプライター効果で追記する。
              * 入力中はブロックカーソルを末尾に付随させ、完了後のカーソル要素を返す。
@@ -207,6 +332,9 @@
             document.addEventListener('DOMContentLoaded', async () => {
                 const mainEl = document.querySelector('main');
 
+                /* ---- ヒーローキャンバス初期化 ---- */
+                initHeroCanvas();
+
                 /* ---- ページ入場アニメーション ---- */
                 if (!prefersReducedMotion && mainEl) {
                     mainEl.classList.add('page-enter');
@@ -221,6 +349,7 @@
                 if (introOverlay) {
                     if (prefersReducedMotion || sessionStorage.getItem('portfolio-intro-shown')) {
                         introOverlay.remove();
+                        triggerHeroItems();
                     } else {
                         sessionStorage.setItem('portfolio-intro-shown', '1');
 
@@ -233,6 +362,7 @@
                             if (dismissed) return;
                             dismissed = true;
                             introOverlay.classList.add('fade-out');
+                            setTimeout(() => triggerHeroItems(), 200);
                             setTimeout(() => introOverlay?.remove(), 420);
                         };
 
