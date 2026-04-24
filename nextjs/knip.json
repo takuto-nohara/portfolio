@@ -1,11 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": [
-    "src/app/layout.tsx",
-    "src/app/page.tsx",
-    "src/app/**/page.tsx",
-    "src/app/**/route.ts",
-    "next.config.ts",
+    "src/app/**/*.{ts,tsx}",
+    "src/domain/publicApi.ts",
+    "src/application/publicApi.ts",
     "open-next.config.ts"
   ],
   "project": [
@@ -14,16 +12,9 @@
     "*.config.{js,mjs,ts}"
   ],
   "ignore": [
-    ".next/**",
-    ".open-next/**",
-    "node_modules/**",
-    "public/**",
-    "scripts/analyze_deps.js",
     "scripts/print-dups.js"
   ],
   "ignoreDependencies": [
-    "^@opennextjs/cloudflare$",
-    "^tailwindcss$",
-    "^wrangler$"
+    "^tailwindcss$"
   ]
 }

@@ -62,7 +62,7 @@ export default function Home() {
           </div>
 
           <div className="rounded-lg border border-border-subtle bg-surface-primary px-6 py-12 text-center text-sm text-foreground-muted">
-            // featured works will be rendered from D1 in Phase 3
+            featured works will be rendered from D1 in Phase 3
           </div>
         </div>
       </section>
