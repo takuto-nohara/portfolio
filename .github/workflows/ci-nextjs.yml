@@ -1,0 +1,35 @@
+name: CI Next.js
+
+on:
+  push:
+    paths:
+      - nextjs/**
+      - .github/workflows/ci-nextjs.yml
+  pull_request:
+    paths:
+      - nextjs/**
+      - .github/workflows/ci-nextjs.yml
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: nextjs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: nextjs/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run CI checks
+        run: npm run ci

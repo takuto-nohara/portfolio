@@ -1,0 +1,50 @@
+name: CD Laravel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - laravel/**
+      - .github/workflows/cd-laravel.yml
+  workflow_dispatch:
+
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: laravel
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: laravel/package-lock.json
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Prepare application key
+        run: |
+          if [ ! -f .env ]; then cp .env.example .env; fi
+          php artisan key:generate
+
+      - name: Run Laravel tests
+        run: php artisan test
+
+      - name: Skip Laravel deploy until Railway target is configured
+        run: echo "Laravel deploy target is not configured yet. Validation completed; deploy skipped."

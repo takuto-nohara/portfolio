@@ -1,0 +1,30 @@
+{
+  "threshold": 0,
+  "minLines": 5,
+  "minTokens": 70,
+  "ignore": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/.open-next/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.wrangler/**",
+    "**/report/**",
+    "**/public/**",
+    "**/*.min.js",
+    "**/*.json",
+    "**/*.lock",
+    "**/*.test.ts",
+    "**/test/**"
+  ],
+  "ignorePattern": [
+    "import.*from.*",
+    "require\\(.*\\)"
+  ],
+  "reporters": [
+    "html",
+    "console"
+  ],
+  "absolute": true,
+  "exitCode": 1
+}
