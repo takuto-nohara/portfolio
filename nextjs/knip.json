@@ -4,6 +4,7 @@
     "src/app/**/*.{ts,tsx}",
     "src/domain/publicApi.ts",
     "src/application/publicApi.ts",
+    "src/infrastructure/publicApi.ts",
     "open-next.config.ts"
   ],
   "project": [
