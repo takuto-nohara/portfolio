@@ -24,7 +24,7 @@ export function WorkCard({ work }: WorkCardProps) {
                 alt=""
                 fill
                 aria-hidden="true"
-                className="scale-110 object-cover blur-xl brightness-50"
+                className="scale-110 object-cover brightness-50"
                 sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
               />
               {/* メイン画像：見切れないよう object-contain */}

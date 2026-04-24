@@ -71,7 +71,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
                 alt=""
                 fill
                 aria-hidden="true"
-                className="scale-110 object-cover blur-2xl brightness-50"
+                className="scale-110 object-cover brightness-50"
                 sizes="(min-width: 1152px) 1152px, 100vw"
               />
               {/* メイン画像：見切れないよう object-contain */}
