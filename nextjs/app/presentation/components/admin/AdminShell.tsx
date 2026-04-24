@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 
-import type { AdminSession } from "@/lib/auth/session";
+import type { AdminSession } from "@/presentation/types/AdminSession";
 
 interface AdminShellProps extends PropsWithChildren {
   readonly session: AdminSession;

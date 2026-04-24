@@ -1,6 +1,6 @@
 import type { Category, PublicSettings, Work } from "@/domain/publicApi";
 
-import { getAppServices } from "@/lib/api/services";
+import { getAppServices } from "@worker/lib/api/services";
 
 const fallbackSettings: PublicSettings = {
   githubUrl: null,

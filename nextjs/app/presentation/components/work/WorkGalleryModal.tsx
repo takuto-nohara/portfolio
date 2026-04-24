@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { resolveWorkAssetUrl } from "@/lib/work-assets";
+import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 
 interface WorkGalleryImage {
   readonly id: number | null;

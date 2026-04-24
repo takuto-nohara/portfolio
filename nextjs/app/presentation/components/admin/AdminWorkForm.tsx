@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { Work } from "@/domain/publicApi";
-import { resolveWorkAssetUrl } from "@/lib/work-assets";
+import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 
 interface AdminWorkFormProps {
   readonly mode: "create" | "edit";
