@@ -6,7 +6,7 @@ import { getAdminServices } from "@worker/lib/api/services";
 function redirectWithStatus(request: NextRequest, status: string): NextResponse {
   const url = new URL("/admin/contacts", request.url);
   url.searchParams.set("status", status);
-  return NextResponse.redirect(url);
+  return NextResponse.redirect(url, { status: 303 });
 }
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }): Promise<NextResponse> {

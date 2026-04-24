@@ -8,7 +8,7 @@ import { extractWorkAssetKey } from "@/presentation/lib/work-assets";
 function redirectWithStatus(request: NextRequest, path: string, status: string): NextResponse {
   const url = new URL(path, request.url);
   url.searchParams.set("status", status);
-  return NextResponse.redirect(url);
+  return NextResponse.redirect(url, { status: 303 });
 }
 
 function getText(formData: FormData, key: string): string | null {
