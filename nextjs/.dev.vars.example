@@ -1,0 +1,24 @@
+# Cloudflare Workers ローカル開発用環境変数
+# このファイルをコピーして .dev.vars を作成し、実際の値を設定してください
+# cp .dev.vars.example .dev.vars
+
+# ========== 必須設定 ==========
+
+# Google OAuth 2.0 認証情報
+# https://console.cloud.google.com/apis/credentials で取得
+GOOGLE_CLIENT_ID="your-google-client-id.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="GOCSPX-your-google-client-secret"
+
+# ========== オプション設定 ==========
+
+# 管理者セッションの署名に使用するシークレット
+# 未設定の場合は開発用デフォルト値が使われます（本番環境では必須）
+# ADMIN_SESSION_SECRET="your-session-secret"
+
+# 管理者メールアドレス（カンマ区切り）
+# ADMIN_EMAILS="admin@example.com"
+
+# ========== Note ==========
+# Gmail 送信設定（送信元メールアドレス・送信者名・件名プレフィックス）は
+# 管理者画面 (/admin/settings) から設定できます。
+# Google OAuth でアカウントを連携した後に設定してください。
