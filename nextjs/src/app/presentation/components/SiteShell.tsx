@@ -57,10 +57,6 @@ export function SiteShell({ settings, children }: SiteShellProps) {
         <p className="text-[11px] text-foreground-muted">&copy; 2025 Takuto Nohara. All rights reserved.</p>
       </footer>
 
-      <div id="transition-overlay" aria-hidden="true">
-        <span id="transition-text" />
-      </div>
-
       <SiteEffects />
     </>
   );

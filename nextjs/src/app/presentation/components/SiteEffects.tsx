@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const LINE_RGB = "14, 165, 233";
@@ -27,6 +28,8 @@ function sleep(ms: number): Promise<void> {
 }
 
 export function SiteEffects() {
+  const router = useRouter();
+
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timeoutIds: number[] = [];
@@ -242,17 +245,18 @@ export function SiteEffects() {
 
       const transitionOverlayEl = document.getElementById("transition-overlay");
       if (transitionOverlayEl) {
+        const transitionArrivalStyle = document.getElementById("portfolio-transition-arrival-style");
         // transition なしで即座に opacity:1 の状態にする
         transitionOverlayEl.style.transition = "none";
         transitionOverlayEl.classList.add("active");
         window.requestAnimationFrame(() => {
-          // transition を元に戻し、フェードアウトを開始
+          // 初回ペイント前に注入した強制表示CSSを外し、通常のフェードへ戻す
+          transitionArrivalStyle?.remove();
           transitionOverlayEl.style.transition = "";
+          addPageEnter();
           schedule(() => {
             transitionOverlayEl.classList.remove("active");
           }, 30);
-          // overlay フェードアウトと重ねてコンテンツをフェードイン
-          schedule(addPageEnter, 120);
         });
       } else {
         addPageEnter();
@@ -369,7 +373,8 @@ export function SiteEffects() {
               await typeInElement(transitionTextElement, `$ cd ${getLabel(link.href)}`, 28);
               await sleep(80);
               window.sessionStorage.setItem("portfolio-transition-active", "1");
-              window.location.href = link.href;
+              const nextUrl = new URL(link.href);
+              router.push(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
             })();
           };
 
@@ -383,7 +388,7 @@ export function SiteEffects() {
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
       cleanupCallbacks.forEach((callback) => callback());
     };
-  }, []);
+  }, [router]);
 
   return null;
 }
