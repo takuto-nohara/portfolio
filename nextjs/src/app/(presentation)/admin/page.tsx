@@ -1,2 +1,5 @@
-export * from "@worker/pages/admin/page";
-export { default } from "@worker/pages/admin/page";
+import { redirect } from "next/navigation";
+
+export default function AdminPage() {
+  redirect("/admin/works");
+}
