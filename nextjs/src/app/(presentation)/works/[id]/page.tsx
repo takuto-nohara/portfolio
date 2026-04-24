@@ -1,10 +1,28 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { getSiteSettings, getWorkDetail } from "@worker/lib/site-data";
+import { getSiteSettings, getWorks, getWorkDetail } from "@worker/lib/site-data";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { WorkGalleryModal } from "@/presentation/components/work/WorkGalleryModal";
+
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1) || null;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const v = parsed.searchParams.get("v");
+      if (v) return v;
+      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
+      if (match) return match[2] ?? null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 interface WorkDetailPageProps {
   readonly params: Promise<{
@@ -22,13 +40,19 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     notFound();
   }
 
-  const [settings, workDetail] = await Promise.all([getSiteSettings(), getWorkDetail(workId)]);
+  const [settings, workDetail, allWorks] = await Promise.all([getSiteSettings(), getWorkDetail(workId), getWorks()]);
 
   if (!workDetail) {
     notFound();
   }
 
+  const sortedWorks = [...allWorks].sort((a, b) => a.sortOrder - b.sortOrder);
+  const currentIndex = sortedWorks.findIndex((w) => w.id === workId);
+  const prevWork = currentIndex > 0 ? sortedWorks[currentIndex - 1] : null;
+  const nextWork = currentIndex < sortedWorks.length - 1 ? sortedWorks[currentIndex + 1] : null;
+
   const thumbnailUrl = resolveWorkAssetUrl(workDetail.thumbnail);
+  const videoId = workDetail.videoUrl ? extractYouTubeVideoId(workDetail.videoUrl) : null;
   const techStack = workDetail.techStack
     .split(",")
     .map((tech) => tech.trim())
@@ -37,8 +61,16 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
   return (
     <SiteShell settings={settings}>
       <section className="bg-surface-card">
-        <div className="mx-auto flex aspect-[16/7] max-w-6xl items-center justify-center">
-          {thumbnailUrl ? (
+        <div className="mx-auto flex aspect-[16/7] max-w-6xl items-center justify-center overflow-hidden">
+          {videoId ? (
+            <iframe
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title={workDetail.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="h-full w-full"
+            />
+          ) : thumbnailUrl ? (
             <img src={thumbnailUrl} alt={workDetail.title} className="h-full w-full object-cover" />
           ) : (
             <span className="text-sm text-foreground-muted">hero_image</span>
@@ -48,9 +80,17 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
 
       <section className="bg-surface-primary px-6 py-10 sm:px-20 sm:py-16">
         <div className="mx-auto max-w-4xl">
-          <span className="inline-block rounded bg-surface-card px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-accent-primary">
-            {`output.${workDetail.category}`}
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="inline-block rounded bg-surface-card px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-accent-primary">
+              {`output.${workDetail.category}`}
+            </span>
+            <Link
+              href="/works"
+              className="text-sm font-medium text-foreground-secondary transition-colors hover:text-accent-primary"
+            >
+              {"> back_to_works"}
+            </Link>
+          </div>
 
           <h1 className="mt-4 text-3xl font-bold text-foreground-primary">{workDetail.title}</h1>
           {workDetail.publishedAt ? (
@@ -94,18 +134,37 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
                 {"> visit_site"}
               </a>
             ) : null}
-            <Link
-              href="/works"
-              className="rounded border border-border-subtle px-6 py-3 text-sm font-medium text-foreground-secondary transition-colors hover:border-accent-primary hover:text-accent-primary"
-            >
-              {"> back_to_works"}
-            </Link>
           </div>
 
           <div className="mt-16">
             <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> gallery"}</h2>
             <WorkGalleryModal title={workDetail.title} images={workDetail.images} />
           </div>
+
+          <nav className="mt-16 flex items-center justify-between border-t border-border-subtle pt-8">
+            {prevWork?.id != null ? (
+              <Link
+                href={`/works/${prevWork.id}`}
+                className="group flex items-center gap-2 text-sm text-foreground-secondary transition-colors hover:text-accent-primary"
+              >
+                <span className="transition-transform group-hover:-translate-x-1">{"<"}</span>
+                <span className="max-w-45 truncate">{prevWork.title}</span>
+              </Link>
+            ) : (
+              <span />
+            )}
+            {nextWork?.id != null ? (
+              <Link
+                href={`/works/${nextWork.id}`}
+                className="group flex items-center gap-2 text-sm text-foreground-secondary transition-colors hover:text-accent-primary"
+              >
+                <span className="max-w-45 truncate">{nextWork.title}</span>
+                <span className="transition-transform group-hover:translate-x-1">{">"}</span>
+              </Link>
+            ) : (
+              <span />
+            )}
+          </nav>
         </div>
       </section>
     </SiteShell>

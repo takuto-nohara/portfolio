@@ -9,7 +9,7 @@ export class D1WorkRepository implements WorkRepository {
   async findAll(): Promise<readonly Work[]> {
     const rows = await selectAll<WorkRow>(
       this.database.prepare(
-        `SELECT id, title, category, description, tech_stack, thumbnail, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+        `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
          FROM works
          ORDER BY sort_order ASC, id DESC`,
       ),
@@ -22,7 +22,7 @@ export class D1WorkRepository implements WorkRepository {
     const rows = await selectAll<WorkRow>(
       this.database
         .prepare(
-          `SELECT id, title, category, description, tech_stack, thumbnail, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+          `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
            FROM works
            WHERE category = ?
            ORDER BY sort_order ASC, id DESC`,
@@ -36,7 +36,7 @@ export class D1WorkRepository implements WorkRepository {
   async findFeatured(): Promise<readonly Work[]> {
     const rows = await selectAll<WorkRow>(
       this.database.prepare(
-        `SELECT id, title, category, description, tech_stack, thumbnail, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+        `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
          FROM works
          WHERE is_featured = 1
          ORDER BY sort_order ASC, id DESC`,
@@ -49,7 +49,7 @@ export class D1WorkRepository implements WorkRepository {
   async findById(id: number): Promise<Work | null> {
     const row = await this.database
       .prepare(
-        `SELECT id, title, category, description, tech_stack, thumbnail, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+        `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
          FROM works
          WHERE id = ?`,
       )
@@ -64,8 +64,8 @@ export class D1WorkRepository implements WorkRepository {
       await this.database
         .prepare(
           `INSERT INTO works (
-             title, category, description, tech_stack, thumbnail, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
-           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+             title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         )
         .bind(
           work.title,
@@ -73,6 +73,7 @@ export class D1WorkRepository implements WorkRepository {
           work.description,
           work.techStack,
           work.thumbnail,
+          work.videoUrl,
           work.url,
           work.githubUrl,
           work.publishedAt,
@@ -94,7 +95,7 @@ export class D1WorkRepository implements WorkRepository {
     await this.database
       .prepare(
         `UPDATE works
-         SET title = ?, category = ?, description = ?, tech_stack = ?, thumbnail = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
+         SET title = ?, category = ?, description = ?, tech_stack = ?, thumbnail = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
       )
       .bind(
@@ -103,6 +104,7 @@ export class D1WorkRepository implements WorkRepository {
         work.description,
         work.techStack,
         work.thumbnail,
+        work.videoUrl,
         work.url,
         work.githubUrl,
         work.publishedAt,

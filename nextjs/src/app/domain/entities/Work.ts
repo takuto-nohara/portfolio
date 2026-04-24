@@ -8,6 +8,7 @@ export interface Work {
   readonly description: string;
   readonly techStack: string;
   readonly thumbnail: string | null;
+  readonly videoUrl: string | null;
   readonly url: string | null;
   readonly githubUrl: string | null;
   readonly publishedAt: string | null;

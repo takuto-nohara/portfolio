@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 import type { Work } from "@/domain/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
@@ -17,9 +20,37 @@ function toDateInputValue(value: string | null): string {
   return value.includes("T") ? value.split("T")[0] : value.split(" ")[0];
 }
 
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1) || null;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const v = parsed.searchParams.get("v");
+      if (v) return v;
+      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
+      if (match) return match[2] ?? null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function AdminWorkForm({ mode, work, status }: AdminWorkFormProps) {
   const isEditing = mode === "edit" && work;
   const action = isEditing ? `/api/admin/works/${work.id}` : "/api/admin/works";
+
+  const [category, setCategory] = useState(work?.category ?? "");
+  const [youtubeUrl, setYoutubeUrl] = useState(work?.videoUrl ?? "");
+  const [thumbnailSource, setThumbnailSource] = useState<"youtube" | "upload">(
+    work?.thumbnail?.startsWith("https://img.youtube.com/") ? "youtube" : "upload",
+  );
+
+  const isVideo = category === "video";
+  const youtubeVideoId = isVideo ? extractYouTubeVideoId(youtubeUrl) : null;
+  const youtubeThumbnailPreview = youtubeVideoId ? `https://img.youtube.com/vi/${youtubeVideoId}/hqdefault.jpg` : null;
 
   return (
     <div className="max-w-3xl">
@@ -68,6 +99,7 @@ export function AdminWorkForm({ mode, work, status }: AdminWorkFormProps) {
               name="category"
               defaultValue={work?.category ?? ""}
               required
+              onChange={(e) => setCategory(e.target.value)}
               className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             >
               <option value="">select_category</option>
@@ -103,16 +135,80 @@ export function AdminWorkForm({ mode, work, status }: AdminWorkFormProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-6">
+            {isVideo ? (
+              <div className="col-span-2">
+                <label htmlFor="video_url" className="mb-2 block text-sm font-medium text-foreground-primary">{"> video_url (YouTube)"}</label>
+                <input
+                  type="url"
+                  id="video_url"
+                  name="video_url"
+                  value={youtubeUrl}
+                  onChange={(e) => setYoutubeUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+                />
+                <p className="mt-2 text-xs text-foreground-muted">YouTube の動画 URL を入力してください。</p>
+              </div>
+            ) : null}
+
             <div>
-              <label htmlFor="thumbnail" className="mb-2 block text-sm font-medium text-foreground-primary">{"> thumbnail"}</label>
-              <input
-                type="file"
-                id="thumbnail"
-                name="thumbnail"
-                accept="image/*"
-                className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary"
-              />
-              <p className="mt-2 text-xs text-foreground-muted">一覧と詳細のメイン画像になります。</p>
+              <label className="mb-2 block text-sm font-medium text-foreground-primary">{"> thumbnail"}</label>
+
+              {isVideo && youtubeVideoId ? (
+                <div className="mb-3 flex gap-4">
+                  <label className="flex cursor-pointer items-center gap-2">
+                    <input
+                      type="radio"
+                      name="thumbnail_source"
+                      value="youtube"
+                      checked={thumbnailSource === "youtube"}
+                      onChange={() => setThumbnailSource("youtube")}
+                      className="accent-accent-primary"
+                    />
+                    <span className="text-xs text-foreground-secondary">YouTube サムネイルを使用</span>
+                  </label>
+                  <label className="flex cursor-pointer items-center gap-2">
+                    <input
+                      type="radio"
+                      name="thumbnail_source"
+                      value="upload"
+                      checked={thumbnailSource === "upload"}
+                      onChange={() => setThumbnailSource("upload")}
+                      className="accent-accent-primary"
+                    />
+                    <span className="text-xs text-foreground-secondary">自分でアップロード</span>
+                  </label>
+                </div>
+              ) : (
+                <input type="hidden" name="thumbnail_source" value="upload" />
+              )}
+
+              {isVideo && youtubeVideoId && thumbnailSource === "youtube" ? (
+                <div className="mt-2">
+                  <input type="hidden" name="thumbnail_source" value="youtube" />
+                  {youtubeThumbnailPreview ? (
+                    <img
+                      src={youtubeThumbnailPreview}
+                      alt="YouTube thumbnail preview"
+                      className="h-20 w-32 rounded border border-border-subtle object-cover"
+                    />
+                  ) : null}
+                  <p className="mt-2 text-xs text-foreground-muted">動画のサムネイルを自動取得します。</p>
+                </div>
+              ) : (
+                <>
+                  {isVideo && youtubeVideoId ? <input type="hidden" name="thumbnail_source" value="upload" /> : null}
+                  <input
+                    type="file"
+                    id="thumbnail"
+                    name="thumbnail"
+                    accept="image/*"
+                    className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary file:mr-4 file:border-0 file:bg-accent-primary file:px-3 file:py-2 file:text-xs file:font-medium file:text-surface-primary"
+                  />
+                  <p className="mt-2 text-xs text-foreground-muted">一覧と詳細のメイン画像になります。</p>
+                </>
+              )}
+
               {work?.thumbnail ? (
                 <div className="mt-3 flex items-center gap-3">
                   {resolveWorkAssetUrl(work.thumbnail) ? (

@@ -61,6 +61,7 @@ export interface WorkRow {
   readonly description: string;
   readonly tech_stack: string;
   readonly thumbnail: string | null;
+  readonly video_url: string | null;
   readonly url: string | null;
   readonly github_url: string | null;
   readonly published_at: string | null;
@@ -135,6 +136,7 @@ export function mapWorkRow(row: WorkRow, images: readonly WorkImage[]): Work {
     description: row.description,
     techStack: row.tech_stack,
     thumbnail: row.thumbnail,
+    videoUrl: row.video_url,
     url: row.url,
     githubUrl: row.github_url,
     publishedAt: row.published_at,

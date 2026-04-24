@@ -40,6 +40,28 @@ function getFiles(formData: FormData, key: string): File[] {
     .filter((value): value is File => value instanceof File && value.size > 0);
 }
 
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1) || null;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const v = parsed.searchParams.get("v");
+      if (v) return v;
+      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
+      if (match) return match[2] ?? null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function getYouTubeThumbnailUrl(videoId: string): string {
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
 async function uploadFile(services: Awaited<ReturnType<typeof getAdminServices>>, file: File, folder: string): Promise<string> {
   const extension = file.name.includes(".") ? `.${file.name.split(".").pop()}` : "";
   const key = `${folder}/${crypto.randomUUID()}${extension}`;
@@ -57,6 +79,7 @@ function createWorkRecord(input: {
   description: string;
   techStack: string | null;
   thumbnail: string | null;
+  videoUrl: string | null;
   url: string | null;
   githubUrl: string | null;
   publishedAt: string | null;
@@ -70,6 +93,7 @@ function createWorkRecord(input: {
     description: input.description,
     techStack: input.techStack ?? "",
     thumbnail: input.thumbnail,
+    videoUrl: input.videoUrl,
     url: input.url,
     githubUrl: input.githubUrl,
     publishedAt: input.publishedAt,
@@ -101,7 +125,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const services = await getAdminServices();
     const thumbnailFile = getFiles(formData, "thumbnail")[0];
     const galleryFiles = getFiles(formData, "images");
-    const thumbnail = thumbnailFile ? await uploadFile(services, thumbnailFile, "works/thumbnails") : null;
+    const thumbnailSource = getOptionalText(formData, "thumbnail_source") ?? "upload";
+    const videoUrl = categoryValue === "video" ? getOptionalText(formData, "video_url") : null;
+
+    let thumbnail: string | null = null;
+    if (thumbnailSource === "youtube" && videoUrl) {
+      const videoId = extractYouTubeVideoId(videoUrl);
+      thumbnail = videoId ? getYouTubeThumbnailUrl(videoId) : null;
+    } else if (thumbnailFile) {
+      thumbnail = await uploadFile(services, thumbnailFile, "works/thumbnails");
+    }
+
     const work = await services.useCases.createWork.execute(
       createWorkRecord({
         title,
@@ -109,6 +143,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         description,
         techStack: getOptionalText(formData, "tech_stack"),
         thumbnail,
+        videoUrl,
         url: getOptionalText(formData, "url"),
         githubUrl: getOptionalText(formData, "github_url"),
         publishedAt: getOptionalText(formData, "published_at"),

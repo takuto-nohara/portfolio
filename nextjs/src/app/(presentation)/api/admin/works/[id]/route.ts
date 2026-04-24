@@ -27,6 +27,28 @@ function getFiles(formData: FormData, key: string): File[] {
     .filter((value): value is File => value instanceof File && value.size > 0);
 }
 
+function extractYouTubeVideoId(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname === "youtu.be") {
+      return parsed.pathname.slice(1) || null;
+    }
+    if (parsed.hostname.includes("youtube.com")) {
+      const v = parsed.searchParams.get("v");
+      if (v) return v;
+      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
+      if (match) return match[2] ?? null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function getYouTubeThumbnailUrl(videoId: string): string {
+  return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+}
+
 function getCheckbox(formData: FormData, key: string): boolean {
   const value = formData.get(key);
   return value === "1" || value === "on";
@@ -96,14 +118,31 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
     const thumbnailFile = getFiles(formData, "thumbnail")[0];
     const galleryFiles = getFiles(formData, "images");
+    const thumbnailSource = getOptionalText(formData, "thumbnail_source") ?? "upload";
+    const videoUrl = categoryValue === "video" ? getOptionalText(formData, "video_url") : null;
     let thumbnail = work.thumbnail;
 
-    if (thumbnailFile) {
+    if (thumbnailSource === "youtube" && videoUrl) {
+      const videoId = extractYouTubeVideoId(videoUrl);
+      const newThumbnail = videoId ? getYouTubeThumbnailUrl(videoId) : null;
+      if (newThumbnail && newThumbnail !== work.thumbnail) {
+        // 既存のR2サムネイルを削除（YouTubeサムネイルURLは削除しない）
+        if (work.thumbnail && !work.thumbnail.startsWith("https://img.youtube.com/")) {
+          const oldThumbnailKey = extractWorkAssetKey(work.thumbnail);
+          if (oldThumbnailKey) {
+            await services.ports.storagePort.delete(oldThumbnailKey);
+          }
+        }
+        thumbnail = newThumbnail;
+      }
+    } else if (thumbnailSource === "upload" && thumbnailFile) {
       thumbnail = await uploadFile(services, thumbnailFile, "works/thumbnails");
-      const oldThumbnailKey = extractWorkAssetKey(work.thumbnail);
-
-      if (oldThumbnailKey) {
-        await services.ports.storagePort.delete(oldThumbnailKey);
+      // 既存のR2サムネイルを削除（YouTubeサムネイルURLは削除しない）
+      if (work.thumbnail && !work.thumbnail.startsWith("https://img.youtube.com/")) {
+        const oldThumbnailKey = extractWorkAssetKey(work.thumbnail);
+        if (oldThumbnailKey) {
+          await services.ports.storagePort.delete(oldThumbnailKey);
+        }
       }
     }
 
@@ -114,6 +153,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       description,
       techStack: getOptionalText(formData, "tech_stack") ?? "",
       thumbnail,
+      videoUrl,
       url: getOptionalText(formData, "url"),
       githubUrl: getOptionalText(formData, "github_url"),
       publishedAt: getOptionalText(formData, "published_at"),
