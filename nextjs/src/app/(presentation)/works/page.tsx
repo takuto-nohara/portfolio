@@ -1,7 +1,7 @@
-import Link from "next/link";
-
-import { categories } from "@/domain/publicApi";
+import { categories, getMediumCategoryDefinition } from "@/domain/publicApi";
 import { getSiteSettings, getWorks } from "@worker/lib/site-data";
+import { CategoryChip } from "@/presentation/components/CategoryChip";
+import { PageHeader } from "@/presentation/components/PageHeader";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { WorkCard } from "@/presentation/components/WorkCard";
 
@@ -24,28 +24,30 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
   const [settings, workList] = await Promise.all([getSiteSettings(), getWorks(activeCategory)]);
 
   return (
-    <SiteShell settings={settings}>
-      <section className="bg-surface-secondary px-6 py-12 text-center sm:px-20 sm:py-20">
-        <h1 className="text-[40px] font-bold text-foreground-primary">{"> All Works"}</h1>
+    <SiteShell settings={settings} currentPath="/works">
+      <section className="bg-surface-secondary px-6 py-12 sm:px-20 sm:py-20">
+        <div className="mx-auto max-w-6xl">
+          <PageHeader
+            titleJa="作品一覧"
+            titleEn="Works"
+            lead="これまでに制作したアプリ、Web、映像、グラフィックの一覧です。カテゴリから興味の近い制作物を絞り込み、短時間で全体像を把握できる構成にしています。"
+            align="center"
+          />
+        </div>
       </section>
 
       <section className="bg-surface-primary px-6 pb-4 pt-8 sm:px-20 sm:pt-12">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-wrap gap-3">
-            <Link
-              href="/works"
-              className={`rounded px-4 py-2 text-xs font-medium transition-colors ${!activeCategory ? "bg-accent-primary text-surface-primary" : "bg-surface-card text-foreground-secondary hover:bg-border-subtle"}`}
-            >
-              all()
-            </Link>
+            <CategoryChip labelJa="すべて" labelEn="All" href="/works" active={!activeCategory} />
             {categories.map((category) => (
-              <Link
+              <CategoryChip
                 key={category}
                 href={`/works?category=${category}`}
-                className={`rounded px-4 py-2 text-xs font-medium transition-colors ${activeCategory === category ? "bg-accent-primary text-surface-primary" : "bg-surface-card text-foreground-secondary hover:bg-border-subtle"}`}
-              >
-                {`output.${category}`}
-              </Link>
+                active={activeCategory === category}
+                labelJa={getMediumCategoryDefinition(category).nameJa}
+                labelEn={getMediumCategoryDefinition(category).nameEn}
+              />
             ))}
           </div>
         </div>

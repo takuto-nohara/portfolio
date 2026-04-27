@@ -11,10 +11,10 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "TN_ Portfolio",
-    template: "%s | TN_ Portfolio",
+    default: "Takuto Nohara Portfolio",
+    template: "%s | Takuto Nohara Portfolio",
   },
-  description: "Rendering Ideas into Reality",
+  description: "野原拓人のポートフォリオサイト。作品、技術、自己紹介を日本語中心で整理し、短時間で実績と強みが伝わるように構成しています。",
 };
 
 export default function RootLayout({

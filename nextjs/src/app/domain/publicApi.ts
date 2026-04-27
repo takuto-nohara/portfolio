@@ -4,7 +4,7 @@ export type { PublicSettings, Setting } from "./entities/Setting";
 export type { User } from "./entities/User";
 export type { Work } from "./entities/Work";
 export type { WorkImage } from "./entities/WorkImage";
-export { categories } from "./valueObjects/Category";
+export { categories, getMediumCategoryDefinition, mediumCategoryDefinitions } from "./valueObjects/Category";
 export type { Category } from "./valueObjects/Category";
 export type { ContactRepository } from "./repositories/ContactRepository";
 export type { OAuthTokenRepository } from "./repositories/OAuthTokenRepository";
