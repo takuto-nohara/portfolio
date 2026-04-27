@@ -36,10 +36,10 @@ export default async function AboutPage() {
               <p className="mt-4 text-base font-medium text-foreground-primary">{siteProfile.roleJa}</p>
               <div className="mt-6 space-y-4 break-keep text-left text-pretty text-sm leading-8 text-foreground-secondary">
                 <p>
-                  中学生のころ、動画編集をきっかけにコンテンツ制作の世界に入りました。映像から始まり、パンフレット、Web ページ、そしてアプリケーション開発へと領域を広げています。
+                  中学生のころ、動画編集をきっかけにコンテンツ制作の世界に入りました。映像から始まり、パンフレット、Webページ、そしてアプリケーション開発へと領域を広げています。
                 </p>
                 <p>
-                  「欲しいものが見当たらないなら自分で作ってしまえ」という姿勢で、幅広いアウトプットに挑戦してきました。現在はフロントエンドからバックエンドまで、Web アプリケーション開発を軸に学習を深めています。
+                  「欲しいものが見当たらないなら自分で作ってしまえ」という姿勢で、幅広いアウトプットに挑戦してきました。現在はフロントエンドからバックエンドまで、Webアプリケーション開発を軸に学習を深めています。
                 </p>
                 <p>コードを書くことは、頭の中のアイデアを実際に動いて触れる形へレンダリングすること。その過程自体に強い面白さを感じています。</p>
               </div>
@@ -65,14 +65,14 @@ export default async function AboutPage() {
       </section>
 
       <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           <div className="mb-12 text-center">
             <h2 className="text-2xl font-semibold text-foreground-primary">経験の流れ</h2>
             <p className="mt-2 text-sm text-foreground-secondary" lang="en">
               Experience
             </p>
           </div>
-          <div className="mx-auto max-w-2xl space-y-8">
+          <div className="space-y-8">
             {experiences.map((experience) => (
               <div key={`${experience.date}-${experience.title}`} className="rounded-2xl border border-border-subtle bg-surface-secondary p-6 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)]">
                 <div className="flex items-start gap-6">
