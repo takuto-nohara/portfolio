@@ -116,7 +116,7 @@ export default async function Home() {
       </section>
 
       <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto grid max-w-6xl items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
           <div className="rounded-3xl border border-border-subtle bg-surface-secondary p-8 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] sm:p-10">
             <p className="text-sm font-medium tracking-[0.24em] text-accent-primary" lang="en">
               About
@@ -133,9 +133,9 @@ export default async function Home() {
 
           <div className="flex flex-col gap-3">
             {highlights.map((highlight) => (
-              <section key={highlight.title} className="flex flex-col gap-3 rounded-3xl border border-border-subtle bg-surface-primary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)] sm:flex-row sm:items-start sm:gap-5">
-                <h3 className="w-full shrink-0 text-balance text-sm font-semibold text-foreground-primary sm:w-36">{highlight.title}</h3>
-                <p className="text-pretty text-sm leading-7 text-foreground-secondary">{highlight.description}</p>
+              <section key={highlight.title} className="rounded-3xl border border-border-subtle bg-surface-primary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)]">
+                <h3 className="text-balance text-sm font-semibold text-foreground-primary">{highlight.title}</h3>
+                <p className="mt-2 text-pretty text-sm leading-7 text-foreground-secondary">{highlight.description}</p>
               </section>
             ))}
           </div>
