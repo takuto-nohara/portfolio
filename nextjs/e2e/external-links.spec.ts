@@ -3,14 +3,12 @@ import { expect, test } from "@playwright/test";
 /**
  * 外部リンクのアクセシビリティ要件を確認する E2E テスト
  *
- * 各外部リンクに以下が揃っていることを検証する:
- *   - target="_blank"
- *   - rel に "noopener" と "noreferrer" を含む
- *   - ↗ アイコン SVG（aria-hidden="true"）が存在する
- *   - スクリーンリーダー向けテキスト「（新しいタブで開きます）」が存在する
+ * ルール:
+ *   - GitHub など外部サービスへのリンク → ExternalLink（新しいタブ・アイコン・SR テキスト・ツールチップ）
+ *   - 他のウェブサイト（ポートフォリオ等）→ 通常 <a>（同タブ・新タブ属性なし）
  */
 
-test.describe("ExternalLink アクセシビリティ", () => {
+test.describe("外部リンク動作確認", () => {
   /**
    * ExternalLink コンポーネントで生成されたリンクの属性・要素を検証するヘルパー
    */
@@ -35,15 +33,25 @@ test.describe("ExternalLink アクセシビリティ", () => {
     await expect(tooltip).toContainText("新しいタブで開きます");
   }
 
+  /**
+   * 通常リンク（同タブ）の検証ヘルパー
+   */
+  async function assertSameTabLink(locator: import("@playwright/test").Locator) {
+    // target="_blank" が設定されていないことを確認
+    await expect(locator).not.toHaveAttribute("target", "_blank");
+    // リンク自体が存在・表示されていることを確認
+    await expect(locator).toBeVisible();
+  }
+
   test.describe("about ページ（DB 不要）", () => {
     test.beforeEach(async ({ page }) => {
       await page.goto("/about");
     });
 
-    test("経験欄の外部リンクがアクセシビリティ要件を満たす", async ({ page }) => {
-      // kute-fes.com へのリンク（aboutContent.ts にハードコード済み）
+    test("経験欄の外部リンクは同タブで開く", async ({ page }) => {
+      // kute-fes.com へのリンク（aboutContent.ts にハードコード済み）→ 同タブ
       const link = page.locator(`a[href="https://www.kute-fes.com/"]`);
-      await assertExternalLink(page, link);
+      await assertSameTabLink(link);
     });
   });
 
@@ -53,16 +61,16 @@ test.describe("ExternalLink アクセシビリティ", () => {
       await page.goto("/works/9001");
     });
 
-    test("GitHub リンクがアクセシビリティ要件を満たす", async ({ page }) => {
+    test("GitHub リンクが新しいタブで開くアクセシビリティ要件を満たす", async ({ page }) => {
       const link = page.locator(
         `a[href="https://github.com/example-user/sample"]`,
       );
       await assertExternalLink(page, link);
     });
 
-    test("サイトリンクがアクセシビリティ要件を満たす", async ({ page }) => {
+    test("サイトリンクは同タブで開く", async ({ page }) => {
       const link = page.locator(`a[href="https://example.com/"]`);
-      await assertExternalLink(page, link);
+      await assertSameTabLink(link);
     });
   });
 });

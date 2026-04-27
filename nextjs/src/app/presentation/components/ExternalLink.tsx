@@ -13,7 +13,7 @@ interface ExternalLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>
  */
 export function ExternalLink({ href, className, children, ...props }: ExternalLinkProps) {
   return (
-    <span className="group/extlink relative inline-block">
+    <span className="group relative inline-block">
       <a
         href={href}
         target="_blank"
@@ -41,7 +41,7 @@ export function ExternalLink({ href, className, children, ...props }: ExternalLi
       </a>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground-primary px-2.5 py-1 text-xs text-surface-primary opacity-0 shadow-sm transition-opacity duration-150 group-hover/extlink:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground-primary px-2.5 py-1 text-xs text-surface-primary opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100"
       >
         新しいタブで開きます
       </span>

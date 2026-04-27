@@ -1,5 +1,4 @@
 import { getSiteSettings } from "@worker/lib/site-data";
-import { ExternalLink } from "@/presentation/components/ExternalLink";
 import { PageHeader } from "@/presentation/components/PageHeader";
 import { ProfileAvatar } from "@/presentation/components/ProfileAvatar";
 import { SiteShell } from "@/presentation/components/SiteShell";
@@ -82,12 +81,12 @@ export default async function AboutPage() {
                   <h3 className="text-base font-semibold text-foreground-primary">{experience.title}</h3>
                     <p className="mt-2 break-keep text-pretty text-sm leading-7 text-foreground-secondary">{experience.description}</p>
                     {experience.href && experience.label ? (
-                      <ExternalLink
+                      <a
                         href={experience.href}
                         className="mt-3 inline-block text-xs text-accent-primary hover:underline"
                       >
                         {experience.label}
-                      </ExternalLink>
+                      </a>
                     ) : null}
                   </div>
                 </div>

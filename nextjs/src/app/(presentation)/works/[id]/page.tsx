@@ -120,12 +120,12 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
               </ExternalLink>
             ) : null}
             {workDetail.url ? (
-              <ExternalLink
+              <a
                 href={workDetail.url}
                 className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
               >
                 サイトを開く / Visit Site
-              </ExternalLink>
+              </a>
             ) : null}
           </div>
 
