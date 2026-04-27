@@ -48,6 +48,8 @@
     background: var(--surface-primary);
     color: var(--foreground-primary);
     font-family: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
 
   a {
