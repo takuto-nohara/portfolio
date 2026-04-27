@@ -9,9 +9,10 @@ import { TechTag } from "./TechTag";
 
 interface WorkCardProps {
   readonly work: Work;
+  readonly priorityImage?: boolean;
 }
 
-export function WorkCard({ work }: WorkCardProps) {
+export function WorkCard({ work, priorityImage = false }: WorkCardProps) {
   const thumbnailUrl = resolveWorkAssetUrl(work.thumbnail);
   const href = work.id === null ? "/works" : `/works/${work.id}`;
   const category = getMediumCategoryDefinition(work.category);
@@ -33,6 +34,7 @@ export function WorkCard({ work }: WorkCardProps) {
               fill
               className="object-contain"
               sizes="(min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+              priority={priorityImage}
             />
           ) : (
             <span className="text-xs text-foreground-muted">no_thumbnail</span>

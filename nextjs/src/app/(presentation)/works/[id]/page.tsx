@@ -96,6 +96,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
               fill
               className="object-contain"
               sizes="(min-width: 1152px) 1152px, 100vw"
+              priority
             />
           ) : (
             <span className="text-sm text-foreground-muted">メインビジュアル準備中 / Hero image pending</span>

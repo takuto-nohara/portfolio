@@ -105,8 +105,8 @@ export default async function Home() {
 
           {featuredWorks.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-3">
-              {featuredWorks.map((work) => (
-                <WorkCard key={work.id ?? work.title} work={work} />
+              {featuredWorks.map((work, index) => (
+                <WorkCard key={work.id ?? work.title} work={work} priorityImage={index === 0} />
               ))}
             </div>
           ) : (

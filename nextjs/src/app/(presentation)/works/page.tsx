@@ -150,7 +150,7 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
       <section className="bg-surface-primary px-6 py-8 sm:px-20 sm:py-12">
         <div className="mx-auto max-w-6xl space-y-12">
           {filteredWorks.length > 0 ? (
-            groupedWorks.map((group) => (
+            groupedWorks.map((group, groupIndex) => (
               <section key={group.key} className="space-y-6">
                 <div className="flex flex-wrap items-end justify-between gap-3 border-b border-border-subtle pb-4">
                   <div>
@@ -163,8 +163,8 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-3">
-                  {group.works.map((work) => (
-                    <WorkCard key={work.id ?? work.title} work={work} />
+                  {group.works.map((work, index) => (
+                    <WorkCard key={work.id ?? work.title} work={work} priorityImage={groupIndex === 0 && index === 0} />
                   ))}
                 </div>
               </section>
