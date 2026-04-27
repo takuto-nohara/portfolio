@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { getSiteSettings, getWorks, getWorkDetail } from "@worker/lib/site-data";
 import { getMediumCategoryDefinition } from "@/domain/publicApi";
+import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 import { Breadcrumb } from "@/presentation/components/Breadcrumb";
 import { CategoryChip } from "@/presentation/components/CategoryChip";
 import { PageHeader } from "@/presentation/components/PageHeader";
@@ -11,24 +12,6 @@ import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { TechTag } from "@/presentation/components/TechTag";
 import { WorkGalleryModal } from "@/presentation/components/work/WorkGalleryModal";
-
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1) || null;
-    }
-    if (parsed.hostname.includes("youtube.com")) {
-      const v = parsed.searchParams.get("v");
-      if (v) return v;
-      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
-      if (match) return match[2] ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 interface WorkDetailPageProps {
   readonly params: Promise<{

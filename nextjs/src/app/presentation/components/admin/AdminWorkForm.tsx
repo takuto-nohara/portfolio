@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { categories, getMediumCategoryDefinition, type Work, type WorkContextCategory } from "@/application/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
+import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 
 interface AdminWorkFormProps {
   readonly mode: "create" | "edit";
@@ -21,24 +22,6 @@ function toDateInputValue(value: string | null): string {
   }
 
   return value.includes("T") ? value.split("T")[0] : value.split(" ")[0];
-}
-
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1) || null;
-    }
-    if (parsed.hostname.includes("youtube.com")) {
-      const v = parsed.searchParams.get("v");
-      if (v) return v;
-      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
-      if (match) return match[2] ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
 }
 
 export function AdminWorkForm({ mode, contextCategories, work, status }: AdminWorkFormProps) {

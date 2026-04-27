@@ -3,36 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import type { WorkContextCategory } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-
-function redirectWithStatus(request: NextRequest, status: string): NextResponse {
-  const url = new URL("/admin/categories", request.url);
-  url.searchParams.set("status", status);
-  return NextResponse.redirect(url, { status: 303 });
-}
-
-function getText(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  return typeof value === "string" ? value.trim() : null;
-}
-
-function getNumber(formData: FormData, key: string): number {
-  const value = Number(getText(formData, key) ?? 0);
-  return Number.isFinite(value) ? value : 0;
-}
-
-function normalizeSlug(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[\s_]+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function isValidSlug(value: string): boolean {
-  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
-}
+import {
+  getText,
+  getNumber,
+  isValidSlug,
+  normalizeSlug,
+  redirectWithStatus,
+} from "@/presentation/lib/api/form-helpers";
 
 function updateCategoryRecord(id: number, formData: FormData, current: WorkContextCategory): WorkContextCategory | null {
   const slug = normalizeSlug(getText(formData, "slug") ?? current.slug);
@@ -64,7 +41,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
   const categoryId = Number(id);
 
   if (!Number.isInteger(categoryId) || categoryId <= 0) {
-    return redirectWithStatus(request, "error");
+    return redirectWithStatus(request, "/admin/categories", "error");
   }
 
   try {
@@ -74,25 +51,25 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
     if (intent === "delete") {
       await services.useCases.deleteWorkContextCategory.execute(categoryId);
-      return redirectWithStatus(request, "deleted");
+      return redirectWithStatus(request, "/admin/categories", "deleted");
     }
 
     const current = await services.repositories.workContextCategoryRepository.findById(categoryId);
 
     if (!current) {
-      return redirectWithStatus(request, "error");
+      return redirectWithStatus(request, "/admin/categories", "error");
     }
 
     const category = updateCategoryRecord(categoryId, formData, current);
 
     if (!category) {
-      return redirectWithStatus(request, "error");
+      return redirectWithStatus(request, "/admin/categories", "error");
     }
 
     await services.useCases.updateWorkContextCategory.execute(category);
-    return redirectWithStatus(request, "updated");
+    return redirectWithStatus(request, "/admin/categories", "updated");
   } catch (error) {
     console.error(error);
-    return redirectWithStatus(request, "error");
+    return redirectWithStatus(request, "/admin/categories", "error");
   }
 }

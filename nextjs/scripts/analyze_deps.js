@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { getAllFiles } from "./file-utils.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,23 +13,6 @@ const layers = {
   infrastructure: ["presentation"],
   presentation: [],
 };
-
-function getAllFiles(dir, fileList = []) {
-  if (!fs.existsSync(dir)) {
-    return fileList;
-  }
-
-  const files = fs.readdirSync(dir);
-  files.forEach((file) => {
-    const filePath = path.join(dir, file);
-    if (fs.statSync(filePath).isDirectory()) {
-      getAllFiles(filePath, fileList);
-    } else if (file.endsWith(".ts") || file.endsWith(".tsx")) {
-      fileList.push(filePath);
-    }
-  });
-  return fileList;
-}
 
 const files = getAllFiles(srcDir);
 let violations = 0;

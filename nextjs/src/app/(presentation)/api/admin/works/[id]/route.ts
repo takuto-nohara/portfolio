@@ -3,81 +3,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { categories, type Category } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
+import { uploadFile } from "@worker/lib/api/upload";
 import { extractWorkAssetKey } from "@/presentation/lib/work-assets";
-
-function redirectWithStatus(request: NextRequest, path: string, status: string): NextResponse {
-  const url = new URL(path, request.url);
-  url.searchParams.set("status", status);
-  return NextResponse.redirect(url, { status: 303 });
-}
-
-function getText(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  return typeof value === "string" ? value.trim() : null;
-}
-
-function getOptionalText(formData: FormData, key: string): string | null {
-  const value = getText(formData, key);
-  return value && value.length > 0 ? value : null;
-}
-
-function getFiles(formData: FormData, key: string): File[] {
-  return formData
-    .getAll(key)
-    .filter((value): value is File => value instanceof File && value.size > 0);
-}
-
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1) || null;
-    }
-    if (parsed.hostname.includes("youtube.com")) {
-      const v = parsed.searchParams.get("v");
-      if (v) return v;
-      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
-      if (match) return match[2] ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function getYouTubeThumbnailUrl(videoId: string): string {
-  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-}
-
-function getCheckbox(formData: FormData, key: string): boolean {
-  const value = formData.get(key);
-  return value === "1" || value === "on";
-}
-
-function getOptionalNumber(formData: FormData, key: string): number | null {
-  const value = getText(formData, key);
-
-  if (!value) {
-    return null;
-  }
-
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
-}
+import {
+  getCheckbox,
+  getFiles,
+  getOptionalNumber,
+  getOptionalText,
+  getText,
+  redirectWithStatus,
+} from "@/presentation/lib/api/form-helpers";
+import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from "@/presentation/lib/youtube";
 
 function isCategory(value: string): value is Category {
   return categories.includes(value as Category);
-}
-
-async function uploadFile(services: Awaited<ReturnType<typeof getAdminServices>>, file: File, folder: string): Promise<string> {
-  const extension = file.name.includes(".") ? `.${file.name.split(".").pop()}` : "";
-  const key = `${folder}/${crypto.randomUUID()}${extension}`;
-
-  return services.ports.storagePort.upload({
-    key,
-    body: await file.arrayBuffer(),
-    contentType: file.type || "application/octet-stream",
-  });
 }
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }): Promise<NextResponse> {
@@ -156,7 +95,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         thumbnail = newThumbnail;
       }
     } else if (thumbnailSource === "upload" && thumbnailFile) {
-      thumbnail = await uploadFile(services, thumbnailFile, "works/thumbnails");
+      thumbnail = await uploadFile(services.ports.storagePort, thumbnailFile, "works/thumbnails");
       // 既存のR2サムネイルを削除（YouTubeサムネイルURLは削除しない）
       if (work.thumbnail && !work.thumbnail.startsWith("https://img.youtube.com/")) {
         const oldThumbnailKey = extractWorkAssetKey(work.thumbnail);
@@ -183,7 +122,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     });
 
     for (const file of galleryFiles) {
-      const path = await uploadFile(services, file, `works/${workId}/gallery`);
+      const path = await uploadFile(services.ports.storagePort, file, `works/${workId}/gallery`);
       await services.useCases.addWorkImage.execute(workId, path, null);
     }
 

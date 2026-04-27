@@ -3,36 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import type { WorkContextCategory } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-
-function redirectWithStatus(request: NextRequest, status: string): NextResponse {
-  const url = new URL("/admin/categories", request.url);
-  url.searchParams.set("status", status);
-  return NextResponse.redirect(url, { status: 303 });
-}
-
-function getText(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  return typeof value === "string" ? value.trim() : null;
-}
-
-function getNumber(formData: FormData, key: string): number {
-  const value = Number(getText(formData, key) ?? 0);
-  return Number.isFinite(value) ? value : 0;
-}
-
-function normalizeSlug(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[\s_]+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
-function isValidSlug(value: string): boolean {
-  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
-}
+import {
+  getText,
+  getNumber,
+  isValidSlug,
+  normalizeSlug,
+  redirectWithStatus,
+} from "@/presentation/lib/api/form-helpers";
 
 function createCategoryRecord(formData: FormData): WorkContextCategory | null {
   const slug = normalizeSlug(getText(formData, "slug") ?? "");
@@ -66,15 +43,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const category = createCategoryRecord(formData);
 
     if (!category) {
-      return redirectWithStatus(request, "error");
+      return redirectWithStatus(request, "/admin/categories", "error");
     }
 
     const services = await getAdminServices();
     await services.useCases.createWorkContextCategory.execute(category);
 
-    return redirectWithStatus(request, "created");
+    return redirectWithStatus(request, "/admin/categories", "created");
   } catch (error) {
     console.error(error);
-    return redirectWithStatus(request, "error");
+    return redirectWithStatus(request, "/admin/categories", "error");
   }
 }
