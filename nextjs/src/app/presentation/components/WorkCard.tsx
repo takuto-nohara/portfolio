@@ -24,9 +24,9 @@ export function WorkCard({ work, priorityImage = false }: WorkCardProps) {
   const remainingTechCount = techStack.length - visibleTechStack.length;
 
   return (
-    <Link href={href} className="group block">
-      <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface-primary shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] transition-colors hover:border-accent-primary">
-        <div className="relative flex aspect-video items-center justify-center bg-border-subtle">
+    <Link href={href} className="group block h-full">
+      <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-border-subtle bg-surface-primary shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] transition-colors hover:border-accent-primary">
+        <div className="relative flex aspect-video shrink-0 items-center justify-center bg-border-subtle">
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
@@ -40,7 +40,7 @@ export function WorkCard({ work, priorityImage = false }: WorkCardProps) {
             <span className="text-xs text-foreground-muted">no_thumbnail</span>
           )}
         </div>
-        <div className="p-5 sm:p-6">
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
           <div className="flex flex-wrap gap-2">
             <CategoryChip labelJa={category.nameJa} labelEn={category.nameEn} />
             {work.contextCategoryNameJa && work.contextCategoryNameEn ? (
@@ -53,7 +53,7 @@ export function WorkCard({ work, priorityImage = false }: WorkCardProps) {
           {work.publishedAt ? <p className="mt-2 text-xs text-foreground-muted">{`公開: ${work.publishedAt}`}</p> : null}
           <p className="mt-3 line-clamp-2 text-sm leading-7 text-foreground-secondary">{work.description}</p>
           {visibleTechStack.length > 0 ? (
-            <ul className="mt-4 flex flex-wrap gap-2" aria-label="使用技術">
+            <ul className="mt-auto flex flex-wrap gap-2 pt-4" aria-label="使用技術">
               {visibleTechStack.map((tech) => (
                 <TechTag key={tech} tone="soft">
                   {tech}
