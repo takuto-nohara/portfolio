@@ -29,7 +29,7 @@ test.describe("外部リンク動作確認", () => {
     await expect(locator.locator(".sr-only")).toContainText("新しいタブで開きます");
 
     // ホバー時ツールチップ（role="tooltip"）が存在する
-    const tooltip = locator.locator("xpath=following-sibling::span[@role='tooltip']");
+    const tooltip = locator.locator("span[role='tooltip']");
     await expect(tooltip).toContainText("新しいタブで開きます");
   }
 
