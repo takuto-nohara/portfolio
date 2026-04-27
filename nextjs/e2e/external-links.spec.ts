@@ -13,7 +13,6 @@ test.describe("外部リンク動作確認", () => {
    * ExternalLink コンポーネントで生成されたリンクの属性・要素を検証するヘルパー
    */
   async function assertExternalLink(
-    page: import("@playwright/test").Page,
     locator: import("@playwright/test").Locator,
   ) {
     await expect(locator).toHaveAttribute("target", "_blank");
@@ -65,7 +64,7 @@ test.describe("外部リンク動作確認", () => {
       const link = page.locator(
         `a[href="https://github.com/example-user/sample"]`,
       );
-      await assertExternalLink(page, link);
+      await assertExternalLink(link);
     });
 
     test("サイトリンクは同タブで開く", async ({ page }) => {
