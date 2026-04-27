@@ -5,7 +5,7 @@
 <div class="{{ $sizeClass }} shrink-0 rounded-4xl border border-border-subtle bg-linear-to-br from-surface-card via-surface-secondary to-surface-primary p-3 shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
     <div class="relative h-full w-full overflow-hidden rounded-3xl border border-border-subtle/70 bg-surface-card/80">
         <img
-            src="{{ asset('images/profile/takuto-nohara-portrait.jpg') }}"
+            src="{{ asset('images/profile/takuto-nohara-portrait.png') }}"
             alt="Takuto Nohara portrait"
             class="h-full w-full object-cover object-center"
         >
