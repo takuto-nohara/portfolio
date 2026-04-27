@@ -34,7 +34,7 @@ export default async function AboutPage() {
                 {siteProfile.nameEn}
               </p>
               <p className="mt-4 text-base font-medium text-foreground-primary">{siteProfile.roleJa}</p>
-              <div className="mt-6 space-y-4 text-left text-sm leading-8 text-foreground-secondary">
+              <div className="mt-6 space-y-4 break-keep text-left text-pretty text-sm leading-8 text-foreground-secondary">
                 <p>
                   中学生のころ、動画編集をきっかけにコンテンツ制作の世界に入りました。映像から始まり、パンフレット、Web ページ、そしてアプリケーション開発へと領域を広げています。
                 </p>
