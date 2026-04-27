@@ -7,6 +7,7 @@ import { getMediumCategoryDefinition } from "@/domain/publicApi";
 import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 import { Breadcrumb } from "@/presentation/components/Breadcrumb";
 import { CategoryChip } from "@/presentation/components/CategoryChip";
+import { ExternalLink } from "@/presentation/components/ExternalLink";
 import { PageHeader } from "@/presentation/components/PageHeader";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 import { SiteShell } from "@/presentation/components/SiteShell";
@@ -111,24 +112,20 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
 
           <div className="mt-10 flex flex-wrap gap-4">
             {workDetail.githubUrl ? (
-              <a
+              <ExternalLink
                 href={workDetail.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="rounded-full bg-foreground-primary px-6 py-3 text-sm font-medium text-surface-primary transition-colors hover:bg-foreground-secondary"
               >
                 GitHub で見る / GitHub
-              </a>
+              </ExternalLink>
             ) : null}
             {workDetail.url ? (
-              <a
+              <ExternalLink
                 href={workDetail.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
               >
                 サイトを開く / Visit Site
-              </a>
+              </ExternalLink>
             ) : null}
           </div>
 

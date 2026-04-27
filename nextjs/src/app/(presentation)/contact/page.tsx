@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ContactForm } from "@/presentation/components/contact/ContactForm";
+import { ExternalLink } from "@/presentation/components/ExternalLink";
 import { PageHeader } from "@/presentation/components/PageHeader";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { getSiteSettings } from "@worker/lib/site-data";
@@ -48,14 +49,12 @@ export default async function ContactPage() {
               <div>
                 <p className="font-medium text-foreground-primary">GitHub</p>
                 {settings.githubUrl ? (
-                  <a
+                  <ExternalLink
                     href={settings.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     className="mt-1 inline-flex text-accent-primary transition-colors hover:text-accent-secondary"
                   >
                     プロフィールを見る / Visit GitHub
-                  </a>
+                  </ExternalLink>
                 ) : (
                   <p className="mt-1 text-foreground-muted">設定準備中</p>
                 )}

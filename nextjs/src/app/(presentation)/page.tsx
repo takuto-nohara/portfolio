@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { getFeaturedWorks, getSiteSettings } from "@worker/lib/site-data";
+import { ExternalLink } from "@/presentation/components/ExternalLink";
 import { ProfileAvatar } from "@/presentation/components/ProfileAvatar";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { WorkCard } from "@/presentation/components/WorkCard";
@@ -57,14 +58,12 @@ export default async function Home() {
                 作品を見る / Works
               </Link>
               {settings.githubUrl ? (
-                <a
+                <ExternalLink
                   href={settings.githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
                 >
                   GitHub
-                </a>
+                </ExternalLink>
               ) : (
                 <Link
                   href="/about"
