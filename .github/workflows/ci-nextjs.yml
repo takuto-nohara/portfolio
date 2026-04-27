@@ -55,11 +55,16 @@ jobs:
 
       - name: Build for E2E
         # opennextjs-cloudflare preview（wrangler dev）が必要とする .open-next/ を生成する。
-        # next dev + getPlatformProxy() は CI 環境で D1 バインディングが不安定なため、
-        # 実際の Cloudflare Workers ランタイムを使った preview でテストする。
         run: npx opennextjs-cloudflare build
 
+      - name: Seed E2E data
+        # Playwright は webServer（wrangler dev）を globalSetup より先に起動する。
+        # wrangler dev は起動時に D1 を内部にロードするため、
+        # globalSetup が起動後にシードしても miniflare には反映されない。
+        # そのため、wrangler dev が起動する前にマイグレーション適用とシードを実施する。
+        run: |
+          npm run db:migrate:local
+          npx wrangler d1 execute portfolio-db --local --file=e2e/fixtures/seed-e2e.sql
+
       - name: Run E2E tests
-        # globalSetup が D1 マイグレーション適用・シードを行い、
-        # その後 opennextjs-cloudflare preview がサーバーを起動する。
         run: npm run test:e2e
