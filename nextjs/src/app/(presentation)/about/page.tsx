@@ -79,7 +79,7 @@ export default async function AboutPage() {
                   <span className="w-20 shrink-0 text-sm font-semibold text-accent-primary">{experience.date}</span>
                   <div>
                   <h3 className="text-base font-semibold text-foreground-primary">{experience.title}</h3>
-                    <p className="mt-2 text-sm leading-7 text-foreground-secondary">{experience.description}</p>
+                    <p className="mt-2 break-keep text-pretty text-sm leading-7 text-foreground-secondary">{experience.description}</p>
                     {experience.href && experience.label ? (
                       <a
                         href={experience.href}
