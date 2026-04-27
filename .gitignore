@@ -1,3 +1,5 @@
 .playwright-mcp
 .wrangler
 report
+test-results
+playwright-report
