@@ -29,6 +29,10 @@ test.describe("ExternalLink アクセシビリティ", () => {
 
     // スクリーンリーダー向けテキスト
     await expect(locator.locator(".sr-only")).toContainText("新しいタブで開きます");
+
+    // ホバー時ツールチップ（role="tooltip"）が存在する
+    const tooltip = locator.locator("xpath=following-sibling::span[@role='tooltip']");
+    await expect(tooltip).toContainText("新しいタブで開きます");
   }
 
   test.describe("about ページ（DB 不要）", () => {
