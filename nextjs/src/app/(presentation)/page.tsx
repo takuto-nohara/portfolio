@@ -13,7 +13,7 @@ const highlights = [
   },
   {
     title: "複数媒体の制作経験",
-    description: "Web アプリだけでなく、映像やグラフィックも含めてアウトプットの幅を持っています。",
+    description: "Webアプリだけでなく、映像やグラフィックも含めてアウトプットの幅を持っています。",
   },
   {
     title: "学習と実践の接続",
@@ -134,8 +134,8 @@ export default async function Home() {
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
             {highlights.map((highlight) => (
               <section key={highlight.title} className="rounded-3xl border border-border-subtle bg-surface-primary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)]">
-                <h3 className="text-base font-semibold text-foreground-primary">{highlight.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-foreground-secondary">{highlight.description}</p>
+                <h3 className="text-balance text-base font-semibold text-foreground-primary">{highlight.title}</h3>
+                <p className="mt-3 text-pretty text-sm leading-7 text-foreground-secondary">{highlight.description}</p>
               </section>
             ))}
           </div>
