@@ -18,7 +18,7 @@ export default async function AboutPage() {
           <PageHeader
             titleJa="自己紹介"
             titleEn="About"
-            lead="このページでは、経歴、得意領域、使用技術をまとめて確認できます。作品の背景にある興味や学習の流れも含めて、人物像が自然に伝わる構成に整えています。"
+            lead={<>このページでは、経歴、得意領域、使用技術をまとめて確認できます。<br />作品の背景にある興味や学習の流れも含めて、人物像が自然に伝わる構成に整えています。</>}
             align="center"
           />
         </div>
@@ -34,12 +34,12 @@ export default async function AboutPage() {
                 {siteProfile.nameEn}
               </p>
               <p className="mt-4 text-base font-medium text-foreground-primary">{siteProfile.roleJa}</p>
-              <div className="mt-6 space-y-4 text-sm leading-8 text-foreground-secondary">
+              <div className="mt-6 space-y-4 text-left text-sm leading-8 text-foreground-secondary">
                 <p>
                   中学生のころ、動画編集をきっかけにコンテンツ制作の世界に入りました。映像から始まり、パンフレット、Web ページ、そしてアプリケーション開発へと領域を広げています。
                 </p>
                 <p>
-                  「欲しいものが見当たらないなら自分で作ればいい」という姿勢で、幅広いアウトプットに挑戦してきました。現在はフロントエンドからバックエンドまで、Web アプリケーション開発を軸に学習を深めています。
+                  「欲しいものが見当たらないなら自分で作ってしまえ」という姿勢で、幅広いアウトプットに挑戦してきました。現在はフロントエンドからバックエンドまで、Web アプリケーション開発を軸に学習を深めています。
                 </p>
                 <p>コードを書くことは、頭の中のアイデアを実際に動いて触れる形へレンダリングすること。その過程自体に強い面白さを感じています。</p>
               </div>

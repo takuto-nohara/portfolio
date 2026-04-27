@@ -1,7 +1,9 @@
+import type { ReactNode } from "react";
+
 interface PageHeaderProps {
   readonly titleJa: string;
   readonly titleEn: string;
-  readonly lead: string;
+  readonly lead: ReactNode;
   readonly align?: "left" | "center";
   readonly variant?: "default" | "hero";
 }
@@ -22,7 +24,7 @@ export function PageHeader({
         {titleEn}
       </p>
       <h1 className={`mt-3 font-semibold tracking-tight text-foreground-primary ${titleClassName}`}>{titleJa}</h1>
-      <p className="mt-5 text-sm leading-7 text-foreground-secondary sm:text-base">{lead}</p>
+      <p className="mt-5 text-pretty text-sm leading-7 text-foreground-secondary sm:text-base">{lead}</p>
     </header>
   );
 }
