@@ -80,7 +80,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
             <PageHeader
               titleJa={workDetail.title}
               titleEn="Work Details"
-              lead={`このページでは、作品「${workDetail.title}」の制作背景、使用技術、公開先を確認できます。採用担当者が実績の内容を短時間で理解できるよう、要点を整理して掲載しています。`}
+              lead={`作品「${workDetail.title}」の制作背景、使用技術、公開先をまとめています。`}
             />
             {workDetail.publishedAt ? <p className="mt-4 text-sm text-foreground-muted">{`公開日: ${workDetail.publishedAt}`}</p> : null}
           </div>

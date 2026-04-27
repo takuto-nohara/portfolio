@@ -78,9 +78,7 @@ export default async function Home() {
                 連絡する / Contact
               </Link>
             </div>
-            <p className="hero-item mt-5 text-sm text-foreground-muted" data-delay="360">
-              採用担当者の方へ: 作品一覧から制作背景と技術構成を短時間で確認できる構成にしています。
-            </p>
+
           </div>
 
           <div className="order-1 flex justify-center lg:order-2 lg:justify-end">

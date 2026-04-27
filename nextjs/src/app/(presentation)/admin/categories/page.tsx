@@ -46,7 +46,7 @@ export default async function AdminCategoriesPage({ searchParams }: AdminCategor
       <div className="grid gap-8 xl:grid-cols-[minmax(0,360px)_1fr]">
         <section className="rounded-lg border border-border-subtle bg-surface-primary p-6">
           <h2 className="text-base font-semibold text-foreground-primary">新規カテゴリ追加</h2>
-          <p className="mt-2 text-sm leading-7 text-foreground-secondary">作品の背景文脈を採用担当者が読み分けやすい単位で管理します。slug は URL クエリでも使うため半角英数字とハイフンで統一します。</p>
+          <p className="mt-2 text-sm leading-7 text-foreground-secondary">作品の背景文脈を整理する単位で管理します。slug は URL クエリでも使うため半角英数字とハイフンで統一します。</p>
 
           <form action="/api/admin/categories" method="post" className="mt-6 space-y-4">
             <div>

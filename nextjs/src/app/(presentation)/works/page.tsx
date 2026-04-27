@@ -97,7 +97,7 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
           <PageHeader
             titleJa="作品一覧"
             titleEn="Works"
-            lead="これまでに制作した作品を、表示媒体と制作文脈の 2 軸で整理しています。採用担当者が興味の近い制作物へ短時間で到達できるよう、一覧性と絞り込みの両立を重視した構成です。"
+            lead="これまでに制作した作品を、表示媒体と制作文脈の 2 軸で整理しています。絞り込みを使って気になる制作物を探してみてください。"
             align="center"
           />
         </div>
