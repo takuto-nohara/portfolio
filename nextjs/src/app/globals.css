@@ -9,9 +9,11 @@
   --surface-card: #e0f2fe;
   --foreground-primary: #0c4a6e;
   --foreground-secondary: #0369a1;
-  --foreground-muted: #7dd3fc;
-  --border-subtle: #bae6fd;
+  --foreground-muted: #3b82a4;
+  --border-subtle: #7eb5c9;
   --border-accent: #0ea5e933;
+  --focus-ring: #0369a1;
+  --surface-tag: #f7fdff;
 }
 
 @theme inline {
@@ -26,6 +28,8 @@
   --color-foreground-muted: var(--foreground-muted);
   --color-border-subtle: var(--border-subtle);
   --color-border-accent: var(--border-accent);
+  --color-focus-ring: var(--focus-ring);
+  --color-surface-tag: var(--surface-tag);
   --font-sans: var(--font-jetbrains-mono);
   --font-mono: var(--font-jetbrains-mono);
 }
@@ -51,11 +55,90 @@
     text-decoration: none;
   }
 
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid var(--focus-ring);
+    outline-offset: 3px;
+  }
+
   button,
   input,
   textarea,
   select {
     font: inherit;
+  }
+}
+
+@layer components {
+  .chip-base {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border-width: 1px;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+  }
+
+  .chip-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border-subtle);
+    background: var(--surface-primary);
+    color: var(--foreground-secondary);
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .chip-link:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+    transform: translateY(-1px);
+  }
+
+  .chip-link-active {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--accent-primary);
+    background: var(--accent-primary);
+    color: var(--surface-primary);
+    padding: 0.65rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .chip-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 9999px;
+    background: var(--surface-tag);
+    color: var(--foreground-secondary);
+    cursor: default;
+    list-style: none;
+    padding: 0.45rem 0.85rem;
+    pointer-events: none;
+    user-select: text;
+    font-size: 0.75rem;
+    line-height: 1.2;
   }
 }
 
