@@ -41,6 +41,9 @@ export function WorkCard({ work }: WorkCardProps) {
         <div className="p-5 sm:p-6">
           <div className="flex flex-wrap gap-2">
             <CategoryChip labelJa={category.nameJa} labelEn={category.nameEn} />
+            {work.contextCategoryNameJa && work.contextCategoryNameEn ? (
+              <CategoryChip labelJa={work.contextCategoryNameJa} labelEn={work.contextCategoryNameEn} />
+            ) : null}
           </div>
           <h3 className="mt-4 text-lg font-semibold text-foreground-primary transition-colors group-hover:text-accent-primary">
             {work.title}

@@ -6,12 +6,13 @@ import type { AdminSession } from "@/presentation/types/AdminSession";
 interface AdminShellProps extends PropsWithChildren {
   readonly session: AdminSession;
   readonly title: string;
-  readonly activePath: "works" | "contacts" | "settings";
+  readonly activePath: "works" | "categories" | "contacts" | "settings";
 }
 
 export function AdminShell({ session, title, activePath, children }: AdminShellProps) {
   const navItems = [
     { href: "/admin/works", label: "> 制作物管理", key: "works" },
+    { href: "/admin/categories", label: "> 文脈カテゴリ", key: "categories" },
     { href: "/admin/contacts", label: "> お問い合わせ", key: "contacts" },
     { href: "/admin/settings", label: "> サイト設定", key: "settings" },
   ] as const;

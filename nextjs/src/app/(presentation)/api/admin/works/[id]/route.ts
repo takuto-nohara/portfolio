@@ -54,6 +54,17 @@ function getCheckbox(formData: FormData, key: string): boolean {
   return value === "1" || value === "on";
 }
 
+function getOptionalNumber(formData: FormData, key: string): number | null {
+  const value = getText(formData, key);
+
+  if (!value) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
 function isCategory(value: string): value is Category {
   return categories.includes(value as Category);
 }
@@ -111,9 +122,18 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const title = getText(formData, "title");
     const categoryValue = getText(formData, "category");
     const description = getText(formData, "description");
+    const contextCategoryId = getOptionalNumber(formData, "context_category_id");
 
     if (!title || !categoryValue || !description || !isCategory(categoryValue)) {
       return redirectWithStatus(request, `/admin/works/${workId}/edit`, "error");
+    }
+
+    if (contextCategoryId !== null) {
+      const contextCategory = await services.repositories.workContextCategoryRepository.findById(contextCategoryId);
+
+      if (!contextCategory) {
+        return redirectWithStatus(request, `/admin/works/${workId}/edit`, "error");
+      }
     }
 
     const thumbnailFile = getFiles(formData, "thumbnail")[0];
@@ -150,6 +170,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       ...work,
       title,
       category: categoryValue,
+      contextCategoryId,
       description,
       techStack: getOptionalText(formData, "tech_stack") ?? "",
       thumbnail,

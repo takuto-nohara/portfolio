@@ -14,6 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const services = await getAppServices();
     const featuredParam = request.nextUrl.searchParams.get("featured");
     const categoryParam = request.nextUrl.searchParams.get("category");
+    const contextParam = request.nextUrl.searchParams.get("context");
     let category: (typeof categories)[number] | null = null;
 
     if (featuredParam === "1" || featuredParam === "true") {
@@ -30,6 +31,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const works = await services.useCases.getWorkList.execute(category);
+
+    if (contextParam) {
+      if (contextParam === "unassigned") {
+        return NextResponse.json({ data: works.filter((work) => work.contextCategoryId === null) });
+      }
+
+      const contextCategories = await services.useCases.getWorkContextCategoryList.execute();
+
+      if (!contextCategories.some((contextCategory) => contextCategory.slug === contextParam)) {
+        return badRequest("Invalid work context category.");
+      }
+
+      return NextResponse.json({ data: works.filter((work) => work.contextCategorySlug === contextParam) });
+    }
 
     return NextResponse.json({ data: works });
   } catch (error) {

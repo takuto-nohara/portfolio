@@ -34,6 +34,17 @@ function getNumber(formData: FormData, key: string): number {
   return Number.isFinite(value) ? value : 0;
 }
 
+function getOptionalNumber(formData: FormData, key: string): number | null {
+  const value = getText(formData, key);
+
+  if (!value) {
+    return null;
+  }
+
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
 function getFiles(formData: FormData, key: string): File[] {
   return formData
     .getAll(key)
@@ -76,6 +87,7 @@ async function uploadFile(services: Awaited<ReturnType<typeof getAdminServices>>
 function createWorkRecord(input: {
   title: string;
   category: Category;
+  contextCategoryId: number | null;
   description: string;
   techStack: string | null;
   thumbnail: string | null;
@@ -90,6 +102,10 @@ function createWorkRecord(input: {
     id: null,
     title: input.title,
     category: input.category,
+    contextCategoryId: input.contextCategoryId,
+    contextCategorySlug: null,
+    contextCategoryNameJa: null,
+    contextCategoryNameEn: null,
     description: input.description,
     techStack: input.techStack ?? "",
     thumbnail: input.thumbnail,
@@ -117,6 +133,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const title = getText(formData, "title");
     const categoryValue = getText(formData, "category");
     const description = getText(formData, "description");
+    const contextCategoryId = getOptionalNumber(formData, "context_category_id");
 
     if (!title || !categoryValue || !description || !isCategory(categoryValue)) {
       return redirectWithStatus(request, "/admin/works/create", "error");
@@ -127,6 +144,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const galleryFiles = getFiles(formData, "images");
     const thumbnailSource = getOptionalText(formData, "thumbnail_source") ?? "upload";
     const videoUrl = categoryValue === "video" ? getOptionalText(formData, "video_url") : null;
+
+    if (contextCategoryId !== null) {
+      const contextCategory = await services.repositories.workContextCategoryRepository.findById(contextCategoryId);
+
+      if (!contextCategory) {
+        return redirectWithStatus(request, "/admin/works/create", "error");
+      }
+    }
 
     let thumbnail: string | null = null;
     if (thumbnailSource === "youtube" && videoUrl) {
@@ -140,6 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       createWorkRecord({
         title,
         category: categoryValue,
+        contextCategoryId,
         description,
         techStack: getOptionalText(formData, "tech_stack"),
         thumbnail,

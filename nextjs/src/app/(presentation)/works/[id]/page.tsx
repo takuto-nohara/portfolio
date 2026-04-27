@@ -72,6 +72,9 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
           <Breadcrumb items={[{ label: "トップ", href: "/" }, { label: "作品一覧", href: "/works" }, { label: workDetail.title }]} />
           <div className="mt-6 flex flex-wrap gap-2">
             <CategoryChip labelJa={category.nameJa} labelEn={category.nameEn} />
+            {workDetail.contextCategoryNameJa && workDetail.contextCategoryNameEn ? (
+              <CategoryChip labelJa={workDetail.contextCategoryNameJa} labelEn={workDetail.contextCategoryNameEn} />
+            ) : null}
           </div>
           <div className="mt-6 max-w-3xl">
             <PageHeader

@@ -3,6 +3,7 @@ export { D1ContactRepository } from "./db/D1ContactRepository";
 export { D1OAuthTokenRepository } from "./db/D1OAuthTokenRepository";
 export { D1SettingRepository } from "./db/D1SettingRepository";
 export { D1UserRepository } from "./db/D1UserRepository";
+export { D1WorkContextCategoryRepository } from "./db/D1WorkContextCategoryRepository";
 export { D1WorkRepository } from "./db/D1WorkRepository";
 export type { GmailEmailConfig } from "./email/GmailEmailAdapter";
 export { GmailEmailAdapter } from "./email/GmailEmailAdapter";

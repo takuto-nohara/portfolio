@@ -4,6 +4,7 @@ import type {
   Setting,
   User,
   Work,
+  WorkContextCategory,
   WorkImage,
 } from "@/domain/publicApi";
 
@@ -54,10 +55,24 @@ export interface WorkImageRow {
   readonly updated_at: string | null;
 }
 
+export interface WorkContextCategoryRow {
+  readonly id: number;
+  readonly slug: string;
+  readonly name_ja: string;
+  readonly name_en: string;
+  readonly sort_order: number;
+  readonly created_at: string | null;
+  readonly updated_at: string | null;
+}
+
 export interface WorkRow {
   readonly id: number;
   readonly title: string;
   readonly category: Work["category"];
+  readonly context_category_id: number | null;
+  readonly context_category_slug: string | null;
+  readonly context_category_name_ja: string | null;
+  readonly context_category_name_en: string | null;
   readonly description: string;
   readonly tech_stack: string;
   readonly thumbnail: string | null;
@@ -128,11 +143,27 @@ export function mapWorkImageRow(row: WorkImageRow): WorkImage {
   };
 }
 
+export function mapWorkContextCategoryRow(row: WorkContextCategoryRow): WorkContextCategory {
+  return {
+    id: row.id,
+    slug: row.slug,
+    nameJa: row.name_ja,
+    nameEn: row.name_en,
+    sortOrder: row.sort_order,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 export function mapWorkRow(row: WorkRow, images: readonly WorkImage[]): Work {
   return {
     id: row.id,
     title: row.title,
     category: row.category,
+    contextCategoryId: row.context_category_id,
+    contextCategorySlug: row.context_category_slug,
+    contextCategoryNameJa: row.context_category_name_ja,
+    contextCategoryNameEn: row.context_category_name_en,
     description: row.description,
     techStack: row.tech_stack,
     thumbnail: row.thumbnail,

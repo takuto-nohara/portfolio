@@ -1,4 +1,4 @@
-export default {
+const dependencyCruiserConfig = {
   forbidden: [
     {
       name: "no-domain-deps",
@@ -50,3 +50,5 @@ export default {
     },
   },
 };
+
+export default dependencyCruiserConfig;

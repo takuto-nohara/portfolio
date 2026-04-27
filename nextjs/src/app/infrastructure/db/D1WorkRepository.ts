@@ -9,9 +9,13 @@ export class D1WorkRepository implements WorkRepository {
   async findAll(): Promise<readonly Work[]> {
     const rows = await selectAll<WorkRow>(
       this.database.prepare(
-        `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+        `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
+                work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
+                works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                works.is_featured, works.sort_order, works.created_at, works.updated_at
          FROM works
-         ORDER BY sort_order ASC, id DESC`,
+         LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+         ORDER BY works.sort_order ASC, works.id DESC`,
       ),
     );
 
@@ -22,10 +26,14 @@ export class D1WorkRepository implements WorkRepository {
     const rows = await selectAll<WorkRow>(
       this.database
         .prepare(
-          `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+          `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
+                  work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
+                  works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                  works.is_featured, works.sort_order, works.created_at, works.updated_at
            FROM works
-           WHERE category = ?
-           ORDER BY sort_order ASC, id DESC`,
+           LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+           WHERE works.category = ?
+           ORDER BY works.sort_order ASC, works.id DESC`,
         )
         .bind(category),
     );
@@ -36,10 +44,14 @@ export class D1WorkRepository implements WorkRepository {
   async findFeatured(): Promise<readonly Work[]> {
     const rows = await selectAll<WorkRow>(
       this.database.prepare(
-        `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+        `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
+                work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
+                works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                works.is_featured, works.sort_order, works.created_at, works.updated_at
          FROM works
-         WHERE is_featured = 1
-         ORDER BY sort_order ASC, id DESC`,
+         LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+         WHERE works.is_featured = 1
+         ORDER BY works.sort_order ASC, works.id DESC`,
       ),
     );
 
@@ -49,9 +61,13 @@ export class D1WorkRepository implements WorkRepository {
   async findById(id: number): Promise<Work | null> {
     const row = await this.database
       .prepare(
-        `SELECT id, title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+        `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
+                work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
+                works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                works.is_featured, works.sort_order, works.created_at, works.updated_at
          FROM works
-         WHERE id = ?`,
+         LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+         WHERE works.id = ?`,
       )
       .bind(id)
       .first<WorkRow>();
@@ -64,12 +80,13 @@ export class D1WorkRepository implements WorkRepository {
       await this.database
         .prepare(
           `INSERT INTO works (
-             title, category, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
-           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+             title, category, context_category_id, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         )
         .bind(
           work.title,
           work.category,
+          work.contextCategoryId,
           work.description,
           work.techStack,
           work.thumbnail,
@@ -95,12 +112,13 @@ export class D1WorkRepository implements WorkRepository {
     await this.database
       .prepare(
         `UPDATE works
-         SET title = ?, category = ?, description = ?, tech_stack = ?, thumbnail = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
+         SET title = ?, category = ?, context_category_id = ?, description = ?, tech_stack = ?, thumbnail = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
       )
       .bind(
         work.title,
         work.category,
+        work.contextCategoryId,
         work.description,
         work.techStack,
         work.thumbnail,
