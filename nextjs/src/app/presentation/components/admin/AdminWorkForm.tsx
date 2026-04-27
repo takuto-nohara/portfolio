@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { categories, getMediumCategoryDefinition, type Work, type WorkContextCategory } from "@/domain/publicApi";
+import { categories, getMediumCategoryDefinition, type Work, type WorkContextCategory } from "@/application/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 
 interface AdminWorkFormProps {

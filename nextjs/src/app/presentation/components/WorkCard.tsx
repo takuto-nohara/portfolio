@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { getMediumCategoryDefinition, type Work } from "@/domain/publicApi";
+import { getMediumCategoryDefinition, type Work } from "@/application/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 
 import { CategoryChip } from "./CategoryChip";
