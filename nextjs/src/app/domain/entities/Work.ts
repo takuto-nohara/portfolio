@@ -5,6 +5,10 @@ export interface Work {
   readonly id: number | null;
   readonly title: string;
   readonly category: Category;
+  readonly contextCategoryId: number | null;
+  readonly contextCategorySlug: string | null;
+  readonly contextCategoryNameJa: string | null;
+  readonly contextCategoryNameEn: string | null;
   readonly description: string;
   readonly techStack: string;
   readonly thumbnail: string | null;

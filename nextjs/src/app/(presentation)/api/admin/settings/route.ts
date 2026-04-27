@@ -2,17 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-
-function redirectWithStatus(request: NextRequest, status: string): NextResponse {
-  const url = new URL("/admin/settings", request.url);
-  url.searchParams.set("status", status);
-  return NextResponse.redirect(url, { status: 303 });
-}
-
-function getText(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  return typeof value === "string" ? value.trim() : null;
-}
+import { getText, redirectWithStatus } from "@/presentation/lib/api/form-helpers";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session = await getAdminSessionFromRequest(request);
@@ -60,9 +50,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
     ]);
 
-    return redirectWithStatus(request, "saved");
+    return redirectWithStatus(request, "/admin/settings", "saved");
   } catch (error) {
     console.error(error);
-    return redirectWithStatus(request, "error");
+    return redirectWithStatus(request, "/admin/settings", "error");
   }
 }

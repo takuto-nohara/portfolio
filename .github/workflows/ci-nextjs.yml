@@ -5,10 +5,6 @@ on:
     paths:
       - nextjs/**
       - .github/workflows/ci-nextjs.yml
-  pull_request:
-    paths:
-      - nextjs/**
-      - .github/workflows/ci-nextjs.yml
   workflow_dispatch:
 
 jobs:

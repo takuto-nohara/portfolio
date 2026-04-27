@@ -3,27 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { getSiteSettings, getWorks, getWorkDetail } from "@worker/lib/site-data";
+import { getMediumCategoryDefinition } from "@/domain/publicApi";
+import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
+import { Breadcrumb } from "@/presentation/components/Breadcrumb";
+import { CategoryChip } from "@/presentation/components/CategoryChip";
+import { PageHeader } from "@/presentation/components/PageHeader";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 import { SiteShell } from "@/presentation/components/SiteShell";
+import { TechTag } from "@/presentation/components/TechTag";
 import { WorkGalleryModal } from "@/presentation/components/work/WorkGalleryModal";
-
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1) || null;
-    }
-    if (parsed.hostname.includes("youtube.com")) {
-      const v = parsed.searchParams.get("v");
-      if (v) return v;
-      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
-      if (match) return match[2] ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 interface WorkDetailPageProps {
   readonly params: Promise<{
@@ -58,11 +46,32 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     .split(",")
     .map((tech) => tech.trim())
     .filter((tech) => tech.length > 0);
+  const category = getMediumCategoryDefinition(workDetail.category);
 
   return (
-    <SiteShell settings={settings}>
-      <section className="bg-surface-card">
-        <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden">
+    <SiteShell settings={settings} currentPath={`/works/${workId}`}>
+      <section className="bg-surface-secondary px-6 py-10 sm:px-20 sm:py-16">
+        <div className="mx-auto max-w-6xl">
+          <Breadcrumb items={[{ label: "トップ", href: "/" }, { label: "作品一覧", href: "/works" }, { label: workDetail.title }]} />
+          <div className="mt-6 flex flex-wrap gap-2">
+            <CategoryChip labelJa={category.nameJa} labelEn={category.nameEn} />
+            {workDetail.contextCategoryNameJa && workDetail.contextCategoryNameEn ? (
+              <CategoryChip labelJa={workDetail.contextCategoryNameJa} labelEn={workDetail.contextCategoryNameEn} />
+            ) : null}
+          </div>
+          <div className="mt-6 max-w-3xl">
+            <PageHeader
+              titleJa={workDetail.title}
+              titleEn="Work Details"
+              lead={`作品「${workDetail.title}」の制作背景、使用技術、公開先をまとめています。`}
+            />
+            {workDetail.publishedAt ? <p className="mt-4 text-sm text-foreground-muted">{`公開日: ${workDetail.publishedAt}`}</p> : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-surface-primary px-6 pb-4 pt-8 sm:px-20 sm:pt-12">
+        <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden rounded-3xl border border-border-subtle bg-surface-card shadow-[0_24px_70px_-42px_rgba(12,74,110,0.32)]">
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
@@ -70,46 +79,34 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
               fill
               className="object-contain"
               sizes="(min-width: 1152px) 1152px, 100vw"
+              priority
             />
           ) : (
-            <span className="text-sm text-foreground-muted">hero_image</span>
+            <span className="text-sm text-foreground-muted">メインビジュアル準備中 / Hero image pending</span>
           )}
         </div>
       </section>
 
       <section className="bg-surface-primary px-6 py-10 sm:px-20 sm:py-16">
         <div className="mx-auto max-w-4xl">
-          <div className="flex items-center justify-between">
-            <span className="inline-block rounded bg-surface-card px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-accent-primary">
-              {`output.${workDetail.category}`}
-            </span>
-            <Link
-              href="/works"
-              className="text-sm font-medium text-foreground-secondary transition-colors hover:text-accent-primary"
-            >
-              {"> back_to_works"}
-            </Link>
-          </div>
-
-          <h1 className="mt-4 text-3xl font-bold text-foreground-primary">{workDetail.title}</h1>
-          {workDetail.publishedAt ? (
-            <p className="mt-2 text-xs text-foreground-muted">{`published: ${workDetail.publishedAt}`}</p>
-          ) : null}
-
           <div className="mt-10">
-            <h2 className="mb-4 text-lg font-semibold text-foreground-primary">{"> description"}</h2>
-            <p className="text-sm leading-relaxed text-foreground-secondary">{workDetail.description}</p>
+            <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
+              概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Overview</span>
+            </h2>
+            <p className="text-sm leading-8 text-foreground-secondary">{workDetail.description}</p>
           </div>
 
           <div className="mt-10">
-            <h2 className="mb-4 text-lg font-semibold text-foreground-primary">{"> tech_stack"}</h2>
-            <div className="flex flex-wrap gap-2">
+            <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
+              使用技術 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Tech Stack</span>
+            </h2>
+            <ul className="flex flex-wrap gap-2" role="list" aria-label="使用技術">
               {techStack.map((tech) => (
-                <span key={tech} className="rounded border border-border-subtle bg-surface-card px-3 py-1 text-xs text-foreground-secondary">
+                <TechTag key={tech}>
                   {tech}
-                </span>
+                </TechTag>
               ))}
-            </div>
+            </ul>
           </div>
 
           <div className="mt-10 flex flex-wrap gap-4">
@@ -118,9 +115,9 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
                 href={workDetail.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded bg-foreground-primary px-6 py-3 text-sm font-medium text-surface-primary transition-colors hover:bg-foreground-secondary"
+                className="rounded-full bg-foreground-primary px-6 py-3 text-sm font-medium text-surface-primary transition-colors hover:bg-foreground-secondary"
               >
-                {"> github_repo"}
+                GitHub で見る / GitHub
               </a>
             ) : null}
             {workDetail.url ? (
@@ -128,16 +125,18 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
                 href={workDetail.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
+                className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
               >
-                {"> visit_site"}
+                サイトを開く / Visit Site
               </a>
             ) : null}
           </div>
 
           {videoId ? (
             <div className="mt-16">
-              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> video"}</h2>
+              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">
+                動画 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Video</span>
+              </h2>
               <div className="relative aspect-video w-full overflow-hidden rounded-lg">
                 <iframe
                   src={`https://www.youtube.com/embed/${videoId}`}
@@ -152,7 +151,9 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
 
           {workDetail.images.length > 0 ? (
             <div className="mt-16">
-              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">{"> gallery"}</h2>
+              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">
+                ギャラリー <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Gallery</span>
+              </h2>
               <WorkGalleryModal title={workDetail.title} images={workDetail.images} />
             </div>
           ) : null}

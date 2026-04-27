@@ -1,4 +1,4 @@
-import type { Category, PublicSettings, Work } from "@/domain/publicApi";
+import type { Category, PublicSettings, Work, WorkContextCategory } from "@/domain/publicApi";
 
 import { getAppServices } from "@worker/lib/api/services";
 
@@ -29,6 +29,15 @@ export async function getWorks(category?: Category | null): Promise<readonly Wor
   try {
     const services = await getAppServices();
     return await services.useCases.getWorkList.execute(category ?? null);
+  } catch {
+    return [];
+  }
+}
+
+export async function getWorkContextCategories(): Promise<readonly WorkContextCategory[]> {
+  try {
+    const services = await getAppServices();
+    return await services.useCases.getWorkContextCategoryList.execute();
   } catch {
     return [];
   }

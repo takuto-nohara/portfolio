@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
+import { getMediumCategoryDefinition } from "@/domain/publicApi";
 import { AdminShell } from "@/presentation/components/admin/AdminShell";
 
 interface AdminWorksPageProps {
@@ -28,9 +29,14 @@ export default async function AdminWorksPage({ searchParams }: AdminWorksPagePro
 
       <div className="mb-8 flex items-center justify-between">
         <p className="text-sm text-foreground-secondary">{`登録作品数: ${workList.length}`}</p>
-        <Link href="/admin/works/create" className="rounded bg-accent-primary px-6 py-2 text-sm font-medium text-surface-primary transition-colors hover:bg-accent-secondary">
-          {"> new_work"}
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/categories" className="rounded border border-border-subtle px-4 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:border-accent-primary hover:text-accent-primary">
+            文脈カテゴリ管理
+          </Link>
+          <Link href="/admin/works/create" className="rounded bg-accent-primary px-6 py-2 text-sm font-medium text-surface-primary transition-colors hover:bg-accent-secondary">
+            {"> new_work"}
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border border-border-subtle bg-surface-primary">
@@ -38,7 +44,8 @@ export default async function AdminWorksPage({ searchParams }: AdminWorksPagePro
           <thead>
             <tr className="bg-surface-secondary text-xs uppercase tracking-wider text-foreground-secondary">
               <th className="px-6 py-3 text-left">タイトル</th>
-              <th className="px-6 py-3 text-left">カテゴリ</th>
+              <th className="px-6 py-3 text-left">表示媒体</th>
+              <th className="px-6 py-3 text-left">文脈カテゴリ</th>
               <th className="px-6 py-3 text-left">公開日</th>
               <th className="px-6 py-3 text-left">表示順</th>
               <th className="px-6 py-3 text-left">Featured</th>
@@ -51,9 +58,10 @@ export default async function AdminWorksPage({ searchParams }: AdminWorksPagePro
                 <td className="px-6 py-4 text-sm font-medium text-foreground-primary">{work.title}</td>
                 <td className="px-6 py-4">
                   <span className="inline-block rounded bg-surface-card px-2 py-1 text-[10px] font-medium uppercase tracking-widest text-accent-primary">
-                    {work.category}
+                    {getMediumCategoryDefinition(work.category).nameJa}
                   </span>
                 </td>
+                <td className="px-6 py-4 text-sm text-foreground-secondary">{work.contextCategoryNameJa ?? "未設定"}</td>
                 <td className="px-6 py-4 text-sm text-foreground-secondary">{work.publishedAt ?? "-"}</td>
                 <td className="px-6 py-4 text-sm text-foreground-secondary">{work.sortOrder}</td>
                 <td className="px-6 py-4 text-sm">{work.isFeatured ? <span className="text-accent-primary">✓</span> : <span className="text-foreground-muted">-</span>}</td>

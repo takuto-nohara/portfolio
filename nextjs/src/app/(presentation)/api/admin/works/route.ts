@@ -3,79 +3,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { categories, type Category, type Work } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-
-function redirectWithStatus(request: NextRequest, path: string, status: string): NextResponse {
-  const url = new URL(path, request.url);
-  url.searchParams.set("status", status);
-  return NextResponse.redirect(url, { status: 303 });
-}
+import { uploadFile } from "@worker/lib/api/upload";
+import {
+  getCheckbox,
+  getFiles,
+  getNumber,
+  getOptionalNumber,
+  getOptionalText,
+  getText,
+  redirectWithStatus,
+} from "@/presentation/lib/api/form-helpers";
+import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from "@/presentation/lib/youtube";
 
 function isCategory(value: string): value is Category {
   return categories.includes(value as Category);
 }
 
-function getText(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  return typeof value === "string" ? value.trim() : null;
-}
-
-function getOptionalText(formData: FormData, key: string): string | null {
-  const value = getText(formData, key);
-  return value && value.length > 0 ? value : null;
-}
-
-function getCheckbox(formData: FormData, key: string): boolean {
-  const value = formData.get(key);
-  return value === "1" || value === "on";
-}
-
-function getNumber(formData: FormData, key: string): number {
-  const value = Number(getText(formData, key) ?? 0);
-  return Number.isFinite(value) ? value : 0;
-}
-
-function getFiles(formData: FormData, key: string): File[] {
-  return formData
-    .getAll(key)
-    .filter((value): value is File => value instanceof File && value.size > 0);
-}
-
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1) || null;
-    }
-    if (parsed.hostname.includes("youtube.com")) {
-      const v = parsed.searchParams.get("v");
-      if (v) return v;
-      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
-      if (match) return match[2] ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function getYouTubeThumbnailUrl(videoId: string): string {
-  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
-}
-
-async function uploadFile(services: Awaited<ReturnType<typeof getAdminServices>>, file: File, folder: string): Promise<string> {
-  const extension = file.name.includes(".") ? `.${file.name.split(".").pop()}` : "";
-  const key = `${folder}/${crypto.randomUUID()}${extension}`;
-
-  return services.ports.storagePort.upload({
-    key,
-    body: await file.arrayBuffer(),
-    contentType: file.type || "application/octet-stream",
-  });
-}
-
 function createWorkRecord(input: {
   title: string;
   category: Category;
+  contextCategoryId: number | null;
   description: string;
   techStack: string | null;
   thumbnail: string | null;
@@ -90,6 +37,10 @@ function createWorkRecord(input: {
     id: null,
     title: input.title,
     category: input.category,
+    contextCategoryId: input.contextCategoryId,
+    contextCategorySlug: null,
+    contextCategoryNameJa: null,
+    contextCategoryNameEn: null,
     description: input.description,
     techStack: input.techStack ?? "",
     thumbnail: input.thumbnail,
@@ -117,6 +68,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const title = getText(formData, "title");
     const categoryValue = getText(formData, "category");
     const description = getText(formData, "description");
+    const contextCategoryId = getOptionalNumber(formData, "context_category_id");
 
     if (!title || !categoryValue || !description || !isCategory(categoryValue)) {
       return redirectWithStatus(request, "/admin/works/create", "error");
@@ -128,18 +80,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const thumbnailSource = getOptionalText(formData, "thumbnail_source") ?? "upload";
     const videoUrl = categoryValue === "video" ? getOptionalText(formData, "video_url") : null;
 
+    if (contextCategoryId !== null) {
+      const contextCategory = await services.repositories.workContextCategoryRepository.findById(contextCategoryId);
+
+      if (!contextCategory) {
+        return redirectWithStatus(request, "/admin/works/create", "error");
+      }
+    }
+
     let thumbnail: string | null = null;
     if (thumbnailSource === "youtube" && videoUrl) {
       const videoId = extractYouTubeVideoId(videoUrl);
       thumbnail = videoId ? getYouTubeThumbnailUrl(videoId) : null;
     } else if (thumbnailFile) {
-      thumbnail = await uploadFile(services, thumbnailFile, "works/thumbnails");
+      thumbnail = await uploadFile(services.ports.storagePort, thumbnailFile, "works/thumbnails");
     }
 
     const work = await services.useCases.createWork.execute(
       createWorkRecord({
         title,
         category: categoryValue,
+        contextCategoryId,
         description,
         techStack: getOptionalText(formData, "tech_stack"),
         thumbnail,
@@ -154,7 +115,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     if (work.id !== null) {
       for (const file of galleryFiles) {
-        const path = await uploadFile(services, file, `works/${work.id}/gallery`);
+        const path = await uploadFile(services.ports.storagePort, file, `works/${work.id}/gallery`);
         await services.useCases.addWorkImage.execute(work.id, path, null);
       }
     }

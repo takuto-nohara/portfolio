@@ -37,17 +37,17 @@ export function ContactForm() {
     const nextErrors: Partial<Record<keyof FormValues, string>> = {};
 
     if (values.name.trim().length === 0) {
-      nextErrors.name = "name is required.";
+      nextErrors.name = "お名前を入力してください。";
     }
 
     if (values.email.trim().length === 0) {
-      nextErrors.email = "email is required.";
+      nextErrors.email = "メールアドレスを入力してください。";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-      nextErrors.email = "email is invalid.";
+      nextErrors.email = "メールアドレスの形式を確認してください。";
     }
 
     if (values.message.trim().length === 0) {
-      nextErrors.message = "message is required.";
+      nextErrors.message = "お問い合わせ内容を入力してください。";
     }
 
     setFieldErrors(nextErrors);
@@ -64,40 +64,48 @@ export function ContactForm() {
     }
 
     startTransition(async () => {
-      const response = await fetch("/api/contacts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      try {
+        const response = await fetch("/api/contacts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
 
-      const payload = (await response.json()) as { error?: string };
+        const payload = (await response.json()) as { error?: string };
 
-      if (!response.ok) {
-        setErrorMessage(payload.error ?? "送信に失敗しました。時間を置いて再度お試しください。");
-        return;
+        if (!response.ok) {
+          setErrorMessage(payload.error ?? "送信に失敗しました。時間を置いて再度お試しください。");
+          return;
+        }
+
+        setValues(initialValues);
+        setFieldErrors({});
+        setSuccessMessage("お問い合わせを送信しました。ありがとうございます。");
+      } catch {
+        setErrorMessage("通信に失敗しました。接続状況を確認して再度お試しください。");
       }
-
-      setValues(initialValues);
-      setFieldErrors({});
-      setSuccessMessage("お問い合わせを送信しました。ありがとうございます。");
     });
   };
 
   return (
-    <form onSubmit={submit} className="space-y-8">
+    <form onSubmit={submit} noValidate className="space-y-8">
       {successMessage ? (
-        <div className="rounded border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">{successMessage}</div>
+        <div role="status" aria-live="polite" className="rounded border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          {successMessage}
+        </div>
       ) : null}
 
       {errorMessage ? (
-        <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{errorMessage}</div>
+        <div role="alert" className="rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </div>
       ) : null}
 
       <div>
         <label htmlFor="name" className="mb-2 block text-sm font-medium text-foreground-primary">
-          {"> name"}
+          お名前 / Name
         </label>
         <input
           type="text"
@@ -106,15 +114,22 @@ export function ContactForm() {
           value={values.name}
           onChange={(event) => updateField("name", event.target.value)}
           required
+          autoComplete="name"
+          aria-invalid={fieldErrors.name ? "true" : "false"}
+          aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
           className={`w-full rounded border bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary ${fieldErrors.name ? "border-red-400" : "border-border-subtle"}`}
-          placeholder="your_name"
+          placeholder="例: 野原 拓人"
         />
-        {fieldErrors.name ? <p className="mt-1 text-xs text-red-500">{fieldErrors.name}</p> : null}
+        {fieldErrors.name ? (
+          <p id="contact-name-error" className="mt-1 text-xs text-red-600">
+            {fieldErrors.name}
+          </p>
+        ) : null}
       </div>
 
       <div>
         <label htmlFor="email" className="mb-2 block text-sm font-medium text-foreground-primary">
-          {"> email"}
+          メールアドレス / Email
         </label>
         <input
           type="email"
@@ -123,15 +138,22 @@ export function ContactForm() {
           value={values.email}
           onChange={(event) => updateField("email", event.target.value)}
           required
+          autoComplete="email"
+          aria-invalid={fieldErrors.email ? "true" : "false"}
+          aria-describedby={fieldErrors.email ? "contact-email-error" : undefined}
           className={`w-full rounded border bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary ${fieldErrors.email ? "border-red-400" : "border-border-subtle"}`}
-          placeholder="your@email.com"
+          placeholder="例: example@example.com"
         />
-        {fieldErrors.email ? <p className="mt-1 text-xs text-red-500">{fieldErrors.email}</p> : null}
+        {fieldErrors.email ? (
+          <p id="contact-email-error" className="mt-1 text-xs text-red-600">
+            {fieldErrors.email}
+          </p>
+        ) : null}
       </div>
 
       <div>
         <label htmlFor="message" className="mb-2 block text-sm font-medium text-foreground-primary">
-          {"> message"}
+          お問い合わせ内容 / Message
         </label>
         <textarea
           id="message"
@@ -140,10 +162,16 @@ export function ContactForm() {
           value={values.message}
           onChange={(event) => updateField("message", event.target.value)}
           required
+          aria-invalid={fieldErrors.message ? "true" : "false"}
+          aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
           className={`w-full resize-none rounded border bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary ${fieldErrors.message ? "border-red-400" : "border-border-subtle"}`}
-          placeholder="write_your_message_here..."
+          placeholder="ご相談内容やご用件を入力してください。"
         />
-        {fieldErrors.message ? <p className="mt-1 text-xs text-red-500">{fieldErrors.message}</p> : null}
+        {fieldErrors.message ? (
+          <p id="contact-message-error" className="mt-1 text-xs text-red-600">
+            {fieldErrors.message}
+          </p>
+        ) : null}
       </div>
 
       <button
@@ -151,7 +179,7 @@ export function ContactForm() {
         disabled={isPending}
         className="w-full rounded bg-accent-primary py-3 text-sm font-medium text-surface-primary transition-colors hover:bg-accent-secondary disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {isPending ? "> submitting..." : "> submit_request"}
+        {isPending ? "送信中... / Sending" : "送信する / Send"}
       </button>
     </form>
   );

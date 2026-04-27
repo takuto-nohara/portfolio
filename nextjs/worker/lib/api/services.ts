@@ -3,24 +3,29 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import {
   AddWorkImageUseCase,
   CreateWorkUseCase,
+  CreateWorkContextCategoryUseCase,
   DeleteContactUseCase,
   DeleteWorkImageUseCase,
   DeleteWorkUseCase,
+  DeleteWorkContextCategoryUseCase,
   GetFeaturedWorksUseCase,
   GetContactListUseCase,
   GetPublicSettingsUseCase,
   GetSettingsUseCase,
   GetWorkDetailUseCase,
   GetWorkListUseCase,
+  GetWorkContextCategoryListUseCase,
   SendContactUseCase,
   UpdateSettingsUseCase,
   UpdateWorkImageCaptionUseCase,
   UpdateWorkUseCase,
+  UpdateWorkContextCategoryUseCase,
 } from "@/application/publicApi";
 import {
   D1ContactRepository,
   D1OAuthTokenRepository,
   D1SettingRepository,
+  D1WorkContextCategoryRepository,
   D1WorkRepository,
   GmailEmailAdapter,
   GoogleOAuthAdapter,
@@ -60,6 +65,7 @@ async function getBaseServices() {
   const bucket = requireBinding(env.R2_BUCKET, "R2_BUCKET");
 
   const workRepository = new D1WorkRepository(database);
+  const workContextCategoryRepository = new D1WorkContextCategoryRepository(database);
   const contactRepository = new D1ContactRepository(database);
   const settingRepository = new D1SettingRepository(database);
   const oAuthTokenRepository = new D1OAuthTokenRepository(database);
@@ -71,6 +77,7 @@ async function getBaseServices() {
     env,
     repositories: {
       workRepository,
+      workContextCategoryRepository,
       contactRepository,
       settingRepository,
       oAuthTokenRepository,
@@ -81,18 +88,22 @@ async function getBaseServices() {
     useCases: {
       addWorkImage: new AddWorkImageUseCase(workRepository),
       createWork: new CreateWorkUseCase(workRepository),
+      createWorkContextCategory: new CreateWorkContextCategoryUseCase(workContextCategoryRepository),
       deleteContact: new DeleteContactUseCase(contactRepository),
       deleteWork: new DeleteWorkUseCase(workRepository),
       deleteWorkImage: new DeleteWorkImageUseCase(workRepository),
+      deleteWorkContextCategory: new DeleteWorkContextCategoryUseCase(workContextCategoryRepository),
       getContactList: new GetContactListUseCase(contactRepository),
       getFeaturedWorks: new GetFeaturedWorksUseCase(workRepository),
       getPublicSettings: new GetPublicSettingsUseCase(settingRepository),
       getSettings: new GetSettingsUseCase(settingRepository),
       getWorkDetail: new GetWorkDetailUseCase(workRepository),
       getWorkList: new GetWorkListUseCase(workRepository),
+      getWorkContextCategoryList: new GetWorkContextCategoryListUseCase(workContextCategoryRepository),
       updateSettings: new UpdateSettingsUseCase(settingRepository),
       updateWork: new UpdateWorkUseCase(workRepository),
       updateWorkImageCaption: new UpdateWorkImageCaptionUseCase(workRepository),
+      updateWorkContextCategory: new UpdateWorkContextCategoryUseCase(workContextCategoryRepository),
     },
   };
 }

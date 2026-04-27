@@ -1,13 +1,17 @@
+/* eslint-disable @next/next/no-img-element */
+
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
 
-import type { Work } from "@/domain/publicApi";
+import { categories, getMediumCategoryDefinition, type Work, type WorkContextCategory } from "@/application/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
+import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 
 interface AdminWorkFormProps {
   readonly mode: "create" | "edit";
+  readonly contextCategories: readonly WorkContextCategory[];
   readonly work?: Work;
   readonly status?: string;
 }
@@ -20,25 +24,7 @@ function toDateInputValue(value: string | null): string {
   return value.includes("T") ? value.split("T")[0] : value.split(" ")[0];
 }
 
-function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const parsed = new URL(url);
-    if (parsed.hostname === "youtu.be") {
-      return parsed.pathname.slice(1) || null;
-    }
-    if (parsed.hostname.includes("youtube.com")) {
-      const v = parsed.searchParams.get("v");
-      if (v) return v;
-      const match = parsed.pathname.match(/\/(embed|shorts|v)\/([^/?]+)/);
-      if (match) return match[2] ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-export function AdminWorkForm({ mode, work, status }: AdminWorkFormProps) {
+export function AdminWorkForm({ mode, contextCategories, work, status }: AdminWorkFormProps) {
   const isEditing = mode === "edit" && work;
   const action = isEditing ? `/api/admin/works/${work.id}` : "/api/admin/works";
 
@@ -102,12 +88,40 @@ export function AdminWorkForm({ mode, work, status }: AdminWorkFormProps) {
               onChange={(e) => setCategory(e.target.value)}
               className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             >
-              <option value="">select_category</option>
-              <option value="app">output.app</option>
-              <option value="web">output.web</option>
-              <option value="video">output.video</option>
-              <option value="graphic">output.graphic</option>
+              <option value="">表示媒体を選択</option>
+              {categories.map((mediumCategory) => {
+                const definition = getMediumCategoryDefinition(mediumCategory);
+
+                return (
+                  <option key={mediumCategory} value={mediumCategory}>
+                    {`${definition.nameJa} / ${definition.nameEn}`}
+                  </option>
+                );
+              })}
             </select>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center justify-between gap-4">
+              <label htmlFor="context_category_id" className="block text-sm font-medium text-foreground-primary">{"> context_category"}</label>
+              <Link href="/admin/categories" className="text-xs text-accent-primary transition-colors hover:text-accent-secondary">
+                文脈カテゴリを管理
+              </Link>
+            </div>
+            <select
+              id="context_category_id"
+              name="context_category_id"
+              defaultValue={work?.contextCategoryId != null ? String(work.contextCategoryId) : ""}
+              className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+            >
+              <option value="">未設定</option>
+              {contextCategories.map((contextCategory) => (
+                <option key={contextCategory.id} value={String(contextCategory.id)}>
+                  {`${contextCategory.nameJa} / ${contextCategory.nameEn}`}
+                </option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs text-foreground-muted">作品の背景文脈で分類したい場合に設定します。</p>
           </div>
 
           <div>
