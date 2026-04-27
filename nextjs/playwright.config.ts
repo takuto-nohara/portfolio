@@ -19,7 +19,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    // CI では opennextjs-cloudflare build 済みの成果物を wrangler dev で起動する。
+    // next dev は getPlatformProxy() 経由の D1 バインディングが CI 環境で
+    // 不安定なため、実際の Cloudflare Workers ランタイムを使う preview を使用する。
+    command: process.env.CI ? "npx opennextjs-cloudflare preview" : "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

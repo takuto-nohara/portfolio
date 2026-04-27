@@ -53,8 +53,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Apply D1 local migrations
-        run: npm run db:migrate:local
+      - name: Build for E2E
+        # opennextjs-cloudflare preview（wrangler dev）が必要とする .open-next/ を生成する。
+        # next dev + getPlatformProxy() は CI 環境で D1 バインディングが不安定なため、
+        # 実際の Cloudflare Workers ランタイムを使った preview でテストする。
+        run: npx opennextjs-cloudflare build
 
       - name: Run E2E tests
+        # globalSetup が D1 マイグレーション適用・シードを行い、
+        # その後 opennextjs-cloudflare preview がサーバーを起動する。
         run: npm run test:e2e
