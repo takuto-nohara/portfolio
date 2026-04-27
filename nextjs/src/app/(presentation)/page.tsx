@@ -45,7 +45,9 @@ export default async function Home() {
               {siteProfile.roleJa}
             </p>
             <p className="hero-item mt-6 max-w-2xl text-sm leading-8 text-foreground-secondary sm:text-base" data-delay="250">
-              {siteProfile.homeLead}
+              {siteProfile.homeLead.map((line, i) => (
+                <span key={i}>{line}{i < siteProfile.homeLead.length - 1 && <br />}</span>
+              ))}
             </p>
             <div className="hero-item mt-10 flex flex-wrap gap-3" data-delay="300">
               <Link
