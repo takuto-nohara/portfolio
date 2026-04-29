@@ -4,6 +4,7 @@ import type { PropsWithChildren } from "react";
 import type { PublicSettings } from "@/domain/publicApi";
 import { siteNavigationItems, siteProfile } from "@/presentation/content/siteProfile";
 
+import { MobileNav } from "./MobileNav";
 import { SiteEffects } from "./SiteEffects";
 
 interface SiteShellProps extends PropsWithChildren {
@@ -37,7 +38,7 @@ export function SiteShell({ settings, currentPath, children }: SiteShellProps) {
             </span>
           </Link>
 
-          <nav aria-label="主要ナビゲーション" className="flex flex-wrap items-center justify-end gap-3 sm:gap-5">
+          <nav aria-label="主要ナビゲーション" className="hidden items-center gap-3 sm:flex sm:gap-5">
             {siteNavigationItems.map((item) => {
               const active = isCurrentPath(currentPath, item.href);
 
@@ -56,6 +57,8 @@ export function SiteShell({ settings, currentPath, children }: SiteShellProps) {
               );
             })}
           </nav>
+
+          <MobileNav />
         </div>
       </header>
 
