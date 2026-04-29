@@ -25,7 +25,7 @@ export default async function AboutPage() {
       </section>
 
       <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-border-subtle bg-surface-secondary p-8 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] sm:p-10">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-border-subtle bg-surface-secondary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] sm:p-10">
           <div className="flex flex-col items-center gap-8 text-center">
             <ProfileAvatar sizeClass="h-48 w-48 sm:h-64 sm:w-64" priority />
             <div className="max-w-2xl">
@@ -48,7 +48,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-surface-primary px-6 pb-12 sm:px-20 sm:pb-20">
+      <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
         <div className="mx-auto max-w-5xl">
           <div className="mb-12 text-center">
             <h2 className="text-2xl font-semibold text-foreground-primary">使用技術</h2>
@@ -74,10 +74,10 @@ export default async function AboutPage() {
           </div>
           <div className="space-y-8">
             {experiences.map((experience) => (
-              <div key={`${experience.date}-${experience.title}`} className="rounded-2xl border border-border-subtle bg-surface-secondary p-6 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)]">
-                <div className="flex items-start gap-6">
-                  <span className="w-20 shrink-0 text-sm font-semibold text-accent-primary">{experience.date}</span>
-                  <div>
+              <div key={`${experience.date}-${experience.title}`} className="rounded-2xl border border-border-subtle bg-surface-secondary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)] sm:p-6">
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-6">
+                  <span className="shrink-0 text-sm font-semibold text-accent-primary sm:w-20">{experience.date}</span>
+                  <div className="min-w-0">
                   <h3 className="text-base font-semibold text-foreground-primary">{experience.title}</h3>
                     <p className="mt-2 break-keep text-pretty text-sm leading-7 text-foreground-secondary">{experience.description}</p>
                     {experience.href && experience.label ? (
