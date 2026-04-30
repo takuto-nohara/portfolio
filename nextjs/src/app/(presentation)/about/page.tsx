@@ -28,8 +28,8 @@ export default async function AboutPage() {
         <div className="mx-auto max-w-5xl rounded-3xl border border-border-subtle bg-surface-secondary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] sm:p-10">
           <div className="flex flex-col items-center gap-8 text-center">
             <ProfileAvatar sizeClass="h-48 w-48 sm:h-64 sm:w-64" priority />
-            <div className="max-w-2xl">
-              <h2 className="text-3xl font-semibold text-foreground-primary">{siteProfile.nameJa}</h2>
+            <div className="w-full max-w-2xl">
+              <h2 className="text-2xl font-semibold text-foreground-primary sm:text-3xl">{siteProfile.nameJa}</h2>
               <p className="mt-2 text-sm uppercase tracking-[0.18em] text-accent-primary" lang="en">
                 {siteProfile.nameEn}
               </p>
