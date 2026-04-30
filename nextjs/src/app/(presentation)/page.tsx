@@ -94,7 +94,7 @@ export default async function Home() {
             <div>
               <h2 className="text-2xl font-semibold text-foreground-primary">注目の作品</h2>
               <p className="mt-2 text-sm text-foreground-secondary" lang="en">
-                Featured Works
+                Picup Works
               </p>
             </div>
             <Link href="/works" className="text-sm font-medium text-accent-primary transition-colors hover:text-accent-secondary">
