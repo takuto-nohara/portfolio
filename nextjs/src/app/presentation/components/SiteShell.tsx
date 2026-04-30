@@ -17,7 +17,7 @@ function isCurrentPath(currentPath: string | undefined, href: string) {
     return false;
   }
 
-  return currentPath === href || currentPath.startsWith(`${href}/`);
+  return currentPath === href || (href !== "/" && currentPath.startsWith(`${href}/`));
 }
 
 export function SiteShell({ settings, currentPath, children }: SiteShellProps) {

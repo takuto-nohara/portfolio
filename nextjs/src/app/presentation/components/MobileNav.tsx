@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 import { siteNavigationItems, siteProfile } from "@/presentation/content/siteProfile";
 
 function isCurrentPath(pathname: string, href: string) {
-  return pathname === href || pathname.startsWith(`${href}/`);
+  return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 }
 
 // SSR では false、CSR では true を返す。setState-in-effect を使わずに済む

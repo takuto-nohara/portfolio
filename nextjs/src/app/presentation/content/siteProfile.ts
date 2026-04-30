@@ -13,6 +13,7 @@ export const siteProfile = {
 } as const;
 
 export const siteNavigationItems = [
+  { href: "/", labelJa: "トップ", labelEn: "Top" },
   { href: "/works", labelJa: "作品", labelEn: "Works" },
   { href: "/about", labelJa: "自己紹介", labelEn: "About" },
   { href: "/contact", labelJa: "連絡先", labelEn: "Contact" },
