@@ -92,10 +92,28 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
         <div className="mx-auto max-w-4xl">
           <div className="mt-10">
             <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
-              概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Overview</span>
+              作品概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Overview</span>
             </h2>
             <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.description}</p>
           </div>
+
+          {workDetail.techDescription ? (
+            <div className="mt-10">
+              <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
+                技術概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Technical Overview</span>
+              </h2>
+              <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.techDescription}</p>
+            </div>
+          ) : null}
+
+          {workDetail.background ? (
+            <div className="mt-10">
+              <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
+                作成背景 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Background</span>
+              </h2>
+              <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.background}</p>
+            </div>
+          ) : null}
 
           <div className="mt-10">
             <h2 className="mb-4 text-lg font-semibold text-foreground-primary">

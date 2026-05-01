@@ -24,6 +24,8 @@ function createWorkRecord(input: {
   category: Category;
   contextCategoryId: number | null;
   description: string;
+  techDescription: string | null;
+  background: string | null;
   techStack: string | null;
   thumbnail: string | null;
   videoUrl: string | null;
@@ -42,6 +44,8 @@ function createWorkRecord(input: {
     contextCategoryNameJa: null,
     contextCategoryNameEn: null,
     description: input.description,
+    techDescription: input.techDescription,
+    background: input.background,
     techStack: input.techStack ?? "",
     thumbnail: input.thumbnail,
     videoUrl: input.videoUrl,
@@ -102,6 +106,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         category: categoryValue,
         contextCategoryId,
         description,
+        techDescription: getOptionalText(formData, "tech_description"),
+        background: getOptionalText(formData, "background"),
         techStack: getOptionalText(formData, "tech_stack"),
         thumbnail,
         videoUrl,

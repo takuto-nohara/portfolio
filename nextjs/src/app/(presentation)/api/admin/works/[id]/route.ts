@@ -111,6 +111,8 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       category: categoryValue,
       contextCategoryId,
       description,
+      techDescription: getOptionalText(formData, "tech_description") ?? null,
+      background: getOptionalText(formData, "background") ?? null,
       techStack: getOptionalText(formData, "tech_stack") ?? "",
       thumbnail,
       videoUrl,

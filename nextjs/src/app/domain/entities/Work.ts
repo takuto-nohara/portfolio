@@ -10,6 +10,8 @@ export interface Work {
   readonly contextCategoryNameJa: string | null;
   readonly contextCategoryNameEn: string | null;
   readonly description: string;
+  readonly techDescription: string | null;
+  readonly background: string | null;
   readonly techStack: string;
   readonly thumbnail: string | null;
   readonly videoUrl: string | null;

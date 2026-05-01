@@ -74,6 +74,8 @@ export interface WorkRow {
   readonly context_category_name_ja: string | null;
   readonly context_category_name_en: string | null;
   readonly description: string;
+  readonly tech_description: string | null;
+  readonly background: string | null;
   readonly tech_stack: string;
   readonly thumbnail: string | null;
   readonly video_url: string | null;
@@ -165,6 +167,8 @@ export function mapWorkRow(row: WorkRow, images: readonly WorkImage[]): Work {
     contextCategoryNameJa: row.context_category_name_ja,
     contextCategoryNameEn: row.context_category_name_en,
     description: row.description,
+    techDescription: row.tech_description ?? null,
+    background: row.background ?? null,
     techStack: row.tech_stack,
     thumbnail: row.thumbnail,
     videoUrl: row.video_url,

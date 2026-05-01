@@ -125,13 +125,35 @@ export function AdminWorkForm({ mode, contextCategories, work, status }: AdminWo
           </div>
 
           <div>
-            <label htmlFor="description" className="mb-2 block text-sm font-medium text-foreground-primary">{"> description"}</label>
+            <label htmlFor="description" className="mb-2 block text-sm font-medium text-foreground-primary">{"> description (作品概要)"}</label>
             <textarea
               id="description"
               name="description"
               rows={4}
               defaultValue={work?.description ?? ""}
               required
+              className="w-full resize-none rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="tech_description" className="mb-2 block text-sm font-medium text-foreground-primary">{"> tech_description (技術概要)"}</label>
+            <textarea
+              id="tech_description"
+              name="tech_description"
+              rows={4}
+              defaultValue={work?.techDescription ?? ""}
+              className="w-full resize-none rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="background" className="mb-2 block text-sm font-medium text-foreground-primary">{"> background (作成背景)"}</label>
+            <textarea
+              id="background"
+              name="background"
+              rows={4}
+              defaultValue={work?.background ?? ""}
               className="w-full resize-none rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
             />
           </div>

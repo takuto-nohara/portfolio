@@ -11,7 +11,7 @@ export class D1WorkRepository implements WorkRepository {
       this.database.prepare(
         `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
                 work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
                 works.is_featured, works.sort_order, works.created_at, works.updated_at
          FROM works
          LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
@@ -28,7 +28,7 @@ export class D1WorkRepository implements WorkRepository {
         .prepare(
           `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
                   work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                  works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                  works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
                   works.is_featured, works.sort_order, works.created_at, works.updated_at
            FROM works
            LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
@@ -46,7 +46,7 @@ export class D1WorkRepository implements WorkRepository {
       this.database.prepare(
         `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
                 work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
                 works.is_featured, works.sort_order, works.created_at, works.updated_at
          FROM works
          LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
@@ -63,7 +63,7 @@ export class D1WorkRepository implements WorkRepository {
       .prepare(
         `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
                 work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                works.description, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
+                works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
                 works.is_featured, works.sort_order, works.created_at, works.updated_at
          FROM works
          LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
@@ -80,14 +80,16 @@ export class D1WorkRepository implements WorkRepository {
       await this.database
         .prepare(
           `INSERT INTO works (
-             title, category, context_category_id, description, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
-           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+             title, category, context_category_id, description, tech_description, background, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         )
         .bind(
           work.title,
           work.category,
           work.contextCategoryId,
           work.description,
+          work.techDescription,
+          work.background,
           work.techStack,
           work.thumbnail,
           work.videoUrl,
@@ -112,7 +114,7 @@ export class D1WorkRepository implements WorkRepository {
     await this.database
       .prepare(
         `UPDATE works
-         SET title = ?, category = ?, context_category_id = ?, description = ?, tech_stack = ?, thumbnail = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
+         SET title = ?, category = ?, context_category_id = ?, description = ?, tech_description = ?, background = ?, tech_stack = ?, thumbnail = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
       )
       .bind(
@@ -120,6 +122,8 @@ export class D1WorkRepository implements WorkRepository {
         work.category,
         work.contextCategoryId,
         work.description,
+        work.techDescription,
+        work.background,
         work.techStack,
         work.thumbnail,
         work.videoUrl,
