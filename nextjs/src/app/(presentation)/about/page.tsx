@@ -18,7 +18,7 @@ export default async function AboutPage() {
           <PageHeader
             titleJa="自己紹介"
             titleEn="About"
-            lead={<>このページでは、経歴、得意領域、使用技術をまとめて確認できます。<br />作品の背景にある興味や学習の流れも含めて、人物像が自然に伝わる構成に整えています。</>}
+            lead={<>このページでは、経歴、得意領域、使用技術をまとめて確認できます。</>}
             align="center"
           />
         </div>

@@ -34,7 +34,7 @@ export const experiences: readonly ExperienceItem[] = [
     date: "2026.04",
     title: "学園祭実行委員会 紹介サイトを新設",
     description:
-      "工学院大学・学園祭実行委員会の紹介サイトを設計・公開。Cloudflare D1 / R2 を組み合わせた疑似 CMS 構成で、独自ドメイン取得から保守・運用まで一人で担当。",
+      "工学院大学・学園祭実行委員会の紹介サイトを設計・公開。Cloudflare D1 / R2 を組み合わせた疑似 CMS 構成で、独自ドメイン取得から保守・運用まで一人で担当。現在に至るまで、学園祭の情報発信の中心的な役割を果たしている。",
     href: "https://www.kute-fes.com/",
     label: "kute-fes.com →",
   },
@@ -42,7 +42,7 @@ export const experiences: readonly ExperienceItem[] = [
     date: "2025.12",
     title: "株式会社 Zequt — 創業初期エンジニアとして参加",
     description:
-      "友人の創業した会社に創業初期エンジニアとして加わる。Web アプリ開発、ホームページ制作、パンフレットデザインを担当し、現在に至る。",
+      "友人の創業した会社に創業初期エンジニアとして加わる。Web アプリ開発、ホームページ制作、パンフレットデザインを担当した。",
   },
   {
     date: "2025.10",

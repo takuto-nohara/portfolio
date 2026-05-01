@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { ContactForm } from "@/presentation/components/contact/ContactForm";
-import { ExternalLink } from "@/presentation/components/ExternalLink";
 import { PageHeader } from "@/presentation/components/PageHeader";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { getSiteSettings } from "@worker/lib/site-data";
@@ -18,7 +17,7 @@ export default async function ContactPage() {
           <PageHeader
             titleJa="連絡先"
             titleEn="Contact"
-            lead="このページでは、お問い合わせフォームと直接連絡先を確認できます。採用や制作に関するご相談は、フォームまたはメールからご連絡ください。"
+            lead={<>このページでは、お問い合わせフォームと直接連絡先を確認できます。<br />採用や制作に関するご相談は、フォームまたはメールからご連絡ください。</>}
             align="center"
           />
         </div>
@@ -42,19 +41,6 @@ export default async function ContactPage() {
                   <a href={`mailto:${settings.contactEmail}`} className="mt-1 inline-flex text-accent-primary transition-colors hover:text-accent-secondary">
                     {settings.contactEmail}
                   </a>
-                ) : (
-                  <p className="mt-1 text-foreground-muted">設定準備中</p>
-                )}
-              </div>
-              <div>
-                <p className="font-medium text-foreground-primary">GitHub</p>
-                {settings.githubUrl ? (
-                  <ExternalLink
-                    href={settings.githubUrl}
-                    className="mt-1 inline-flex text-accent-primary transition-colors hover:text-accent-secondary"
-                  >
-                    プロフィールを見る / Visit GitHub
-                  </ExternalLink>
                 ) : (
                   <p className="mt-1 text-foreground-muted">設定準備中</p>
                 )}
