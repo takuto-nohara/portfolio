@@ -94,7 +94,7 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
             <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
               概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Overview</span>
             </h2>
-            <p className="text-sm leading-8 text-foreground-secondary">{workDetail.description}</p>
+            <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.description}</p>
           </div>
 
           <div className="mt-10">
