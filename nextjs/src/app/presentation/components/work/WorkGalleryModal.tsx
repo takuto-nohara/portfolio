@@ -116,7 +116,7 @@ export function WorkGalleryModal({ title, images }: WorkGalleryModalProps) {
 
           {/* コンテンツエリア（z-[61] で背景の上に確実に表示） */}
           <div className="pointer-events-none fixed inset-0 z-61 flex items-start justify-center overflow-y-auto px-4 py-8 sm:px-8">
-            <div className="pointer-events-auto mx-auto w-full max-w-2xl">
+            <div className="pointer-events-auto mx-auto w-full max-w-4xl">
               <div className="flex flex-col rounded-2xl border border-border-subtle bg-surface-secondary p-4 shadow-2xl sm:p-5">
 
                 {/* 閉じるボタン（右上） */}
@@ -146,7 +146,7 @@ export function WorkGalleryModal({ title, images }: WorkGalleryModalProps) {
                     <img
                       src={activeImageUrl}
                       alt={`${title} gallery image`}
-                      className="max-h-[50vh] w-full object-contain sm:max-h-[55vh]"
+                      className="max-h-[60vh] w-full object-contain sm:max-h-[70vh]"
                     />
                   </div>
 
@@ -183,16 +183,20 @@ export function WorkGalleryModal({ title, images }: WorkGalleryModalProps) {
 
                 {/* キャプション + ページ番号（sm以上） */}
                 <div className="mt-3 hidden items-start justify-between gap-4 px-1 sm:flex">
-                  <p className="min-h-6 text-sm leading-relaxed text-foreground-secondary">
-                    {activeImage.caption ?? "説明は未設定です。"}
-                  </p>
-                  <span className="shrink-0 pt-0.5 text-xs text-foreground-muted">{`${activeIndex + 1} / ${images.length}`}</span>
+                  {activeImage.caption && (
+                    <p className="text-sm leading-relaxed text-foreground-secondary">
+                      {activeImage.caption}
+                    </p>
+                  )}
+                  <span className="ml-auto shrink-0 pt-0.5 text-xs text-foreground-muted">{`${activeIndex + 1} / ${images.length}`}</span>
                 </div>
 
                 {/* キャプション（モバイル） */}
-                <p className="mt-2 min-h-6 text-sm leading-relaxed text-foreground-secondary sm:hidden">
-                  {activeImage.caption ?? "説明は未設定です。"}
-                </p>
+                {activeImage.caption && (
+                  <p className="mt-2 text-sm leading-relaxed text-foreground-secondary sm:hidden">
+                    {activeImage.caption}
+                  </p>
+                )}
               </div>
             </div>
           </div>
