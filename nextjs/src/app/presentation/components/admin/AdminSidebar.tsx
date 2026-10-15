@@ -75,7 +75,7 @@ export function AdminSidebar({ counts, mobileOpen, onCloseMobile }: AdminSidebar
       {mobileOpen ? <div aria-hidden="true" className="fixed inset-0 z-40 bg-ink/30 md:hidden" onClick={onCloseMobile} /> : null}
       <aside
         id="admin-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex w-60 min-w-0 flex-col overflow-hidden border-r border-line bg-[#f1f5f8] transition-[transform,width] duration-300 ease-out-expo md:static md:z-auto md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 min-w-0 flex-col overflow-hidden border-r border-line bg-panel transition-[transform,width] duration-300 ease-out-expo md:static md:z-auto md:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         } ${expanded ? "md:w-60" : "md:w-[72px]"}`}
       >

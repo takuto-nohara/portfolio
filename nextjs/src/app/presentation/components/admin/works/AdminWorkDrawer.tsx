@@ -60,7 +60,7 @@ export function AdminWorkDrawer({ work, onClose }: AdminWorkDrawerProps) {
               <div role="menu" className="absolute top-11 right-0 z-[5] min-w-[200px] rounded border border-line bg-white p-1 shadow-[0_16px_40px_rgba(12,31,46,0.14)]">
                 <form action={`/api/admin/works/${work.id}`} method="post">
                   <input type="hidden" name="intent" value="toggle-featured" />
-                  <button type="submit" role="menuitem" className={`${menuItemClassName} font-medium text-ink hover:bg-[#f1f5f8]`}>
+                  <button type="submit" role="menuitem" className={`${menuItemClassName} font-medium text-ink hover:bg-panel`}>
                     <AdminIcon name="star" className="h-[15px] w-[15px]" />
                     {work.isFeatured ? "トップ掲載を外す" : "トップに掲載する"}
                   </button>
@@ -93,7 +93,7 @@ export function AdminWorkDrawer({ work, onClose }: AdminWorkDrawerProps) {
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-sky-soft px-2.5 py-0.5 text-xs font-bold text-link-hover">{getMediumCategoryDefinition(work.category).nameJa}</span>
-        <span className="rounded-full bg-[#f1f5f8] px-2.5 py-0.5 text-xs font-bold text-ink-body">{work.contextCategoryNameJa ?? "未分類"}</span>
+        <span className="rounded-full bg-panel px-2.5 py-0.5 text-xs font-bold text-ink-body">{work.contextCategoryNameJa ?? "未分類"}</span>
         {work.isFeatured ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-sky-pale bg-white px-2.5 py-px text-xs font-bold text-link">
             <AdminIcon name="star" filled className="h-3 w-3 text-sky" />

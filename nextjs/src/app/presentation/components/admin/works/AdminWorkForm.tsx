@@ -184,7 +184,7 @@ export function AdminWorkForm({ contextCategories, work }: AdminWorkFormProps) {
             <Field id="tech-stack-input" label="技術スタック" hint="Enter またはカンマで追加します。">
               <div className="flex min-h-[46px] flex-wrap items-center gap-1.5 rounded border border-line-strong bg-white px-2 py-1.5 focus-within:border-link focus-within:shadow-[0_0_0_3px_rgba(3,105,161,0.15)]">
                 {stack.map((tech) => (
-                  <span key={tech} className="inline-flex h-7 items-center gap-1 rounded-full bg-[#f1f5f8] pr-1.5 pl-2.5 font-mono text-xs text-ink-body">
+                  <span key={tech} className="inline-flex h-7 items-center gap-1 rounded-full bg-panel pr-1.5 pl-2.5 font-mono text-xs text-ink-body">
                     {tech}
                     <button
                       type="button"

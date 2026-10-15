@@ -79,7 +79,7 @@ export function ConfirmSubmitButton({ formId, title, body, confirmLabel = "削�
                     ref={cancelRef}
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="h-11 cursor-pointer rounded border-0 bg-transparent px-4 text-sm font-medium text-ink-body hover:bg-[#f1f5f8]"
+                    className="h-11 cursor-pointer rounded border-0 bg-transparent px-4 text-sm font-medium text-ink-body hover:bg-panel"
                   >
                     キャンセル
                   </button>

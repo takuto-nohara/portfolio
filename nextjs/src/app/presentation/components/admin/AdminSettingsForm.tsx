@@ -27,7 +27,7 @@ function SettingsSection({ title, description, last = false, children }: { reado
 
 function LockedValue({ value }: { readonly value: string }) {
   return (
-    <div className="flex h-11 items-center gap-2 rounded border border-line bg-[#f1f5f8] px-3 font-mono text-[13px] text-ink-body">
+    <div className="flex h-11 items-center gap-2 rounded border border-line bg-panel px-3 font-mono text-[13px] text-ink-body">
       <AdminIcon name="lock" className="h-3.5 w-3.5 text-ink-muted" />
       <span className="truncate">{value}</span>
     </div>

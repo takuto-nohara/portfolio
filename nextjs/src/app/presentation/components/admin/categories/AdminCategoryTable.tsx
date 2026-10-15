@@ -55,6 +55,19 @@ function EditableFields({ category, sortOrder }: { readonly category?: WorkConte
   );
 }
 
+function RowActions({ submitLabel, onCancel }: { readonly submitLabel: string; readonly onCancel: () => void }) {
+  return (
+    <div className="flex justify-end gap-1">
+      <button type="submit" title={submitLabel} aria-label={submitLabel} className={saveButton}>
+        <AdminIcon name="check" className="h-4 w-4" />
+      </button>
+      <button type="button" onClick={onCancel} title="キャンセル" aria-label="キャンセル" className={adminIconButton}>
+        <AdminIcon name="x" className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 export function AdminCategoryTable({ rows, nextSortOrder, unassignedCount }: AdminCategoryTableProps) {
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -98,14 +111,7 @@ export function AdminCategoryTable({ rows, nextSortOrder, unassignedCount }: Adm
           >
             <EditableFields sortOrder={nextSortOrder} />
             <span className="hidden font-mono text-xs text-ink-muted md:block">—</span>
-            <div className="flex justify-end gap-1">
-              <button type="submit" title="追加" aria-label="追加" className={saveButton}>
-                <AdminIcon name="check" className="h-4 w-4" />
-              </button>
-              <button type="button" onClick={() => setAdding(false)} title="キャンセル" aria-label="キャンセル" className={adminIconButton}>
-                <AdminIcon name="x" className="h-4 w-4" />
-              </button>
-            </div>
+            <RowActions submitLabel="追加" onCancel={() => setAdding(false)} />
           </form>
           <p className="m-0 px-3 py-2 text-xs text-ink-muted">slug は URL クエリでも使うため、半角英小文字・数字とハイフンで入力します。</p>
         </div>
@@ -126,14 +132,7 @@ export function AdminCategoryTable({ rows, nextSortOrder, unassignedCount }: Adm
                 <input type="hidden" name="intent" value="update" />
                 <EditableFields category={category} sortOrder={category.sortOrder} />
                 <span className="hidden font-mono text-xs text-ink-muted md:block">{`${workCount} 件`}</span>
-                <div className="flex justify-end gap-1">
-                  <button type="submit" title="保存" aria-label="保存" className={saveButton}>
-                    <AdminIcon name="check" className="h-4 w-4" />
-                  </button>
-                  <button type="button" onClick={() => setEditingId(null)} title="キャンセル" aria-label="キャンセル" className={adminIconButton}>
-                    <AdminIcon name="x" className="h-4 w-4" />
-                  </button>
-                </div>
+                <RowActions submitLabel="保存" onCancel={() => setEditingId(null)} />
               </form>
             ) : (
               <div className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-3 py-3.5 hover:bg-sky-soft/45 ${gridColumns}`}>
@@ -144,7 +143,7 @@ export function AdminCategoryTable({ rows, nextSortOrder, unassignedCount }: Adm
                 </span>
                 <span className="hidden text-[13px] text-ink-body md:block">{category.nameEn}</span>
                 <span className="order-3 col-span-full flex items-center gap-3 md:order-none md:col-span-1">
-                  <span className="rounded-full bg-[#f1f5f8] px-2.5 py-0.5 font-mono text-[11.5px] text-ink-body">{category.slug}</span>
+                  <span className="rounded-full bg-panel px-2.5 py-0.5 font-mono text-[11.5px] text-ink-body">{category.slug}</span>
                   <span className="font-mono text-xs md:hidden">{`作品 ${workCount} 件`}</span>
                 </span>
                 <span className="hidden font-mono text-xs md:block">{`${workCount} 件`}</span>
