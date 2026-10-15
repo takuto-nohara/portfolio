@@ -231,24 +231,24 @@ export function AdminWorkForm({ contextCategories, work }: AdminWorkFormProps) {
                 ) : (
                   <input type="hidden" name="thumbnail_source" value="upload" />
                 )}
-                {useYoutubeThumbnail ? (
-                  <p className="m-0 text-xs text-ink-muted">動画のサムネイルを自動で使います。</p>
-                ) : (
-                  <label className="flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 rounded border border-dashed border-[rgba(12,74,110,0.3)] bg-white px-3 text-center text-[13px] text-ink-body transition-colors focus-within:border-sky hover:border-sky hover:bg-[#f5fbff] hover:text-link">
-                    <AdminIcon name="upload" />
-                    {uploadPreview ? "別の画像を選ぶ" : isEditing && work.thumbnail ? "画像を差し替える" : "クリックして画像を選択"}
-                    <input
-                      type="file"
-                      name="thumbnail"
-                      accept="image/*"
-                      onChange={(event) => {
-                        const file = event.target.files?.[0];
-                        setUploadPreview(file ? URL.createObjectURL(file) : null);
-                      }}
-                      className="sr-only"
-                    />
-                  </label>
-                )}
+                {useYoutubeThumbnail ? <p className="m-0 text-xs text-ink-muted">動画のサムネイルを自動で使います。</p> : null}
+                {/* 取得元を切り替えても選択済みのファイルを失わないよう、入力欄は常にマウントしておく */}
+                <label
+                  hidden={useYoutubeThumbnail}
+                  className="flex min-h-[72px] cursor-pointer flex-col items-center justify-center gap-1 rounded border border-dashed border-[rgba(12,74,110,0.3)] bg-white px-3 text-center text-[13px] text-ink-body transition-colors focus-within:border-sky hover:border-sky hover:bg-[#f5fbff] hover:text-link">
+                  <AdminIcon name="upload" />
+                  {uploadPreview ? "別の画像を選ぶ" : isEditing && work.thumbnail ? "画像を差し替える" : "クリックして画像を選択"}
+                  <input
+                    type="file"
+                    name="thumbnail"
+                    accept="image/*"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      setUploadPreview(file ? URL.createObjectURL(file) : null);
+                    }}
+                    className="sr-only"
+                  />
+                </label>
                 <div role="radiogroup" aria-label="サムネイルの表示方法" className="flex flex-wrap items-center gap-1.5">
                   <span className="mr-1 text-xs font-bold text-ink-body">表示方法</span>
                   {thumbnailFits.map((option) => (
