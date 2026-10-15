@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
 import { getWorkDetail } from "@worker/lib/site-data";
-import { AdminShell } from "@/presentation/components/admin/AdminShell";
+import { AdminPage } from "@/presentation/components/admin/AdminPageHeader";
 import { AdminWorkForm } from "@/presentation/components/admin/AdminWorkForm";
 
 interface AdminWorkEditPageProps {
@@ -25,7 +25,7 @@ export default async function AdminWorkEditPage({ params, searchParams }: AdminW
     notFound();
   }
 
-  const session = await requireAdminPageSession(`/admin/works/${workId}/edit`);
+  await requireAdminPageSession(`/admin/works/${workId}/edit`);
   const services = await getAdminServices();
   const { status } = await searchParams;
   const [work, contextCategories] = await Promise.all([getWorkDetail(workId), services.useCases.getWorkContextCategoryList.execute()]);
@@ -35,8 +35,8 @@ export default async function AdminWorkEditPage({ params, searchParams }: AdminW
   }
 
   return (
-    <AdminShell session={session} title={"> 作品編集"} activePath="works">
+    <AdminPage>
       <AdminWorkForm mode="edit" contextCategories={contextCategories} work={work} status={status} />
-    </AdminShell>
+    </AdminPage>
   );
 }

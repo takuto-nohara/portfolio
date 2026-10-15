@@ -3,7 +3,7 @@ import Link from "next/link";
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
 import { getMediumCategoryDefinition } from "@/domain/publicApi";
-import { AdminShell } from "@/presentation/components/admin/AdminShell";
+import { AdminPage } from "@/presentation/components/admin/AdminPageHeader";
 
 interface AdminWorksPageProps {
   readonly searchParams: Promise<{
@@ -14,13 +14,13 @@ interface AdminWorksPageProps {
 export const dynamic = "force-dynamic";
 
 export default async function AdminWorksPage({ searchParams }: AdminWorksPageProps) {
-  const session = await requireAdminPageSession("/admin/works");
+  await requireAdminPageSession("/admin/works");
   const services = await getAdminServices();
   const workList = await services.useCases.getWorkList.execute();
   const { status } = await searchParams;
 
   return (
-    <AdminShell session={session} title={"> 制作物管理"} activePath="works">
+    <AdminPage>
       {status === "created" || status === "updated" || status === "deleted" ? (
         <div className="mb-6 rounded border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
           {status === "created" ? "作品を作成しました。" : status === "updated" ? "作品を更新しました。" : "作品を削除しました。"}
@@ -83,6 +83,6 @@ export default async function AdminWorksPage({ searchParams }: AdminWorksPagePro
           </tbody>
         </table>
       </div>
-    </AdminShell>
+    </AdminPage>
   );
 }

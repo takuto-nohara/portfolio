@@ -1,6 +1,6 @@
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-import { AdminShell } from "@/presentation/components/admin/AdminShell";
+import { AdminPage } from "@/presentation/components/admin/AdminPageHeader";
 
 interface AdminCategoriesPageProps {
   readonly searchParams: Promise<{
@@ -11,7 +11,7 @@ interface AdminCategoriesPageProps {
 export const dynamic = "force-dynamic";
 
 export default async function AdminCategoriesPage({ searchParams }: AdminCategoriesPageProps) {
-  const session = await requireAdminPageSession("/admin/categories");
+  await requireAdminPageSession("/admin/categories");
   const services = await getAdminServices();
   const { status } = await searchParams;
   const [contextCategories, workList] = await Promise.all([
@@ -30,7 +30,7 @@ export default async function AdminCategoriesPage({ searchParams }: AdminCategor
   }
 
   return (
-    <AdminShell session={session} title={"> 文脈カテゴリ管理"} activePath="categories">
+    <AdminPage>
       {status === "created" || status === "updated" || status === "deleted" ? (
         <div className="mb-6 rounded border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
           {status === "created" ? "文脈カテゴリを作成しました。" : status === "updated" ? "文脈カテゴリを更新しました。" : "文脈カテゴリを削除しました。"}
@@ -126,6 +126,6 @@ export default async function AdminCategoriesPage({ searchParams }: AdminCategor
           </div>
         </section>
       </div>
-    </AdminShell>
+    </AdminPage>
   );
 }

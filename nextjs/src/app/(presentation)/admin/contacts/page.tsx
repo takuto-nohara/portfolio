@@ -1,6 +1,6 @@
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-import { AdminShell } from "@/presentation/components/admin/AdminShell";
+import { AdminPage } from "@/presentation/components/admin/AdminPageHeader";
 
 interface AdminContactsPageProps {
   readonly searchParams: Promise<{
@@ -11,13 +11,13 @@ interface AdminContactsPageProps {
 export const dynamic = "force-dynamic";
 
 export default async function AdminContactsPage({ searchParams }: AdminContactsPageProps) {
-  const session = await requireAdminPageSession("/admin/contacts");
+  await requireAdminPageSession("/admin/contacts");
   const services = await getAdminServices();
   const contacts = await services.useCases.getContactList.execute();
   const { status } = await searchParams;
 
   return (
-    <AdminShell session={session} title={"> お問い合わせ管理"} activePath="contacts">
+    <AdminPage>
       <div className="mb-8 flex items-center justify-between">
         <p className="text-sm text-foreground-secondary">{`受信件数: ${contacts.length}`}</p>
       </div>
@@ -62,6 +62,6 @@ export default async function AdminContactsPage({ searchParams }: AdminContactsP
           </tbody>
         </table>
       </div>
-    </AdminShell>
+    </AdminPage>
   );
 }
