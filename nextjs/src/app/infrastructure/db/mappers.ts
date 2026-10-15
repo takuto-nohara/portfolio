@@ -1,11 +1,12 @@
-import type {
-  Contact,
-  OAuthToken,
-  Setting,
-  User,
-  Work,
-  WorkContextCategory,
-  WorkImage,
+import {
+  type Contact,
+  type OAuthToken,
+  type Setting,
+  type User,
+  type Work,
+  type WorkContextCategory,
+  type WorkImage,
+  toThumbnailFit,
 } from "@/domain/publicApi";
 
 export interface ContactRow {
@@ -73,11 +74,14 @@ export interface WorkRow {
   readonly context_category_slug: string | null;
   readonly context_category_name_ja: string | null;
   readonly context_category_name_en: string | null;
+  readonly lead: string | null;
+  readonly role: string | null;
   readonly description: string;
   readonly tech_description: string | null;
   readonly background: string | null;
   readonly tech_stack: string;
   readonly thumbnail: string | null;
+  readonly thumbnail_fit: string | null;
   readonly video_url: string | null;
   readonly url: string | null;
   readonly github_url: string | null;
@@ -166,11 +170,14 @@ export function mapWorkRow(row: WorkRow, images: readonly WorkImage[]): Work {
     contextCategorySlug: row.context_category_slug,
     contextCategoryNameJa: row.context_category_name_ja,
     contextCategoryNameEn: row.context_category_name_en,
+    lead: row.lead ?? null,
+    role: row.role ?? null,
     description: row.description,
     techDescription: row.tech_description ?? null,
     background: row.background ?? null,
     techStack: row.tech_stack,
     thumbnail: row.thumbnail,
+    thumbnailFit: toThumbnailFit(row.thumbnail_fit),
     videoUrl: row.video_url,
     url: row.url,
     githubUrl: row.github_url,
