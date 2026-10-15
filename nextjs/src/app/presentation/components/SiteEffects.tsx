@@ -1,397 +1,145 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-const LINE_RGB = "14, 165, 233";
-const DOT_COLORS = [
-  [14, 165, 233],
-  [2, 132, 199],
-  [56, 189, 248],
-  [125, 211, 252],
-] as const;
-const MAX_DIST = 170;
-const BASE_SPEED = 0.42;
+const PAGE_LEAVE_MS = 240;
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  r: number;
-  color: readonly [number, number, number];
-  alpha: number;
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
-}
-
+/**
+ * 公開サイト全体の演出。
+ * - [data-reveal] 要素をスクロールに合わせて表示する（rise / render / type の 3 種）
+ * - 内部リンク遷移時に main をフェードアウト → 遷移後にフェードイン
+ */
 export function SiteEffects() {
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const revealed = new WeakSet<Element>();
     const timeoutIds: number[] = [];
-    const cleanupCallbacks: Array<() => void> = [];
 
-    const schedule = (callback: () => void, ms: number) => {
-      const timeoutId = window.setTimeout(callback, ms);
-      timeoutIds.push(timeoutId);
-      return timeoutId;
-    };
-
-    const triggerHeroItems = () => {
-      if (prefersReducedMotion) {
+    const show = (element: HTMLElement, stagger: number) => {
+      if (revealed.has(element)) {
         return;
       }
 
-      document.querySelectorAll<HTMLElement>(".hero-item").forEach((element) => {
-        const delay = Number.parseInt(element.dataset.delay ?? "0", 10);
-        schedule(() => element.classList.add("is-visible"), Number.isNaN(delay) ? 0 : delay);
+      revealed.add(element);
+      element.style.opacity = "";
+      const scanLine = element.querySelector<HTMLElement>("[data-scan]");
+
+      if (reduceMotion) {
+        scanLine?.style.setProperty("display", "none");
+        return;
+      }
+
+      const delay = stagger * 90;
+      const kind = element.dataset.reveal;
+
+      if (kind === "render") {
+        element.style.animation = `render-clip 1.15s var(--ease-out) ${delay}ms both`;
+        if (scanLine) {
+          scanLine.style.animation = `scan 1.15s var(--ease-out) ${delay}ms both`;
+        }
+        const image = element.querySelector<HTMLElement>("[data-img]");
+        if (image) {
+          image.style.animation = `focus-in 1.6s ease ${delay}ms both`;
+        }
+        return;
+      }
+
+      if (kind === "type") {
+        const steps = Math.max(8, (element.textContent ?? "").trim().length);
+        element.style.animation = `type-in ${Math.min(1.2, steps * 0.035)}s steps(${steps}, end) ${delay}ms both`;
+        return;
+      }
+
+      element.style.animation = `rise 1.1s var(--ease-out) ${delay}ms both`;
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            show(entry.target as HTMLElement, 0);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
+    );
+
+    const arm = () => {
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      let stagger = 0;
+
+      document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((element) => {
+        if (revealed.has(element)) {
+          return;
+        }
+
+        const rect = element.getBoundingClientRect();
+
+        if (rect.top < viewportHeight && rect.bottom > 0) {
+          show(element, stagger);
+          stagger += 1;
+        } else {
+          element.style.opacity = "0";
+          observer.observe(element);
+        }
       });
     };
 
-    const initHeroCanvas = () => {
-      const canvas = document.getElementById("hero-canvas") as HTMLCanvasElement | null;
+    arm();
+    // 画像の読み込みなどでレイアウトがずれた場合の取りこぼし対策
+    timeoutIds.push(window.setTimeout(arm, 600), window.setTimeout(arm, 1500));
 
-      if (!canvas || prefersReducedMotion) {
-        return;
-      }
-
-      const context = canvas.getContext("2d");
-
-      if (!context) {
-        return;
-      }
-
-      let particles: Particle[] = [];
-      let width = 0;
-      let height = 0;
-      let animationFrameId = 0;
-      let resizeTimeoutId = 0;
-
-      const resize = () => {
-        const devicePixelRatio = window.devicePixelRatio || 1;
-        width = canvas.offsetWidth;
-        height = canvas.offsetHeight;
-        canvas.width = width * devicePixelRatio;
-        canvas.height = height * devicePixelRatio;
-        context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-      };
-
-      const createParticle = (): Particle => {
-        const color = DOT_COLORS[Math.floor(Math.random() * DOT_COLORS.length)];
-        const angle = Math.random() * Math.PI * 2;
-        const speed = BASE_SPEED * (0.5 + Math.random());
-
-        return {
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          r: Math.random() * 2.8 + 1.4,
-          color,
-          alpha: 0.55 + Math.random() * 0.35,
-        };
-      };
-
-      const init = () => {
-        resize();
-        const count = Math.max(45, Math.floor((width * height) / 12000));
-        particles = Array.from({ length: Math.min(count, 100) }, createParticle);
-      };
-
-      const drawFrame = () => {
-        context.clearRect(0, 0, width, height);
-
-        for (let index = 0; index < particles.length; index += 1) {
-          for (let nextIndex = index + 1; nextIndex < particles.length; nextIndex += 1) {
-            const dx = particles[index].x - particles[nextIndex].x;
-            const dy = particles[index].y - particles[nextIndex].y;
-            const distanceSquared = dx * dx + dy * dy;
-
-            if (distanceSquared < MAX_DIST * MAX_DIST) {
-              const ratio = 1 - Math.sqrt(distanceSquared) / MAX_DIST;
-              context.beginPath();
-              context.moveTo(particles[index].x, particles[index].y);
-              context.lineTo(particles[nextIndex].x, particles[nextIndex].y);
-              context.strokeStyle = `rgba(${LINE_RGB}, ${(ratio * 0.38).toFixed(3)})`;
-              context.lineWidth = 1;
-              context.stroke();
-            }
-          }
-        }
-
-        for (const particle of particles) {
-          const [red, green, blue] = particle.color;
-          context.beginPath();
-          context.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
-          context.fillStyle = `rgba(${red}, ${green}, ${blue}, ${particle.alpha})`;
-          context.fill();
-        }
-      };
-
-      const tick = () => {
-        for (const particle of particles) {
-          particle.x += particle.vx;
-          particle.y += particle.vy;
-
-          if (particle.x < -8) {
-            particle.x = width + 8;
-          } else if (particle.x > width + 8) {
-            particle.x = -8;
-          }
-
-          if (particle.y < -8) {
-            particle.y = height + 8;
-          } else if (particle.y > height + 8) {
-            particle.y = -8;
-          }
-        }
-      };
-
-      const loop = () => {
-        tick();
-        drawFrame();
-        animationFrameId = window.requestAnimationFrame(loop);
-      };
-
-      const onResize = () => {
-        if (resizeTimeoutId) {
-          window.clearTimeout(resizeTimeoutId);
-        }
-
-        resizeTimeoutId = schedule(() => {
-          window.cancelAnimationFrame(animationFrameId);
-          init();
-          loop();
-        }, 200);
-      };
-
-      window.addEventListener("resize", onResize);
-      cleanupCallbacks.push(() => {
-        window.removeEventListener("resize", onResize);
-        window.cancelAnimationFrame(animationFrameId);
-        if (resizeTimeoutId) {
-          window.clearTimeout(resizeTimeoutId);
-        }
-      });
-
-      init();
-      loop();
-    };
-
-    const typeInElement = async (element: HTMLElement | null, text: string, speed: number) => {
-      if (!element?.isConnected) {
-        return null;
-      }
-
-      const cursor = document.createElement("span");
-      cursor.className = "terminal-cursor";
-      element.appendChild(cursor);
-
-      for (const character of text) {
-        if (!element.isConnected) {
-          cursor.remove();
-          return null;
-        }
-
-        cursor.insertAdjacentText("beforebegin", character);
-        await sleep(speed);
-      }
-
-      return element.isConnected ? cursor : null;
-    };
-
-    const createIntroOverlay = () => {
-      const overlay = document.createElement("div");
-      overlay.id = "intro-overlay";
-      overlay.setAttribute("aria-hidden", "true");
-      overlay.innerHTML = `
-        <div class="intro-terminal">
-          <div class="intro-prompt">
-            <span id="intro-line-1" class="intro-line"></span>
-          </div>
-          <div class="intro-prompt">
-            <span id="intro-line-2" class="intro-line"></span>
-          </div>
-          <div class="intro-prompt">
-            <span id="intro-line-3" class="intro-line"></span>
-          </div>
-        </div>
-        <p class="intro-skip">click or press any key to skip</p>
-      `;
-      document.body.appendChild(overlay);
-      return overlay;
-    };
-
-    const mainElement = document.querySelector<HTMLElement>("main[data-site-main='true']");
-    initHeroCanvas();
-
-    const isTransitionArrival =
-      !prefersReducedMotion && !!window.sessionStorage.getItem("portfolio-transition-active");
-    window.sessionStorage.removeItem("portfolio-transition-active");
-
-    if (isTransitionArrival && mainElement) {
-      const addPageEnter = () => {
-        mainElement.classList.add("page-enter");
-        const onAnimationEnd = () => {
-          mainElement.classList.remove("page-enter");
-        };
-        mainElement.addEventListener("animationend", onAnimationEnd, { once: true });
-        cleanupCallbacks.push(() => mainElement.removeEventListener("animationend", onAnimationEnd));
-      };
-
-      const transitionOverlayEl = document.getElementById("transition-overlay");
-      if (transitionOverlayEl) {
-        const transitionArrivalStyle = document.getElementById("portfolio-transition-arrival-style");
-        // transition なしで即座に opacity:1 の状態にする
-        transitionOverlayEl.style.transition = "none";
-        transitionOverlayEl.classList.add("active");
-        window.requestAnimationFrame(() => {
-          // 初回ペイント前に注入した強制表示CSSを外し、通常のフェードへ戻す
-          transitionArrivalStyle?.remove();
-          transitionOverlayEl.style.transition = "";
-          addPageEnter();
-          schedule(() => {
-            transitionOverlayEl.classList.remove("active");
-          }, 30);
-        });
-      } else {
-        addPageEnter();
-      }
-    }
-
-    const shouldSkipIntro = prefersReducedMotion || !!window.sessionStorage.getItem("portfolio-intro-shown");
-    const introOverlay = shouldSkipIntro ? null : createIntroOverlay();
-
-    if (shouldSkipIntro) {
-      triggerHeroItems();
-    } else if (introOverlay) {
-        window.sessionStorage.setItem("portfolio-intro-shown", "1");
-        const line1Element = document.getElementById("intro-line-1");
-        const line2Element = document.getElementById("intro-line-2");
-        const line3Element = document.getElementById("intro-line-3");
-        let dismissed = false;
-
-        const dismiss = () => {
-          if (dismissed) {
-            return;
-          }
-
-          dismissed = true;
-          introOverlay.classList.add("fade-out");
-          schedule(() => triggerHeroItems(), 200);
-          schedule(() => introOverlay.remove(), 420);
-        };
-
-        const onOverlayClick = () => dismiss();
-        const onKeyDown = () => dismiss();
-
-        introOverlay.addEventListener("click", onOverlayClick, { once: true });
-        document.addEventListener("keydown", onKeyDown, { once: true });
-        cleanupCallbacks.push(() => {
-          introOverlay.removeEventListener("click", onOverlayClick);
-          document.removeEventListener("keydown", onKeyDown);
-        });
-
-        line1Element?.classList.add("is-command");
-
-        void (async () => {
-          const cursor1 = await typeInElement(line1Element, "$ ./portfolio --start", 30);
-          cursor1?.remove();
-
-          if (dismissed) {
-            return;
-          }
-
-          await sleep(100);
-
-          const cursor2 = await typeInElement(line2Element, "> Loading TN_ Portfolio...", 30);
-          cursor2?.remove();
-
-          if (dismissed) {
-            return;
-          }
-
-          await sleep(100);
-          await typeInElement(line3Element, "> Welcome.", 30);
-
-          if (dismissed) {
-            return;
-          }
-
-          await sleep(480);
-          dismiss();
-        })();
-    }
-
-    if (!prefersReducedMotion) {
-      const transitionOverlay = document.getElementById("transition-overlay");
-      const transitionTextElement = document.getElementById("transition-text");
-
-      if (transitionOverlay && transitionTextElement) {
-        const getLabel = (href: string) => {
-          try {
-            const pathname = new URL(href, window.location.origin).pathname;
-            return pathname === "/" ? "~" : pathname.replace(/^\/+|\/+$/g, "");
-          } catch {
-            return href;
-          }
-        };
-
-        const links = Array.from(document.querySelectorAll<HTMLAnchorElement>("a[href]"));
-
-        for (const link of links) {
-          const href = link.getAttribute("href") ?? "";
-
-          if (!href || href.startsWith("#") || href.startsWith("mailto:")) {
-            continue;
-          }
-
-          try {
-            const url = new URL(link.href);
-
-            if (url.origin !== window.location.origin) {
-              continue;
-            }
-
-            if (url.pathname.includes("/admin") || url.pathname.includes("/login") || url.pathname.includes("/logout")) {
-              continue;
-            }
-          } catch {
-            continue;
-          }
-
-          const onClick = (event: MouseEvent) => {
-            const nextUrl = new URL(link.href);
-            if (nextUrl.pathname === window.location.pathname) {
-              return;
-            }
-
-            event.preventDefault();
-            transitionTextElement.textContent = "";
-            transitionOverlay.classList.add("active");
-
-            void (async () => {
-              await typeInElement(transitionTextElement, `$ cd ${getLabel(link.href)}`, 28);
-              await sleep(80);
-              window.sessionStorage.setItem("portfolio-transition-active", "1");
-              router.push(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
-            })();
-          };
-
-          link.addEventListener("click", onClick);
-          cleanupCallbacks.push(() => link.removeEventListener("click", onClick));
-        }
-      }
-    }
+    const main = document.querySelector<HTMLElement>("main[data-site-main]");
+    main?.classList.remove("page-leave");
+    main?.classList.add("page-enter");
 
     return () => {
+      observer.disconnect();
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
-      cleanupCallbacks.forEach((callback) => callback());
     };
+  }, [pathname]);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const onClick = (event: MouseEvent) => {
+      if (reduceMotion || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+
+      const anchor = (event.target as Element | null)?.closest("a");
+
+      if (!anchor || anchor.target === "_blank" || anchor.hasAttribute("download")) {
+        return;
+      }
+
+      const url = new URL(anchor.href, window.location.href);
+
+      // 同一パス内（絞り込み・ページ内リンク）はフェードさせない
+      if (url.origin !== window.location.origin || url.pathname.startsWith("/api/") || url.pathname === window.location.pathname) {
+        return;
+      }
+
+      const main = document.querySelector<HTMLElement>("main[data-site-main]");
+
+      if (!main) {
+        return;
+      }
+
+      event.preventDefault();
+      main.classList.remove("page-enter");
+      main.classList.add("page-leave");
+      window.setTimeout(() => router.push(`${url.pathname}${url.search}${url.hash}`), PAGE_LEAVE_MS);
+    };
+
+    // capture 段階で先に処理し、next/link の遷移を遅延させる
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
   }, [router]);
 
   return null;

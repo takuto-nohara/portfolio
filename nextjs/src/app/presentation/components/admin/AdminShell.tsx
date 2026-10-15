@@ -18,7 +18,7 @@ export function AdminShell({ session, title, activePath, children }: AdminShellP
   ] as const;
 
   return (
-    <div className="flex min-h-screen bg-surface-secondary text-foreground-primary">
+    <div className="flex min-h-screen bg-surface-secondary font-mono text-foreground-primary">
       <aside className="flex min-h-screen w-64 shrink-0 flex-col bg-foreground-primary px-6 py-8 text-white">
         <Link href="/" className="mb-12 text-lg font-medium tracking-wide" style={{ color: "white" }}>
           {"> TN_"}
