@@ -44,7 +44,7 @@ Laravel 実装の開発中に Railway との 連携が動作しないという�
 - **データベース**: Cloudflare D1（SQLite）
 - **ストレージ**: Cloudflare R2（制作物画像）
 - **認証**: JWT（jose）/ bcryptjs による管理者セッション + Google OAuth（Gmail 送信用）
-- **主な機能**: 制作物 CRUD・画像管理・お問い合わせフォーム（Gmail 送信）・管理画面・サイト設定
+- **主な機能**: 制作物 CRUD・画像管理・お問い合わせフォーム（Gmail 送信）・管理画面・サイト設定・MCP サーバー（AI ツールからの管理）
 
 ```
 nextjs/src/app/
@@ -81,7 +81,8 @@ portfolio/
 | `/login` | 管理者ログイン |
 | `/admin/works` | 制作物 CRUD 管理画面 |
 | `/admin/contacts` | お問い合わせ一覧 |
-| `/admin/settings` | サイト設定（Gmail 送信設定など） |
+| `/admin/settings` | サイト設定（Gmail 送信設定・MCP 連携など） |
+| `/oauth/consent` | MCP の OAuth 同意画面（Next.js 実装のみ） |
 
 ---
 
@@ -95,8 +96,39 @@ portfolio/
 | `users` | 管理者アカウント |
 | `settings` | サイト設定（key-value） |
 | `oauth_tokens` | OAuth トークン（Gmail 送信用） |
+| `api_tokens` | MCP のアクセストークン（個人トークンと OAuth。平文は保存せず SHA-256 のみ） |
+| `oauth_clients` / `oauth_codes` / `oauth_refresh_tokens` | MCP 用 OAuth 2.1 のクライアント・認可コード・リフレッシュトークン |
 
 マイグレーションファイル: `nextjs/worker/migrations/`
+
+---
+
+## AI ツールから管理する（MCP）
+
+Next.js 実装は MCP（Model Context Protocol）サーバーを持ち、ChatGPT・Claude・dots などの AI ツールから管理画面と同じ操作ができます。
+
+- **エンドポイント**: `https://<サイトのドメイン>/api/mcp`（ステートレスな JSON-RPC over POST。SSE・セッションなし）
+- **できること**: 作品の登録・更新・削除、注目作品の切り替え、サムネイル・ギャラリー画像（https の URL か base64、PNG / JPEG / GIF / WebP / AVIF・10MB まで）、制作区分の追加・更新・削除、お問い合わせの閲覧・削除、サイト設定の参照・更新
+- **できないこと**: Google アカウントの連携（ブラウザでのリダイレクトが必要なため管理画面から行う）、プロフィール・スキル・経歴の編集（コード内の固定値。参照のみ）
+- **認証**: Bearer トークンのみ。スコープは `portfolio:read`（参照）と `portfolio:write`（変更）
+
+### 接続方法
+
+| クライアント | 方法 |
+|--------------|------|
+| ChatGPT | 設定 → アプリとコネクタ → 開発者モードを有効にし、コネクタを作成。URL に `/api/mcp` を入れ、認証は OAuth。管理者アカウントでログインして同意します |
+| Claude（claude.ai / Claude Desktop） | 設定 → コネクタ → カスタムコネクタを追加。URL に `/api/mcp` を入れると OAuth の同意画面が開きます |
+| Claude Code | 管理画面「サイト設定 → MCP 連携」で個人トークンを発行し、`claude mcp add --transport http portfolio https://<ドメイン>/api/mcp --header "Authorization: Bearer ptf_..."` |
+| dots などその他 | URL と `Authorization: Bearer <個人トークン>` ヘッダを設定します。OAuth（動的クライアント登録 + PKCE）に対応したクライアントならトークンなしで接続できます |
+
+個人トークンと OAuth の接続は、どちらも「サイト設定 → MCP 連携」から失効できます。
+
+### 実装
+
+- `nextjs/worker/lib/mcp/` … JSON-RPC の処理とツール定義（`tools-read.ts` / `tools-works.ts` / `tools-site.ts`）
+- `nextjs/worker/lib/mcp-auth/` … 個人トークンと OAuth 2.1 認可サーバー（RFC 9728 / 8414 / 7591 / 7009、PKCE S256、リフレッシュトークンの回転）
+- 管理操作は `application/usecases/admin/` のサービスに集約し、管理画面のフォームと MCP ツールの両方から使っています
+- テスト: `npm run test:unit`（Vitest）、`npm run test:e2e`（Playwright。`e2e/mcp.spec.ts`）
 
 ---
 

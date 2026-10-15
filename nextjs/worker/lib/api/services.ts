@@ -1,25 +1,17 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 import {
-  AddWorkImageUseCase,
-  CreateWorkUseCase,
-  CreateWorkContextCategoryUseCase,
+  ContextCategoryAdminService,
   DeleteContactUseCase,
-  DeleteWorkImageUseCase,
-  DeleteWorkUseCase,
-  DeleteWorkContextCategoryUseCase,
   GetFeaturedWorksUseCase,
   GetContactListUseCase,
   GetPublicSettingsUseCase,
-  GetSettingsUseCase,
   GetWorkDetailUseCase,
   GetWorkListUseCase,
   GetWorkContextCategoryListUseCase,
   SendContactUseCase,
-  UpdateSettingsUseCase,
-  UpdateWorkImageCaptionUseCase,
-  UpdateWorkUseCase,
-  UpdateWorkContextCategoryUseCase,
+  SettingsAdminService,
+  WorkAdminService,
 } from "@/application/publicApi";
 import {
   D1ContactRepository,
@@ -86,24 +78,18 @@ async function getBaseServices() {
       storagePort,
     },
     useCases: {
-      addWorkImage: new AddWorkImageUseCase(workRepository),
-      createWork: new CreateWorkUseCase(workRepository),
-      createWorkContextCategory: new CreateWorkContextCategoryUseCase(workContextCategoryRepository),
       deleteContact: new DeleteContactUseCase(contactRepository),
-      deleteWork: new DeleteWorkUseCase(workRepository),
-      deleteWorkImage: new DeleteWorkImageUseCase(workRepository),
-      deleteWorkContextCategory: new DeleteWorkContextCategoryUseCase(workContextCategoryRepository),
       getContactList: new GetContactListUseCase(contactRepository),
       getFeaturedWorks: new GetFeaturedWorksUseCase(workRepository),
       getPublicSettings: new GetPublicSettingsUseCase(settingRepository),
-      getSettings: new GetSettingsUseCase(settingRepository),
       getWorkDetail: new GetWorkDetailUseCase(workRepository),
       getWorkList: new GetWorkListUseCase(workRepository),
       getWorkContextCategoryList: new GetWorkContextCategoryListUseCase(workContextCategoryRepository),
-      updateSettings: new UpdateSettingsUseCase(settingRepository),
-      updateWork: new UpdateWorkUseCase(workRepository),
-      updateWorkImageCaption: new UpdateWorkImageCaptionUseCase(workRepository),
-      updateWorkContextCategory: new UpdateWorkContextCategoryUseCase(workContextCategoryRepository),
+    },
+    admin: {
+      works: new WorkAdminService(workRepository, workContextCategoryRepository, storagePort),
+      contextCategories: new ContextCategoryAdminService(workContextCategoryRepository),
+      settings: new SettingsAdminService(settingRepository, oAuthTokenRepository),
     },
   };
 }
@@ -122,8 +108,16 @@ export async function getReadServices() {
   };
 }
 
-export function getAdminServices() {
-  return getReadServices();
+/** 管理画面・MCP 向け。読み取り用のサービスに管理操作（admin）を加えたもの。 */
+export async function getAdminServices() {
+  const baseServices = await getBaseServices();
+
+  return {
+    repositories: baseServices.repositories,
+    ports: baseServices.ports,
+    useCases: baseServices.useCases,
+    admin: baseServices.admin,
+  };
 }
 
 export async function getAppServices(redirectUri?: string) {

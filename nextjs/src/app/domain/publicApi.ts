@@ -14,3 +14,10 @@ export type { SettingRepository } from "./repositories/SettingRepository";
 export type { UserRepository } from "./repositories/UserRepository";
 export type { WorkContextCategoryRepository } from "./repositories/WorkContextCategoryRepository";
 export type { WorkRepository } from "./repositories/WorkRepository";
+export { isValidSlug, normalizeSlug } from "./valueObjects/Slug";
+export {
+  extractWorkAssetKey,
+  extractYouTubeVideoId,
+  getYouTubeThumbnailUrl,
+  isYouTubeThumbnailUrl,
+} from "./valueObjects/WorkAsset";

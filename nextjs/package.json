@@ -20,6 +20,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv worker/cloudflare-env.d.ts",
     "db:migrate:local": "wrangler d1 migrations apply portfolio-db --local",
     "db:migrate:remote": "wrangler d1 migrations apply portfolio-db --remote",
+    "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
@@ -48,6 +49,7 @@
     "postcss": "^8.5.3",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vitest": "^3.2.7",
     "wrangler": "^4.13.2"
   }
 }

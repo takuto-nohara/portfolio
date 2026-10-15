@@ -11,7 +11,7 @@ import { SiteShell } from "@/presentation/components/SiteShell";
 import { WorkGalleryModal } from "@/presentation/components/work/WorkGalleryModal";
 import { WorkThumb } from "@/presentation/components/work/WorkThumb";
 import { getWorkMeta } from "@/presentation/lib/work-view";
-import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
+import { extractYouTubeVideoId } from "@/application/publicApi";
 
 interface WorkDetailPageProps {
   readonly params: Promise<{

@@ -53,6 +53,12 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Prepare E2E env vars
+        # wrangler dev（preview）に渡すテスト専用の値。seed-mcp.sql の管理者（admin@example.com）でログインする
+        run: |
+          echo 'ADMIN_SESSION_SECRET="e2e-only-session-secret"' > .dev.vars
+          echo 'ADMIN_EMAILS="admin@example.com"' >> .dev.vars
+
       - name: Build for E2E
         # opennextjs-cloudflare preview（wrangler dev）が必要とする .open-next/ を生成する。
         run: npx opennextjs-cloudflare build
@@ -65,6 +71,7 @@ jobs:
         run: |
           npm run db:migrate:local
           npx wrangler d1 execute portfolio-db --local --file=e2e/fixtures/seed-e2e.sql
+          npx wrangler d1 execute portfolio-db --local --file=e2e/fixtures/seed-mcp.sql
 
       - name: Run E2E tests
         run: npm run test:e2e

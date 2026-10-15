@@ -11,11 +11,10 @@ export default function globalSetup() {
   });
 
   // E2E テスト用シードデータ投入（INSERT OR IGNORE でべき等）
-  execSync(
-    "npx wrangler d1 execute portfolio-db --local --file=e2e/fixtures/seed-e2e.sql",
-    {
+  for (const file of ["e2e/fixtures/seed-e2e.sql", "e2e/fixtures/seed-mcp.sql"]) {
+    execSync(`npx wrangler d1 execute portfolio-db --local --file=${file}`, {
       cwd: root,
       stdio: "inherit",
-    },
-  );
+    });
+  }
 }
