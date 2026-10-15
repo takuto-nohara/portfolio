@@ -96,8 +96,8 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
           priority
         />
 
-        <div className="mt-[clamp(40px,6vh,72px)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] items-start gap-[clamp(32px,5vw,72px)]">
-          <dl data-reveal className="grid grid-cols-[auto_1fr] gap-x-6 border-b border-line-strong text-[15px] leading-[1.7] md:sticky md:top-24">
+        <div className="mt-[clamp(40px,6vh,72px)] grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(260px,340px)_minmax(0,1fr)] lg:gap-[clamp(32px,5vw,72px)]">
+          <dl data-reveal className="grid grid-cols-[auto_1fr] gap-x-6 border-b border-line-strong text-[15px] leading-[1.7] lg:sticky lg:top-24">
             {work.role ? (
               <>
                 <dt className={dtClassName}>担当</dt>
@@ -176,17 +176,17 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
           </section>
         ) : null}
 
-        <nav aria-label="前後の作品" data-reveal className="mt-[clamp(48px,7vh,80px)] flex justify-between gap-6 border-t border-line-strong pt-6 text-[15px]">
+        <nav aria-label="前後の作品" data-reveal className="mt-[clamp(48px,7vh,80px)] flex flex-col gap-2 border-t border-line-strong pt-6 text-[15px] sm:flex-row sm:justify-between sm:gap-6">
           {prevWork?.id != null ? (
             <Link href={`/works/${prevWork.id}`} className="inline-flex min-h-11 items-center gap-2.5 text-ink hover:text-link">
               <span aria-hidden="true">←</span>
               <span>{prevWork.title}</span>
             </Link>
           ) : (
-            <span />
+            <span className="hidden sm:block" />
           )}
           {nextWork?.id != null ? (
-            <Link href={`/works/${nextWork.id}`} className="inline-flex min-h-11 items-center gap-2.5 text-right text-ink hover:text-link">
+            <Link href={`/works/${nextWork.id}`} className="inline-flex min-h-11 items-center gap-2.5 self-end text-right text-ink hover:text-link sm:self-auto">
               <span>{nextWork.title}</span>
               <span aria-hidden="true">→</span>
             </Link>

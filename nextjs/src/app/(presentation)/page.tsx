@@ -5,6 +5,7 @@ import { getFeaturedWorks, getSiteSettings, getWorks } from "@worker/lib/site-da
 import { NextPageLink } from "@/presentation/components/NextPageLink";
 import { Phrases } from "@/presentation/components/Phrases";
 import { SectionLabel } from "@/presentation/components/SectionLabel";
+import { Segments } from "@/presentation/components/Segments";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { TypedCommand } from "@/presentation/components/TypedCommand";
 import { WorkThumb } from "@/presentation/components/work/WorkThumb";
@@ -26,7 +27,7 @@ export default async function Home() {
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_72%_40%,rgba(186,230,253,0.55)_0%,rgba(224,242,254,0.25)_45%,rgba(247,249,251,0)_75%)]"
         />
-        <div className="site-container relative grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-[clamp(32px,5vw,72px)] pt-[clamp(48px,8vh,96px)] pb-[clamp(64px,10vh,120px)]">
+        <div className="site-container relative grid grid-cols-1 items-center gap-12 pt-[clamp(40px,8vh,96px)] pb-[clamp(64px,10vh,120px)] md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:gap-[clamp(32px,5vw,72px)]">
           <div>
             <TypedCommand text={siteProfile.command} />
             <p className="sr-only">{siteProfile.command}</p>
@@ -34,7 +35,7 @@ export default async function Home() {
               {siteProfile.nameJa}
             </h1>
             <p data-reveal className="mt-3 text-sm leading-relaxed text-ink-muted">
-              {`${siteProfile.nameKana} / ${siteProfile.roleJa}`}
+              <Segments items={[siteProfile.nameKana, ...siteProfile.roleJa.split(" / ")]} />
             </p>
             <p className="mt-8 max-w-[14em] font-serif text-[clamp(22px,2.6vw,32px)] leading-[1.55] tracking-[0.06em]">
               <Phrases text={siteProfile.catchCopy} />
@@ -56,7 +57,7 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="relative w-[min(100%,clamp(260px,34vw,460px))] justify-self-center">
+          <div className="relative w-[min(calc(100%-24px),300px)] justify-self-center md:w-[min(100%,clamp(260px,34vw,460px))]">
             <div data-reveal="render" className="media-frame aspect-[4/5]">
               <div data-img className="absolute inset-0">
                 <Image
@@ -81,7 +82,7 @@ export default async function Home() {
           href="#h-works"
           data-reveal
           aria-label="作品セクションへスクロール"
-          className="absolute bottom-6 left-[clamp(20px,5vw,56px)] inline-flex min-h-11 items-center gap-3 font-mono text-[11px] tracking-[0.14em] text-ink-muted hover:text-link"
+          className="absolute bottom-6 left-[clamp(20px,5vw,56px)] hidden min-h-11 md:inline-flex items-center gap-3 font-mono text-[11px] tracking-[0.14em] text-ink-muted hover:text-link"
         >
           <span aria-hidden="true" className="scroll-cue block h-10 w-px bg-sky" />
           <span>scroll</span>
@@ -111,7 +112,7 @@ export default async function Home() {
                     <Link
                       href={work.id === null ? "/works" : `/works/${work.id}`}
                       aria-label={`${work.title} の詳細`}
-                      className="row-link group grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] items-center gap-[clamp(20px,3vw,48px)] py-[clamp(28px,4vh,44px)]"
+                      className="row-link group grid-cols-1 items-center gap-5 py-[clamp(28px,4vh,44px)] md:grid-cols-2 md:gap-[clamp(24px,3vw,48px)]"
                     >
                       <WorkThumb work={work} sizes="(min-width: 1024px) 560px, 100vw" priority={index === 0} />
                       <div>
@@ -138,7 +139,7 @@ export default async function Home() {
       </section>
 
       <section aria-labelledby="h-about" className="border-t border-line bg-sky-soft/35">
-        <div className="site-container section-pad grid grid-cols-[repeat(auto-fit,minmax(min(100%,400px),1fr))] items-end gap-[clamp(32px,5vw,80px)]">
+        <div className="site-container section-pad grid grid-cols-1 items-end gap-10 md:grid-cols-2 md:gap-[clamp(32px,5vw,80px)]">
           <div>
             <SectionLabel prefix="//">02 &nbsp;about</SectionLabel>
             <h2 id="h-about" className="heading-section mt-5 max-w-[14em]">

@@ -118,10 +118,10 @@ export function WorkGalleryModal({ title, images }: WorkGalleryModalProps) {
               </button>
               {images.length > 1 ? (
                 <>
-                  <button type="button" onClick={() => step(-1)} aria-label="前の画像" className={`${roundButtonClassName} top-1/2 left-4 -translate-y-1/2 text-xl`}>
+                  <button type="button" onClick={() => step(-1)} aria-label="前の画像" className={`${roundButtonClassName} bottom-4 left-4 text-xl sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2`}>
                     ←
                   </button>
-                  <button type="button" onClick={() => step(1)} aria-label="次の画像" className={`${roundButtonClassName} top-1/2 right-4 -translate-y-1/2 text-xl`}>
+                  <button type="button" onClick={() => step(1)} aria-label="次の画像" className={`${roundButtonClassName} right-4 bottom-4 text-xl sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2`}>
                     →
                   </button>
                 </>
@@ -131,11 +131,11 @@ export function WorkGalleryModal({ title, images }: WorkGalleryModalProps) {
                   key={activeImageUrl}
                   src={activeImageUrl}
                   alt={activeImage.caption ?? `${title} の画面 ${currentIndex + 1}`}
-                  className="max-h-[min(80vh,800px)] w-auto max-w-[min(100%,1200px)] animate-[rise_0.5s_var(--ease-out)] object-contain"
+                  className="max-h-[min(72vh,800px)] sm:max-h-[min(80vh,800px)] w-auto max-w-[min(100%,1200px)] animate-[rise_0.5s_var(--ease-out)] object-contain"
                 />
                 {activeImage.caption ? <figcaption className="max-w-[40em] text-center text-sm text-white/85">{activeImage.caption}</figcaption> : null}
               </figure>
-              <p className="absolute inset-x-0 bottom-5 text-center font-mono text-[13px] text-white">{`${currentIndex + 1} / ${images.length}`}</p>
+              <p className="absolute inset-x-0 bottom-7 text-center font-mono sm:bottom-5 text-[13px] text-white">{`${currentIndex + 1} / ${images.length}`}</p>
             </div>,
             document.body,
           )

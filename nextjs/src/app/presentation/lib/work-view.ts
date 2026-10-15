@@ -17,6 +17,6 @@ export function getWorkMeta(work: Work) {
     stackShort: tags.slice(0, 4).join(" / ") + (tags.length > 4 ? " …" : ""),
     stackFull: tags.join(" / "),
     // lead 未設定の作品は概要の冒頭で代用する
-    lead: work.lead ?? work.description.split("\n").find((line) => line.trim().length > 0) ?? "",
+    lead: work.lead ?? work.description.split(/\r?\n/).map((line) => line.trim()).find((line) => line.length > 0) ?? "",
   };
 }

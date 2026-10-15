@@ -58,7 +58,7 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
           {siteSections.worksPageLead}
         </p>
 
-        <div data-reveal role="group" aria-label="媒体で絞り込む" className="mt-9 flex flex-wrap gap-x-6 gap-y-1 border-b border-line-strong">
+        <div data-reveal role="group" aria-label="媒体で絞り込む" className="-mx-[clamp(20px,5vw,56px)] mt-9 flex gap-x-5 overflow-x-auto border-b border-line-strong px-[clamp(20px,5vw,56px)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:flex-wrap sm:gap-x-6 sm:gap-y-1 sm:overflow-visible sm:px-0">
           {tabs.map((tab) => {
             const active = tab.key === activeCategory;
 
@@ -68,7 +68,7 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
                 href={tab.key ? `/works?category=${tab.key}` : "/works"}
                 scroll={false}
                 aria-current={active ? "true" : undefined}
-                className={`relative inline-flex min-h-11 items-center px-0.5 pt-3 pb-3.5 text-[15px] leading-normal font-medium transition-colors hover:text-link ${active ? "text-ink" : "text-ink-muted"}`}
+                className={`relative inline-flex min-h-11 shrink-0 items-center px-0.5 pt-3 pb-3.5 text-[15px] leading-normal font-medium whitespace-nowrap transition-colors hover:text-link ${active ? "text-ink" : "text-ink-muted"}`}
               >
                 <span>{tab.label}</span>
                 <span className="ml-2 font-mono text-xs text-ink-muted">{tab.count}</span>
@@ -105,8 +105,8 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
                         <div className="min-w-0">
                           <p className="font-mono text-xs leading-normal tracking-[0.06em] text-ink-muted">{`${meta.mediumJa}  ${meta.year}`}</p>
                           <h3 className="heading-display mt-2 text-[clamp(18px,2vw,24px)] leading-[1.45] tracking-[0.03em]">{work.title}</h3>
-                          <p className="mt-2 text-[15px] leading-[1.8] text-ink-body">{meta.lead}</p>
-                          {meta.stackShort ? <p className="mt-2 font-mono text-xs leading-relaxed text-ink-muted">{meta.stackShort}</p> : null}
+                          <p className="mt-2 line-clamp-3 text-sm leading-[1.8] text-ink-body sm:line-clamp-none sm:text-[15px]">{meta.lead}</p>
+                          {meta.stackShort ? <p className="mt-2 hidden font-mono text-xs leading-relaxed text-ink-muted sm:block">{meta.stackShort}</p> : null}
                         </div>
                         <span aria-hidden="true" className="hidden text-xl text-ink-muted transition-[transform,color] duration-300 ease-out-expo group-hover:translate-x-1 group-hover:text-link sm:inline">
                           →

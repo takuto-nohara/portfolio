@@ -32,14 +32,14 @@ export function SiteShell({ settings, currentPath, children }: SiteShellProps) {
 
       <header className="sticky top-0 z-50 border-b border-line bg-paper/85 backdrop-blur-md">
         <ScrollProgress />
-        <div className="site-container flex min-h-18 items-center justify-between gap-6">
-          <Link href="/" aria-label="トップへ" className="inline-flex min-h-11 items-center px-1 font-mono text-[17px] font-medium tracking-[0.02em] text-ink">
+        <div className="site-container flex min-h-16 items-center justify-between gap-3 sm:min-h-18 sm:gap-6">
+          <Link href="/" aria-label="トップへ" className="inline-flex min-h-11 shrink-0 items-center px-1 font-mono whitespace-nowrap text-[17px] font-medium tracking-[0.02em] text-ink">
             <span className="text-sky">&gt;</span>
             <span className="ml-1.5">TN</span>
             <span aria-hidden="true" className="cursor-blink mb-[11px] ml-[3px] inline-block h-0.5 w-[0.6em] self-end bg-sky" />
           </Link>
 
-          <nav aria-label="主要ナビゲーション" className="flex items-center gap-[clamp(4px,2vw,20px)]">
+          <nav aria-label="主要ナビゲーション" className="flex items-center gap-0.5 sm:gap-[clamp(4px,2vw,20px)]">
             {siteNavigationItems.map((item) => {
               const active = isCurrentPath(currentPath, item.href);
 
@@ -48,12 +48,12 @@ export function SiteShell({ settings, currentPath, children }: SiteShellProps) {
                   key={item.href}
                   href={item.href}
                   aria-current={active ? "page" : undefined}
-                  className={`relative inline-flex min-h-11 items-center px-2.5 text-[15px] font-medium transition-colors hover:text-link ${active ? "text-ink" : "text-ink-body"}`}
+                  className={`relative inline-flex min-h-11 items-center px-2 text-sm font-medium whitespace-nowrap transition-colors sm:px-2.5 sm:text-[15px] hover:text-link ${active ? "text-ink" : "text-ink-body"}`}
                 >
                   <span>{item.label}</span>
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-x-2.5 bottom-2 h-0.5 origin-left bg-sky transition-transform duration-300 ease-out-expo ${active ? "scale-x-100" : "scale-x-0"}`}
+                    className={`absolute inset-x-2 bottom-2 h-0.5 sm:inset-x-2.5 origin-left bg-sky transition-transform duration-300 ease-out-expo ${active ? "scale-x-100" : "scale-x-0"}`}
                   />
                 </Link>
               );

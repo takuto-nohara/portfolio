@@ -3,6 +3,7 @@ import Image from "next/image";
 import { getSiteSettings } from "@worker/lib/site-data";
 import { NextPageLink } from "@/presentation/components/NextPageLink";
 import { SectionLabel } from "@/presentation/components/SectionLabel";
+import { Segments } from "@/presentation/components/Segments";
 import { SiteShell } from "@/presentation/components/SiteShell";
 import { experiences, siteProfile, siteSections, skills } from "@/presentation/content/siteContent";
 
@@ -15,8 +16,8 @@ export default async function AboutPage() {
   return (
     <SiteShell settings={settings} currentPath="/about">
       <div className="site-container page-pad">
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-start gap-[clamp(32px,5vw,80px)]">
-          <div className="relative w-[min(100%,clamp(240px,30vw,420px))]">
+        <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:gap-[clamp(32px,5vw,80px)]">
+          <div className="relative w-[min(calc(100%-12px),280px)] md:w-full md:max-w-[420px]">
             <div data-reveal="render" className="media-frame aspect-[4/5]">
               <div data-img className="absolute inset-0">
                 <Image
@@ -39,7 +40,7 @@ export default async function AboutPage() {
               {siteProfile.nameJa}
             </h1>
             <p data-reveal className="mt-3 text-sm leading-relaxed text-ink-muted">
-              {`${siteProfile.nameKana} / ${siteProfile.roleJa} / ${siteProfile.affiliation}`}
+              <Segments items={[siteProfile.nameKana, ...siteProfile.roleJa.split(" / "), siteProfile.affiliation]} />
             </p>
             <div data-reveal className="mt-7 flex max-w-[34em] flex-col gap-5 leading-[1.9] text-ink-body">
               {siteProfile.aboutParagraphs.map((paragraph) => (
@@ -54,11 +55,11 @@ export default async function AboutPage() {
           <h2 id="h-skills" data-reveal className="heading-display mt-5 text-[clamp(28px,3.2vw,40px)] leading-[1.35]">
             {siteSections.skillsHeading}
           </h2>
-          <dl data-reveal className="mt-8 grid grid-cols-[88px_1fr] sm:grid-cols-[200px_1fr] gap-x-6 border-b border-line-strong">
+          <dl data-reveal className="mt-8 grid grid-cols-1 border-b border-line-strong sm:grid-cols-[160px_1fr] sm:gap-x-6 md:grid-cols-[200px_1fr]">
             {skills.map((skill) => (
               <div key={skill.titleJa} className="contents">
-                <dt className="border-t border-line-strong py-4.5 text-[15px] leading-[1.7] font-medium">{skill.titleJa}</dt>
-                <dd className="border-t border-line-strong py-4.5 font-mono text-sm leading-[1.9] text-ink-body">{skill.items.join(" / ")}</dd>
+                <dt className="border-t border-line-strong pt-4 text-[15px] leading-[1.7] font-medium sm:py-4.5">{skill.titleJa}</dt>
+                <dd className="pt-1 pb-4 font-mono text-[13px] leading-[1.9] text-ink-body sm:border-t sm:border-line-strong sm:py-4.5 sm:text-sm">{skill.items.join(" / ")}</dd>
               </div>
             ))}
           </dl>
@@ -74,11 +75,11 @@ export default async function AboutPage() {
               <li
                 key={`${experience.date}-${experience.title}`}
                 data-reveal
-                className="grid grid-cols-[64px_1fr] gap-x-4 sm:grid-cols-[120px_1fr] sm:gap-x-6 gap-y-3 border-t border-line-strong py-6"
+                className="grid grid-cols-1 gap-y-2 border-t border-line-strong py-6 sm:grid-cols-[120px_1fr] sm:gap-x-6 sm:gap-y-3"
               >
-                <span className="pt-1 font-mono text-sm leading-[1.7] tracking-[0.04em] text-link">{experience.date}</span>
+                <span className="font-mono text-sm leading-[1.7] tracking-[0.04em] text-link sm:pt-1">{experience.date}</span>
                 <div className="max-w-[40em]">
-                  <h3 className="heading-display text-xl leading-normal tracking-[0.03em]">{experience.title}</h3>
+                  <h3 className="heading-display text-lg leading-normal tracking-[0.03em] sm:text-xl">{experience.title}</h3>
                   <p className="mt-2 text-[15px] leading-[1.8] text-ink-body">{experience.description}</p>
                   {experience.href && experience.label ? (
                     <a href={experience.href} className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-link hover:text-link-hover">

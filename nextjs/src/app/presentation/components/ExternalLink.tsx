@@ -8,7 +8,7 @@ interface ExternalLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>
  * 外部サービス（GitHub など）へのリンク。
  * - `target="_blank"` / `rel="noopener noreferrer"` を固定
  * - ↗ アイコンをリンクテキストの右に表示（aria-hidden）
- * - ホバー時にツールチップ「新しいタブで開きます」を表示
+ * - ホバー・フォーカス時にツールチップ「新しいタブで開きます」を表示（非表示中はレイアウトに影響させない）
  * - スクリーンリーダー向けに「（新しいタブで開きます）」を付加
  */
 export function ExternalLink({ href, className, children, ...props }: ExternalLinkProps) {
@@ -32,7 +32,7 @@ export function ExternalLink({ href, className, children, ...props }: ExternalLi
       <span className="sr-only">（新しいタブで開きます）</span>
       <span
         role="tooltip"
-        className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-2.5 py-1 font-sans text-xs text-white opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100"
+        className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1.5 hidden -translate-x-1/2 whitespace-nowrap rounded bg-ink px-2.5 py-1 font-sans text-xs text-white shadow-sm group-hover:block group-focus-visible:block"
       >
         新しいタブで開きます
       </span>

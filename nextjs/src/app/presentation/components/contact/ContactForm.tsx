@@ -120,12 +120,12 @@ export function ContactForm({ sentMessage }: ContactFormProps) {
           ~/contact — お問い合わせフォーム
         </p>
       </div>
-      <p className="px-5 py-4 font-mono text-[13px] leading-[1.7] text-sky-pale">
+      <p className="px-4 py-4 font-mono sm:px-5 text-[13px] leading-[1.7] text-sky-pale">
         <span className="text-[#38bdf8]">$</span> ./send-message <span className="text-[#7dd3fc]">{"// 3つの項目を入力して送信してください"}</span>
       </p>
 
       {isSent ? (
-        <p role="status" className="mx-5 mb-4 rounded border border-[#34d399] bg-[#34d399]/8 px-3.5 py-3 text-[15px] leading-[1.7] text-[#d1fae5]">
+        <p role="status" className="mx-4 mb-4 rounded border border-[#34d399] sm:mx-5 bg-[#34d399]/8 px-3.5 py-3 text-[15px] leading-[1.7] text-[#d1fae5]">
           <span aria-hidden="true" className="font-mono text-[#34d399]">
             ✓ 200 OK&nbsp;&nbsp;
           </span>
@@ -134,7 +134,7 @@ export function ContactForm({ sentMessage }: ContactFormProps) {
       ) : null}
 
       {errorMessage ? (
-        <p role="alert" className="mx-5 mb-4 rounded border border-[#f87171] bg-[#f87171]/8 px-3.5 py-3 text-[15px] leading-[1.7] text-[#fecaca]">
+        <p role="alert" className="mx-4 mb-4 rounded border border-[#f87171] sm:mx-5 bg-[#f87171]/8 px-3.5 py-3 text-[15px] leading-[1.7] text-[#fecaca]">
           <span aria-hidden="true" className="font-mono text-[#f87171]">
             ✗ error&nbsp;&nbsp;
           </span>
@@ -149,7 +149,7 @@ export function ContactForm({ sentMessage }: ContactFormProps) {
         const inputClassName = "min-w-0 flex-1 border-0 bg-transparent p-0 text-base text-[#f0f9ff] caret-[#38bdf8] outline-none focus-visible:outline-none";
 
         return (
-          <div key={field.name} className="border-t border-sky-pale/15 px-5 pt-4 pb-3">
+          <div key={field.name} className="border-t border-sky-pale/15 px-4 pt-4 pb-3 sm:px-5">
             <label htmlFor={id} className="flex items-baseline gap-2.5 text-sm leading-normal font-medium text-sky-soft">
               <span aria-hidden="true" className="font-mono text-[13px] text-[#38bdf8]">
                 {String(index + 1).padStart(2, "0")}
@@ -199,7 +199,7 @@ export function ContactForm({ sentMessage }: ContactFormProps) {
         );
       })}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-sky-pale/15 px-5 pt-4 pb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-sky-pale/15 px-4 pt-4 pb-5 sm:px-5">
         <p className="font-mono text-xs leading-[1.6] text-[#7dd3fc]">Enter で改行 / ボタンで送信</p>
         <button
           type="submit"

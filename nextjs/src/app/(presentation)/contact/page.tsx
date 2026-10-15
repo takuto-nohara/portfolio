@@ -20,7 +20,7 @@ export default async function ContactPage() {
         <h1 data-reveal className="heading-page mt-4">
           連絡する
         </h1>
-        <div className="mt-[clamp(32px,5vh,56px)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,320px),1fr))] items-start gap-[clamp(32px,5vw,80px)]">
+        <div className="mt-[clamp(32px,5vh,56px)] grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,600px)] lg:gap-[clamp(32px,5vw,80px)]">
           <div data-reveal>
             <p className="leading-[1.9] text-ink-body">{siteSections.contactPageLead}</p>
             {settings.contactEmail ? (
