@@ -1,11 +1,12 @@
-import { getSiteSettings } from "@worker/lib/site-data";
-import { PageHeader } from "@/presentation/components/PageHeader";
-import { ProfileAvatar } from "@/presentation/components/ProfileAvatar";
-import { SiteShell } from "@/presentation/components/SiteShell";
-import { SkillCard } from "@/presentation/components/SkillCard";
-import { experiences, skillColumns } from "@/presentation/content/aboutContent";
-import { siteProfile } from "@/presentation/content/siteProfile";
+import Image from "next/image";
 
+import { getSiteSettings } from "@worker/lib/site-data";
+import { NextPageLink } from "@/presentation/components/NextPageLink";
+import { SectionLabel } from "@/presentation/components/SectionLabel";
+import { SiteShell } from "@/presentation/components/SiteShell";
+import { experiences, siteProfile, siteSections, skills } from "@/presentation/content/siteContent";
+
+export const metadata = { title: "自己紹介" };
 export const dynamic = "force-dynamic";
 
 export default async function AboutPage() {
@@ -13,88 +14,86 @@ export default async function AboutPage() {
 
   return (
     <SiteShell settings={settings} currentPath="/about">
-      <section className="bg-surface-secondary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-6xl">
-          <PageHeader
-            titleJa="自己紹介"
-            titleEn="About"
-            lead={<>このページでは、経歴、得意領域、使用技術をまとめて確認できます。</>}
-            align="center"
-          />
-        </div>
-      </section>
-
-      <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-border-subtle bg-surface-secondary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] sm:p-10">
-          <div className="flex flex-col items-center gap-8 text-center">
-            <ProfileAvatar sizeClass="h-48 w-48 sm:h-64 sm:w-64" priority />
-            <div className="w-full max-w-2xl">
-              <h2 className="text-2xl font-semibold text-foreground-primary sm:text-3xl">{siteProfile.nameJa}</h2>
-              <p className="mt-2 text-sm uppercase tracking-[0.18em] text-accent-primary" lang="en">
-                {siteProfile.nameEn}
-              </p>
-              <p className="mt-4 text-base font-medium text-foreground-primary">{siteProfile.roleJa}</p>
-              <div className="mt-6 space-y-4 break-keep text-left text-pretty text-sm leading-8 text-foreground-secondary">
-                <p>
-                  中学生のころ、動画編集をきっかけにコンテンツ制作の世界に入りました。映像から始まり、パンフレット、Webページ、そしてアプリケーション開発へと領域を広げています。
-                </p>
-                <p>
-                  「欲しいものが見当たらないなら自分で作ってしまえ」という姿勢で、幅広いアウトプットに挑戦してきました。現在はフロントエンドからバックエンドまで、Webアプリケーション開発を軸に学習を深めています。
-                </p>
-                <p>コードを書くことは、頭の中のアイデアを実際に動いて触れる形へレンダリングすること。その過程自体に強い面白さを感じています。</p>
+      <div className="site-container page-pad">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,360px),1fr))] items-start gap-[clamp(32px,5vw,80px)]">
+          <div className="relative w-[min(100%,clamp(240px,30vw,420px))]">
+            <div data-reveal="render" className="media-frame aspect-[4/5]">
+              <div data-img className="absolute inset-0">
+                <Image
+                  src={siteProfile.portrait}
+                  alt={siteProfile.portraitAlt}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 420px, 80vw"
+                  className="object-cover object-[50%_20%]"
+                />
               </div>
+              <span data-scan aria-hidden="true" className="scan-line" />
+            </div>
+            <span aria-hidden="true" className="corner-bl" />
+          </div>
+
+          <div>
+            <SectionLabel prefix="$">whoami</SectionLabel>
+            <h1 data-reveal className="heading-page mt-4">
+              {siteProfile.nameJa}
+            </h1>
+            <p data-reveal className="mt-3 text-sm leading-relaxed text-ink-muted">
+              {`${siteProfile.nameKana} / ${siteProfile.roleJa} / ${siteProfile.affiliation}`}
+            </p>
+            <div data-reveal className="mt-7 flex max-w-[34em] flex-col gap-5 leading-[1.9] text-ink-body">
+              {siteProfile.aboutParagraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
           </div>
         </div>
-      </section>
 
-      <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl font-semibold text-foreground-primary">使用技術</h2>
-            <p className="mt-2 text-sm text-foreground-secondary" lang="en">
-              Skills
-            </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {skillColumns.map((column) => (
-              <SkillCard key={column.titleEn} titleJa={column.titleJa} titleEn={column.titleEn} items={column.items} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl font-semibold text-foreground-primary">経験の流れ</h2>
-            <p className="mt-2 text-sm text-foreground-secondary" lang="en">
-              Experience
-            </p>
-          </div>
-          <div className="space-y-8">
-            {experiences.map((experience) => (
-              <div key={`${experience.date}-${experience.title}`} className="rounded-2xl border border-border-subtle bg-surface-secondary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)] sm:p-6">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:gap-6">
-                  <span className="shrink-0 text-sm font-semibold text-accent-primary sm:w-20">{experience.date}</span>
-                  <div className="min-w-0">
-                  <h3 className="text-base font-semibold text-foreground-primary">{experience.title}</h3>
-                    <p className="mt-2 break-keep text-pretty text-sm leading-7 text-foreground-secondary">{experience.description}</p>
-                    {experience.href && experience.label ? (
-                      <a
-                        href={experience.href}
-                        className="mt-3 inline-block text-xs text-accent-primary hover:underline"
-                      >
-                        {experience.label}
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
+        <section aria-labelledby="h-skills" className="mt-[clamp(64px,10vh,120px)] border-t border-line pt-[clamp(40px,6vh,64px)]">
+          <SectionLabel prefix="//">01 &nbsp;skills</SectionLabel>
+          <h2 id="h-skills" data-reveal className="heading-display mt-5 text-[clamp(28px,3.2vw,40px)] leading-[1.35]">
+            {siteSections.skillsHeading}
+          </h2>
+          <dl data-reveal className="mt-8 grid grid-cols-[88px_1fr] sm:grid-cols-[200px_1fr] gap-x-6 border-b border-line-strong">
+            {skills.map((skill) => (
+              <div key={skill.titleJa} className="contents">
+                <dt className="border-t border-line-strong py-4.5 text-[15px] leading-[1.7] font-medium">{skill.titleJa}</dt>
+                <dd className="border-t border-line-strong py-4.5 font-mono text-sm leading-[1.9] text-ink-body">{skill.items.join(" / ")}</dd>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
+          </dl>
+        </section>
+
+        <section aria-labelledby="h-experience" className="mt-[clamp(64px,10vh,120px)]">
+          <SectionLabel prefix="//">02 &nbsp;git log</SectionLabel>
+          <h2 id="h-experience" data-reveal className="heading-display mt-5 text-[clamp(28px,3.2vw,40px)] leading-[1.35]">
+            {siteSections.experienceHeading}
+          </h2>
+          <ol className="mt-8 border-b border-line-strong">
+            {experiences.map((experience) => (
+              <li
+                key={`${experience.date}-${experience.title}`}
+                data-reveal
+                className="grid grid-cols-[64px_1fr] gap-x-4 sm:grid-cols-[120px_1fr] sm:gap-x-6 gap-y-3 border-t border-line-strong py-6"
+              >
+                <span className="pt-1 font-mono text-sm leading-[1.7] tracking-[0.04em] text-link">{experience.date}</span>
+                <div className="max-w-[40em]">
+                  <h3 className="heading-display text-xl leading-normal tracking-[0.03em]">{experience.title}</h3>
+                  <p className="mt-2 text-[15px] leading-[1.8] text-ink-body">{experience.description}</p>
+                  {experience.href && experience.label ? (
+                    <a href={experience.href} className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-link hover:text-link-hover">
+                      <span>{experience.label}</span>
+                      <span aria-hidden="true">→</span>
+                    </a>
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </div>
+
+      <NextPageLink href="/contact" label="次は、連絡へ" />
     </SiteShell>
   );
 }

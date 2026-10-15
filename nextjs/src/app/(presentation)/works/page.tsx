@@ -99,7 +99,7 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
                     <li key={work.id ?? work.title} data-reveal className="border-t border-line">
                       <Link
                         href={work.id === null ? "/works" : `/works/${work.id}`}
-                        className="row-link group grid-cols-[minmax(96px,220px)_minmax(0,1fr)_auto] items-center gap-[clamp(16px,3vw,40px)] py-6"
+                        className="row-link group grid-cols-[96px_minmax(0,1fr)] items-start gap-4 py-6 sm:grid-cols-[minmax(120px,220px)_minmax(0,1fr)_auto] sm:items-center sm:gap-[clamp(16px,3vw,40px)]"
                       >
                         <WorkThumb work={work} sizes="220px" />
                         <div className="min-w-0">
@@ -108,7 +108,7 @@ export default async function WorksPage({ searchParams }: WorksPageProps) {
                           <p className="mt-2 text-[15px] leading-[1.8] text-ink-body">{meta.lead}</p>
                           {meta.stackShort ? <p className="mt-2 font-mono text-xs leading-relaxed text-ink-muted">{meta.stackShort}</p> : null}
                         </div>
-                        <span aria-hidden="true" className="text-xl text-ink-muted transition-[transform,color] duration-300 ease-out-expo group-hover:translate-x-1 group-hover:text-link">
+                        <span aria-hidden="true" className="hidden text-xl text-ink-muted transition-[transform,color] duration-300 ease-out-expo group-hover:translate-x-1 group-hover:text-link sm:inline">
                           →
                         </span>
                       </Link>
