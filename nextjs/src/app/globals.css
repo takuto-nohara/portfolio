@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  /* 公開サイト（Redesign v3） */
+  /* 公開サイト・管理画面の共通トークン */
   --ink: #0c1f2e;
   --ink-body: #334b5c;
   --ink-muted: #5f7180;
@@ -14,22 +14,8 @@
   --line: rgba(12, 74, 110, 0.14);
   --line-strong: rgba(12, 74, 110, 0.18);
   --line-underline: rgba(12, 74, 110, 0.4);
+  --panel: #f1f5f8;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-
-  /* 管理画面 */
-  --accent-primary: #0ea5e9;
-  --accent-secondary: #0284c7;
-  --accent-tertiary: #38bdf8;
-  --surface-primary: #ffffff;
-  --surface-secondary: #f0f9ff;
-  --surface-card: #e0f2fe;
-  --foreground-primary: #0c4a6e;
-  --foreground-secondary: #0369a1;
-  --foreground-muted: #3b82a4;
-  --border-subtle: #7eb5c9;
-  --border-accent: #0ea5e933;
-  --focus-ring: #0369a1;
-  --surface-tag: #f7fdff;
 }
 
 @theme inline {
@@ -45,20 +31,7 @@
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-line-underline: var(--line-underline);
-
-  --color-accent-primary: var(--accent-primary);
-  --color-accent-secondary: var(--accent-secondary);
-  --color-accent-tertiary: var(--accent-tertiary);
-  --color-surface-primary: var(--surface-primary);
-  --color-surface-secondary: var(--surface-secondary);
-  --color-surface-card: var(--surface-card);
-  --color-foreground-primary: var(--foreground-primary);
-  --color-foreground-secondary: var(--foreground-secondary);
-  --color-foreground-muted: var(--foreground-muted);
-  --color-border-subtle: var(--border-subtle);
-  --color-border-accent: var(--border-accent);
-  --color-focus-ring: var(--focus-ring);
-  --color-surface-tag: var(--surface-tag);
+  --color-panel: var(--panel);
 
   --font-sans: var(--font-zen-kaku), "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
   --font-serif: var(--font-shippori), "Hiragino Mincho ProN", serif;
@@ -126,6 +99,13 @@
       linear-gradient(90deg, rgba(14, 165, 233, 0.07) 1px, transparent 1px);
     background-size: 48px 48px;
     background-position: center top;
+  }
+
+  .admin-grid {
+    background-image:
+      linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
 
   .site-container {
@@ -284,6 +264,18 @@
     opacity: 1;
     transform: none;
     filter: blur(0);
+  }
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 

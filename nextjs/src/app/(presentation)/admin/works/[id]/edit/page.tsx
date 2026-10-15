@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
 import { getWorkDetail } from "@worker/lib/site-data";
-import { AdminShell } from "@/presentation/components/admin/AdminShell";
-import { AdminWorkForm } from "@/presentation/components/admin/AdminWorkForm";
+import { AdminPage } from "@/presentation/components/admin/AdminPageHeader";
+import { AdminToast } from "@/presentation/components/admin/AdminToast";
+import { AdminWorkForm } from "@/presentation/components/admin/works/AdminWorkForm";
 
 interface AdminWorkEditPageProps {
   readonly params: Promise<{
@@ -15,6 +16,7 @@ interface AdminWorkEditPageProps {
   }>;
 }
 
+export const metadata = { title: "作品を編集" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminWorkEditPage({ params, searchParams }: AdminWorkEditPageProps) {
@@ -25,7 +27,7 @@ export default async function AdminWorkEditPage({ params, searchParams }: AdminW
     notFound();
   }
 
-  const session = await requireAdminPageSession(`/admin/works/${workId}/edit`);
+  await requireAdminPageSession(`/admin/works/${workId}/edit`);
   const services = await getAdminServices();
   const { status } = await searchParams;
   const [work, contextCategories] = await Promise.all([getWorkDetail(workId), services.useCases.getWorkContextCategoryList.execute()]);
@@ -35,8 +37,16 @@ export default async function AdminWorkEditPage({ params, searchParams }: AdminW
   }
 
   return (
-    <AdminShell session={session} title={"> 作品編集"} activePath="works">
-      <AdminWorkForm mode="edit" contextCategories={contextCategories} work={work} status={status} />
-    </AdminShell>
+    <AdminPage>
+      <AdminToast
+        status={status}
+        messages={{
+          "caption-saved": { message: "画像の説明を保存しました。" },
+          "image-deleted": { message: "画像を削除しました。" },
+          error: { message: "保存に失敗しました。入力内容を確認してください。", tone: "error" },
+        }}
+      />
+      <AdminWorkForm contextCategories={contextCategories} work={work} />
+    </AdminPage>
   );
 }

@@ -2,7 +2,7 @@ export type { EmailPort } from "./ports/EmailPort";
 export type { OAuthPort } from "./ports/OAuthPort";
 export type { StoragePort, StorageUploadInput } from "./ports/StoragePort";
 export type { ThumbnailFit, Work } from "../domain/publicApi";
-export type { WorkContextCategory } from "../domain/publicApi";
+export type { Category, WorkContextCategory } from "../domain/publicApi";
 export { categories, getMediumCategoryDefinition, thumbnailFits } from "../domain/publicApi";
 export { AddWorkImageUseCase } from "./usecases/work/AddWorkImageUseCase";
 export { CreateWorkUseCase } from "./usecases/work/CreateWorkUseCase";
