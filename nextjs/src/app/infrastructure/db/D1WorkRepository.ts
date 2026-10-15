@@ -3,18 +3,64 @@ import type { Category, Work, WorkImage, WorkRepository } from "@/domain/publicA
 import { D1DatabaseLike, getLastInsertId, selectAll } from "./D1Database";
 import { mapWorkImageRow, mapWorkRow, WorkImageRow, WorkRow } from "./mappers";
 
+const workSelectSql = `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
+       work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
+       works.lead, works.role, works.description, works.tech_description, works.background, works.tech_stack,
+       works.thumbnail, works.thumbnail_fit, works.video_url, works.url, works.github_url, works.published_at,
+       works.is_featured, works.sort_order, works.created_at, works.updated_at
+FROM works
+LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id`;
+
+// INSERT / UPDATE で書き込むカラム（toWritableValues と同じ順序）
+const writableColumns = [
+  "title",
+  "category",
+  "context_category_id",
+  "lead",
+  "role",
+  "description",
+  "tech_description",
+  "background",
+  "tech_stack",
+  "thumbnail",
+  "thumbnail_fit",
+  "video_url",
+  "url",
+  "github_url",
+  "published_at",
+  "is_featured",
+  "sort_order",
+] as const;
+
+function toWritableValues(work: Work): readonly (string | number | null)[] {
+  return [
+    work.title,
+    work.category,
+    work.contextCategoryId,
+    work.lead,
+    work.role,
+    work.description,
+    work.techDescription,
+    work.background,
+    work.techStack,
+    work.thumbnail,
+    work.thumbnailFit,
+    work.videoUrl,
+    work.url,
+    work.githubUrl,
+    work.publishedAt,
+    work.isFeatured ? 1 : 0,
+    work.sortOrder,
+  ];
+}
+
 export class D1WorkRepository implements WorkRepository {
   constructor(private readonly database: D1DatabaseLike) {}
 
   async findAll(): Promise<readonly Work[]> {
     const rows = await selectAll<WorkRow>(
       this.database.prepare(
-        `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
-                work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
-                works.is_featured, works.sort_order, works.created_at, works.updated_at
-         FROM works
-         LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+        `${workSelectSql}
          ORDER BY works.sort_order ASC, works.id DESC`,
       ),
     );
@@ -26,12 +72,7 @@ export class D1WorkRepository implements WorkRepository {
     const rows = await selectAll<WorkRow>(
       this.database
         .prepare(
-          `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
-                  work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                  works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
-                  works.is_featured, works.sort_order, works.created_at, works.updated_at
-           FROM works
-           LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+          `${workSelectSql}
            WHERE works.category = ?
            ORDER BY works.sort_order ASC, works.id DESC`,
         )
@@ -44,12 +85,7 @@ export class D1WorkRepository implements WorkRepository {
   async findFeatured(): Promise<readonly Work[]> {
     const rows = await selectAll<WorkRow>(
       this.database.prepare(
-        `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
-                work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
-                works.is_featured, works.sort_order, works.created_at, works.updated_at
-         FROM works
-         LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+        `${workSelectSql}
          WHERE works.is_featured = 1
          ORDER BY works.sort_order ASC, works.id DESC`,
       ),
@@ -61,12 +97,7 @@ export class D1WorkRepository implements WorkRepository {
   async findById(id: number): Promise<Work | null> {
     const row = await this.database
       .prepare(
-        `SELECT works.id, works.title, works.category, works.context_category_id, work_context_categories.slug AS context_category_slug,
-                work_context_categories.name_ja AS context_category_name_ja, work_context_categories.name_en AS context_category_name_en,
-                works.description, works.tech_description, works.background, works.tech_stack, works.thumbnail, works.video_url, works.url, works.github_url, works.published_at,
-                works.is_featured, works.sort_order, works.created_at, works.updated_at
-         FROM works
-         LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id
+        `${workSelectSql}
          WHERE works.id = ?`,
       )
       .bind(id)
@@ -76,29 +107,15 @@ export class D1WorkRepository implements WorkRepository {
   }
 
   async save(work: Work): Promise<Work> {
+    const values = toWritableValues(work);
+
     if (work.id === null) {
       await this.database
         .prepare(
-          `INSERT INTO works (
-             title, category, context_category_id, description, tech_description, background, tech_stack, thumbnail, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
-           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+          `INSERT INTO works (${writableColumns.join(", ")}, created_at, updated_at)
+           VALUES (${writableColumns.map(() => "?").join(", ")}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         )
-        .bind(
-          work.title,
-          work.category,
-          work.contextCategoryId,
-          work.description,
-          work.techDescription,
-          work.background,
-          work.techStack,
-          work.thumbnail,
-          work.videoUrl,
-          work.url,
-          work.githubUrl,
-          work.publishedAt,
-          work.isFeatured ? 1 : 0,
-          work.sortOrder,
-        )
+        .bind(...values)
         .run();
 
       const id = await getLastInsertId(this.database);
@@ -114,26 +131,10 @@ export class D1WorkRepository implements WorkRepository {
     await this.database
       .prepare(
         `UPDATE works
-         SET title = ?, category = ?, context_category_id = ?, description = ?, tech_description = ?, background = ?, tech_stack = ?, thumbnail = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
+         SET ${writableColumns.map((column) => `${column} = ?`).join(", ")}, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
       )
-      .bind(
-        work.title,
-        work.category,
-        work.contextCategoryId,
-        work.description,
-        work.techDescription,
-        work.background,
-        work.techStack,
-        work.thumbnail,
-        work.videoUrl,
-        work.url,
-        work.githubUrl,
-        work.publishedAt,
-        work.isFeatured ? 1 : 0,
-        work.sortOrder,
-        work.id,
-      )
+      .bind(...values, work.id)
       .run();
 
     const saved = await this.findById(work.id);

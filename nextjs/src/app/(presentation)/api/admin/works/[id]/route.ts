@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { categories, type Category } from "@/domain/publicApi";
+import { categories, toThumbnailFit, type Category } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
 import { uploadFile } from "@worker/lib/api/upload";
@@ -110,11 +110,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       title,
       category: categoryValue,
       contextCategoryId,
+      lead: getOptionalText(formData, "lead") ?? null,
+      role: getOptionalText(formData, "role") ?? null,
       description,
       techDescription: getOptionalText(formData, "tech_description") ?? null,
       background: getOptionalText(formData, "background") ?? null,
       techStack: getOptionalText(formData, "tech_stack") ?? "",
       thumbnail,
+      thumbnailFit: toThumbnailFit(getOptionalText(formData, "thumbnail_fit")),
       videoUrl,
       url: getOptionalText(formData, "url"),
       githubUrl: getOptionalText(formData, "github_url"),

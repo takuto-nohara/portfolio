@@ -1,20 +1,34 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
-import Script from "next/script";
+import { JetBrains_Mono, Shippori_Mincho_B1, Zen_Kaku_Gothic_New } from "next/font/google";
 import "./globals.css";
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
+});
+
+// 日本語フォントは unicode-range で分割配信されるため preload しない
+const shipporiMincho = Shippori_Mincho_B1({
+  variable: "--font-shippori",
+  weight: ["500", "600", "700"],
+  preload: false,
+  display: "swap",
+});
+
+const zenKakuGothic = Zen_Kaku_Gothic_New({
+  variable: "--font-zen-kaku",
+  weight: ["400", "500", "700"],
+  preload: false,
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Takuto Nohara Portfolio",
-    template: "%s | Takuto Nohara Portfolio",
+    default: "野原 拓人 | ポートフォリオ",
+    template: "%s | 野原 拓人",
   },
-  description: "野原拓人のポートフォリオサイト。作品、技術、自己紹介を日本語中心で整理し、短時間で実績と強みが伝わるように構成しています。",
+  description: "野原拓人のポートフォリオサイト。何を解決したか・何を担当したかを先に示しながら、作品と経歴を紹介しています。",
 };
 
 export default function RootLayout({
@@ -23,14 +37,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${jetbrainsMono.variable} h-full antialiased`} data-scroll-behavior="smooth">
-      <body className="min-h-full bg-surface-primary text-foreground-primary font-mono">
-        <Script id="transition-arrival-style" strategy="beforeInteractive">{`try{if(sessionStorage.getItem('portfolio-transition-active')){var s=document.createElement('style');s.id='portfolio-transition-arrival-style';s.textContent='#transition-overlay{opacity:1!important;pointer-events:auto!important;transition:none!important}main[data-site-main="true"]{opacity:0!important}';document.head.appendChild(s)}}catch(e){}`}</Script>
-        <div id="transition-overlay" aria-hidden="true">
-          <span id="transition-text" />
-        </div>
-        {children}
-      </body>
+    <html
+      lang="ja"
+      className={`${jetbrainsMono.variable} ${shipporiMincho.variable} ${zenKakuGothic.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
+    >
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

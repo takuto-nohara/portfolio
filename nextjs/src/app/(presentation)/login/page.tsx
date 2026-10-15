@@ -13,7 +13,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-surface-secondary px-6 text-foreground-primary antialiased sm:px-8">
+    <main className="flex min-h-screen items-center justify-center bg-surface-secondary px-6 font-mono text-foreground-primary antialiased sm:px-8">
       <AdminLoginForm />
     </main>
   );

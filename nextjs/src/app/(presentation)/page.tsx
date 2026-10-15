@@ -1,145 +1,193 @@
+import Image from "next/image";
 import Link from "next/link";
 
-import { getFeaturedWorks, getSiteSettings } from "@worker/lib/site-data";
-import { ExternalLink } from "@/presentation/components/ExternalLink";
-import { ProfileAvatar } from "@/presentation/components/ProfileAvatar";
+import { getFeaturedWorks, getSiteSettings, getWorks } from "@worker/lib/site-data";
+import { NextPageLink } from "@/presentation/components/NextPageLink";
+import { Phrases } from "@/presentation/components/Phrases";
+import { SectionLabel } from "@/presentation/components/SectionLabel";
+import { Segments } from "@/presentation/components/Segments";
 import { SiteShell } from "@/presentation/components/SiteShell";
-import { WorkCard } from "@/presentation/components/WorkCard";
-import { siteProfile } from "@/presentation/content/siteProfile";
+import { TypedCommand } from "@/presentation/components/TypedCommand";
+import { WorkThumb } from "@/presentation/components/work/WorkThumb";
+import { siteProfile, siteSections } from "@/presentation/content/siteContent";
+import { getWorkMeta } from "@/presentation/lib/work-view";
 
-const highlights = [
-  {
-    title: "設計から実装まで",
-    description: "要件定義、設計、実装、運用まで一連の流れを自走して進めた制作物を掲載しています。",
-  },
-  {
-    title: "複数媒体の制作経験",
-    description: "Webアプリだけでなく、映像やグラフィックも含めてアウトプットの幅を持っています。",
-  },
-  {
-    title: "学習と実践の接続",
-    description: "個人開発と実案件の両方を通じて、学んだ技術を実際の課題解決へ結びつけています。",
-  },
-] as const;
+const FEATURED_COUNT = 3;
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [settings, featuredWorks] = await Promise.all([getSiteSettings(), getFeaturedWorks()]);
+  const [settings, featuredWorks, allWorks] = await Promise.all([getSiteSettings(), getFeaturedWorks(), getWorks()]);
+  const featured = featuredWorks.slice(0, FEATURED_COUNT);
 
   return (
     <SiteShell settings={settings} currentPath="/">
-      <section className="hero-bg relative overflow-hidden px-6 py-16 sm:px-20 sm:py-24">
-        <canvas id="hero-canvas" className="pointer-events-none absolute inset-0 z-0 h-full w-full" aria-hidden="true" />
-        <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-16">
-          <div className="order-2 lg:order-1">
-            <p className="hero-item text-sm font-medium tracking-[0.24em] text-accent-primary" data-delay="0" lang="en">
-              {siteProfile.roleEn}
-            </p>
-            <h1 className="hero-item mt-4 text-4xl font-bold leading-tight tracking-tight text-foreground-primary sm:text-6xl" data-delay="100">
+      <section aria-label="自己紹介の要約" className="relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_72%_40%,rgba(186,230,253,0.55)_0%,rgba(224,242,254,0.25)_45%,rgba(247,249,251,0)_75%)]"
+        />
+        <div className="site-container relative grid grid-cols-1 items-center gap-12 pt-[clamp(40px,8vh,96px)] pb-[clamp(64px,10vh,120px)] md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] md:gap-[clamp(32px,5vw,72px)]">
+          <div>
+            <TypedCommand text={siteProfile.command} />
+            <p className="sr-only">{siteProfile.command}</p>
+            <h1 data-reveal className="heading-display mt-5 text-[clamp(40px,6vw,76px)] leading-[1.2] tracking-[0.04em]">
               {siteProfile.nameJa}
             </h1>
-            <p className="hero-item mt-3 text-lg text-foreground-secondary" data-delay="150" lang="en">
-              {siteProfile.nameEn}
+            <p data-reveal className="mt-3 text-sm leading-relaxed text-ink-muted">
+              <Segments items={[siteProfile.nameKana, ...siteProfile.roleJa.split(" / ")]} />
             </p>
-            <p className="hero-item mt-4 text-base font-medium text-foreground-primary sm:text-lg" data-delay="200">
-              {siteProfile.roleJa}
+            <p className="mt-8 max-w-[14em] font-serif text-[clamp(22px,2.6vw,32px)] leading-[1.55] tracking-[0.06em]">
+              <Phrases text={siteProfile.catchCopy} />
             </p>
-            <p className="hero-item mt-6 max-w-2xl text-sm leading-8 text-foreground-secondary sm:text-base" data-delay="250">
-              {siteProfile.homeLead.map((line, i) => (
-                <span key={i}>{line}{i < siteProfile.homeLead.length - 1 && <br />}</span>
-              ))}
+            <p data-reveal className="mt-6 max-w-[34em] leading-[1.9] text-ink-body">
+              {siteProfile.lead}
             </p>
-            <div className="hero-item mt-10 flex flex-wrap gap-3" data-delay="300">
+            <div data-reveal className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
               <Link
                 href="/works"
-                className="rounded-full bg-accent-primary px-6 py-3 text-sm font-medium text-surface-primary transition-colors hover:bg-accent-secondary"
+                className="inline-flex min-h-13 items-center gap-3.5 rounded-full bg-ink px-7 text-[15px] font-medium text-white transition-[background-color,box-shadow,transform] duration-300 ease-out-expo hover:translate-x-0.5 hover:bg-link hover:shadow-[0_0_0_6px_rgba(14,165,233,0.18)]"
               >
-                作品を見る / Works
+                <span>作品を見る</span>
+                <span aria-hidden="true">→</span>
               </Link>
-              {settings.githubUrl ? (
-                <ExternalLink
-                  href={settings.githubUrl}
-                  className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
-                >
-                  GitHub
-                </ExternalLink>
-              ) : (
-                <Link
-                  href="/about"
-                  className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
-                >
-                  自己紹介 / About
-                </Link>
-              )}
-              <Link
-                href="/contact"
-                className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
-              >
-                連絡する / Contact
+              <Link href="/contact" className="link-underline text-[15px]">
+                連絡する
               </Link>
             </div>
-
           </div>
 
-          <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
-            <ProfileAvatar sizeClass="h-56 w-56 sm:h-72 sm:w-72 lg:h-80 lg:w-80" priority />
+          <div className="relative w-[min(calc(100%-24px),300px)] justify-self-center md:w-[min(100%,clamp(260px,34vw,460px))]">
+            <div data-reveal="render" className="media-frame aspect-[4/5]">
+              <div data-img className="absolute inset-0">
+                <Image
+                  src={siteProfile.portrait}
+                  alt={siteProfile.portraitAlt}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 460px, 80vw"
+                  className="object-cover object-[50%_20%]"
+                />
+              </div>
+              <span data-scan aria-hidden="true" className="scan-line" />
+            </div>
+            <span aria-hidden="true" className="corner-bl" />
+            <span aria-hidden="true" className="corner-tr" />
+            <p aria-hidden="true" className="absolute right-0 -bottom-7.5 font-mono text-[11px] tracking-[0.08em] text-ink-muted">
+              creator &amp;&amp; programmer
+            </p>
           </div>
         </div>
+        <a
+          href="#h-works"
+          data-reveal
+          aria-label="作品セクションへスクロール"
+          className="absolute bottom-6 left-[clamp(20px,5vw,56px)] hidden min-h-11 md:inline-flex items-center gap-3 font-mono text-[11px] tracking-[0.14em] text-ink-muted hover:text-link"
+        >
+          <span aria-hidden="true" className="scroll-cue block h-10 w-px bg-sky" />
+          <span>scroll</span>
+        </a>
       </section>
 
-      <section className="bg-surface-secondary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-12 flex items-baseline justify-between">
-            <div>
-              <h2 className="text-2xl font-semibold text-foreground-primary">注目の作品</h2>
-              <p className="mt-2 text-sm text-foreground-secondary" lang="en">
-                Picup Works
-              </p>
-            </div>
-            <Link href="/works" className="text-sm font-medium text-accent-primary transition-colors hover:text-accent-secondary">
-              すべて見る / View all
+      <section aria-labelledby="h-works" className="border-t border-line">
+        <div className="site-container section-pad">
+          <SectionLabel prefix="//">01 &nbsp;works --featured</SectionLabel>
+          <div className="mt-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+            <h2 id="h-works" data-reveal className="heading-section">
+              {siteSections.worksHeading}
+            </h2>
+            <Link href="/works" data-reveal className="inline-flex min-h-11 items-center gap-2.5 text-[15px] font-medium text-ink hover:text-link">
+              <span>{`${siteSections.worksAll}（${allWorks.length}）`}</span>
+              <span aria-hidden="true">→</span>
             </Link>
           </div>
 
-          {featuredWorks.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 md:grid-cols-3">
-              {featuredWorks.map((work, index) => (
-                <WorkCard key={work.id ?? work.title} work={work} priorityImage={index === 0} />
-              ))}
-            </div>
+          {featured.length > 0 ? (
+            <ol className="mt-[clamp(32px,5vh,56px)] flex flex-col">
+              {featured.map((work, index) => {
+                const meta = getWorkMeta(work);
+
+                return (
+                  <li key={work.id ?? work.title} data-reveal className="border-t border-line">
+                    <Link
+                      href={work.id === null ? "/works" : `/works/${work.id}`}
+                      aria-label={`${work.title} の詳細`}
+                      className="row-link group grid-cols-1 items-center gap-5 py-[clamp(28px,4vh,44px)] md:grid-cols-2 md:gap-[clamp(24px,3vw,48px)]"
+                    >
+                      <WorkThumb work={work} sizes="(min-width: 1024px) 560px, 100vw" priority={index === 0} />
+                      <div>
+                        <p className="font-mono text-xs leading-normal tracking-[0.06em] text-ink-muted">
+                          {`${String(index + 1).padStart(2, "0")}  ${meta.mediumJa}  ${meta.year}`}
+                        </p>
+                        <h3 className="heading-display mt-3 text-[clamp(24px,2.6vw,34px)] leading-[1.4] tracking-[0.04em]">{work.title}</h3>
+                        <p className="mt-3 leading-[1.8] text-ink-body">{meta.lead}</p>
+                        {work.role ? <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">{`担当: ${work.role}`}</p> : null}
+                        <span className="mt-5 inline-flex items-center gap-2.5 text-sm font-medium text-link">
+                          <span>詳しく見る</span>
+                          <span aria-hidden="true">→</span>
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ol>
           ) : (
-            <p className="col-span-3 py-12 text-center text-sm text-foreground-muted">{"// まだ作品が登録されていません"}</p>
+            <p className="py-12 text-center text-ink-muted">まだ作品が登録されていません。</p>
           )}
         </div>
       </section>
 
-      <section className="bg-surface-primary px-6 py-12 sm:px-20 sm:py-20">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]">
-          <div className="rounded-3xl border border-border-subtle bg-surface-secondary p-8 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.24)] sm:p-10">
-            <p className="text-sm font-medium tracking-[0.24em] text-accent-primary" lang="en">
-              About
+      <section aria-labelledby="h-about" className="border-t border-line bg-sky-soft/35">
+        <div className="site-container section-pad grid grid-cols-1 items-end gap-10 md:grid-cols-2 md:gap-[clamp(32px,5vw,80px)]">
+          <div>
+            <SectionLabel prefix="//">02 &nbsp;about</SectionLabel>
+            <h2 id="h-about" className="heading-section mt-5 max-w-[14em]">
+              <Phrases text={siteProfile.aboutTitle} />
+            </h2>
+            <p data-reveal className="mt-6 max-w-[32em] leading-[1.9] text-ink-body">
+              {siteProfile.aboutSummary}
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-foreground-primary">自己紹介</h2>
-            <p className="mt-5 text-sm leading-8 text-foreground-secondary">{siteProfile.summary}</p>
-            <p className="mt-4 text-sm leading-8 text-foreground-secondary">
-              中学生のころに動画編集からものづくりへ入り、現在は Web アプリケーション開発を中心に、設計意図まで説明できる成果物づくりを重視しています。
-            </p>
-            <Link href="/about" className="mt-6 inline-flex text-sm font-medium text-accent-primary transition-colors hover:text-accent-secondary">
-              自己紹介を見る / Learn more
+            <Link href="/about" data-reveal className="link-underline mt-7 text-[15px]">
+              <span>{siteSections.aboutMore}</span>
+              <span aria-hidden="true">→</span>
             </Link>
           </div>
-
-          <div className="flex flex-col gap-3">
-            {highlights.map((highlight) => (
-              <section key={highlight.title} className="rounded-3xl border border-border-subtle bg-surface-primary p-5 shadow-[0_18px_50px_-28px_rgba(12,74,110,0.18)]">
-                <h3 className="text-balance text-sm font-semibold text-foreground-primary">{highlight.title}</h3>
-                <p className="mt-2 text-pretty text-sm leading-7 text-foreground-secondary">{highlight.description}</p>
-              </section>
+          <dl data-reveal className="grid grid-cols-[auto_1fr] gap-x-6 border-b border-line-strong text-[15px] leading-[1.7]">
+            {siteProfile.facts.map((fact) => (
+              <div key={fact.label} className="contents">
+                <dt className="border-t border-line-strong py-4 font-mono text-xs leading-[1.7] tracking-[0.06em] text-link">{fact.label}</dt>
+                <dd className="border-t border-line-strong py-4">{fact.value}</dd>
+              </div>
             ))}
+          </dl>
+        </div>
+      </section>
+
+      <section aria-labelledby="h-contact" className="border-t border-line">
+        <div className="site-container section-pad">
+          <SectionLabel prefix="//">03 &nbsp;contact</SectionLabel>
+          <h2 id="h-contact" className="heading-section mt-5 max-w-[16em]">
+            <Phrases text={siteSections.contactTitle} />
+          </h2>
+          <div data-reveal className="mt-8 flex flex-wrap items-center gap-x-10 gap-y-4">
+            {settings.contactEmail ? (
+              <a href={`mailto:${settings.contactEmail}`} className="link-underline font-mono text-[clamp(16px,2.2vw,22px)] font-normal">
+                {settings.contactEmail}
+              </a>
+            ) : null}
+            <Link
+              href="/contact"
+              className="inline-flex min-h-13 items-center gap-3.5 rounded-full border border-ink px-7 text-[15px] font-medium text-ink transition-colors hover:bg-ink hover:text-white"
+            >
+              <span>フォームを開く</span>
+              <span aria-hidden="true">→</span>
+            </Link>
           </div>
         </div>
       </section>
+
+      <NextPageLink href="/works" label="次は、作品一覧へ" />
     </SiteShell>
   );
 }

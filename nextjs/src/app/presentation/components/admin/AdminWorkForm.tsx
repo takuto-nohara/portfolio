@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { categories, getMediumCategoryDefinition, type Work, type WorkContextCategory } from "@/application/publicApi";
+import { categories, getMediumCategoryDefinition, thumbnailFits, type Work, type WorkContextCategory } from "@/application/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
 import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 
@@ -122,6 +122,31 @@ export function AdminWorkForm({ mode, contextCategories, work, status }: AdminWo
               ))}
             </select>
             <p className="mt-2 text-xs text-foreground-muted">作品の背景文脈で分類したい場合に設定します。</p>
+          </div>
+
+          <div>
+            <label htmlFor="lead" className="mb-2 block text-sm font-medium text-foreground-primary">{"> lead (一行リード)"}</label>
+            <input
+              type="text"
+              id="lead"
+              name="lead"
+              defaultValue={work?.lead ?? ""}
+              placeholder="何を解決したかを一文で"
+              className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+            />
+            <p className="mt-2 text-xs text-foreground-muted">一覧・トップ・詳細の冒頭に表示されます。</p>
+          </div>
+
+          <div>
+            <label htmlFor="role" className="mb-2 block text-sm font-medium text-foreground-primary">{"> role (担当範囲)"}</label>
+            <input
+              type="text"
+              id="role"
+              name="role"
+              defaultValue={work?.role ?? ""}
+              placeholder="フロント・バックエンド / PM（3人チーム）"
+              className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+            />
           </div>
 
           <div>
@@ -257,6 +282,20 @@ export function AdminWorkForm({ mode, contextCategories, work, status }: AdminWo
                   <span className="break-all text-xs text-foreground-muted">{work.thumbnail}</span>
                 </div>
               ) : null}
+
+              <label htmlFor="thumbnail_fit" className="mb-2 mt-4 block text-sm font-medium text-foreground-primary">{"> thumbnail_fit"}</label>
+              <select
+                id="thumbnail_fit"
+                name="thumbnail_fit"
+                defaultValue={work?.thumbnailFit ?? "contain"}
+                className="w-full rounded border border-border-subtle bg-surface-secondary px-4 py-3 text-sm text-foreground-primary transition-colors focus:border-accent-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+              >
+                {thumbnailFits.map((fit) => (
+                  <option key={fit} value={fit}>
+                    {fit === "cover" ? "cover（枠いっぱいに表示）" : "contain（余白を残して全体を表示）"}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>

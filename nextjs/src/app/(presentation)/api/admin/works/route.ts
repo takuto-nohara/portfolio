@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { categories, type Category, type Work } from "@/domain/publicApi";
+import { categories, toThumbnailFit, type Category, type ThumbnailFit, type Work } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
 import { uploadFile } from "@worker/lib/api/upload";
@@ -23,11 +23,14 @@ function createWorkRecord(input: {
   title: string;
   category: Category;
   contextCategoryId: number | null;
+  lead: string | null;
+  role: string | null;
   description: string;
   techDescription: string | null;
   background: string | null;
   techStack: string | null;
   thumbnail: string | null;
+  thumbnailFit: ThumbnailFit;
   videoUrl: string | null;
   url: string | null;
   githubUrl: string | null;
@@ -43,11 +46,14 @@ function createWorkRecord(input: {
     contextCategorySlug: null,
     contextCategoryNameJa: null,
     contextCategoryNameEn: null,
+    lead: input.lead,
+    role: input.role,
     description: input.description,
     techDescription: input.techDescription,
     background: input.background,
     techStack: input.techStack ?? "",
     thumbnail: input.thumbnail,
+    thumbnailFit: input.thumbnailFit,
     videoUrl: input.videoUrl,
     url: input.url,
     githubUrl: input.githubUrl,
@@ -105,11 +111,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         title,
         category: categoryValue,
         contextCategoryId,
+        lead: getOptionalText(formData, "lead"),
+        role: getOptionalText(formData, "role"),
         description,
         techDescription: getOptionalText(formData, "tech_description"),
         background: getOptionalText(formData, "background"),
         techStack: getOptionalText(formData, "tech_stack"),
         thumbnail,
+        thumbnailFit: toThumbnailFit(getOptionalText(formData, "thumbnail_fit")),
         videoUrl,
         url: getOptionalText(formData, "url"),
         githubUrl: getOptionalText(formData, "github_url"),

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { badRequest, internalServerError, notFound } from "@worker/lib/api/responses";
-import { getAppServices } from "@worker/lib/api/services";
+import { getReadServices } from "@worker/lib/api/services";
 
 interface RouteContext {
   readonly params: Promise<{
@@ -19,7 +19,7 @@ export async function GET(request: Request, context: RouteContext): Promise<Next
       return badRequest("Invalid work id.");
     }
 
-    const services = await getAppServices();
+    const services = await getReadServices();
     const work = await services.useCases.getWorkDetail.execute(workId);
 
     if (!work) {
