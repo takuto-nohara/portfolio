@@ -73,6 +73,11 @@ export function SiteEffects() {
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
       let stagger = 0;
 
+      // 非表示タブなどで寸法が取れない間は何も隠さない（resize 時に再判定する）
+      if (viewportHeight === 0) {
+        return;
+      }
+
       document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((element) => {
         if (revealed.has(element)) {
           return;
@@ -80,7 +85,15 @@ export function SiteEffects() {
 
         const rect = element.getBoundingClientRect();
 
-        if (rect.top < viewportHeight && rect.bottom > 0) {
+        // スクロール復元などで既に通り過ぎた要素は演出なしで表示する
+        if (rect.bottom <= 0) {
+          revealed.add(element);
+          element.style.opacity = "";
+          observer.unobserve(element);
+          return;
+        }
+
+        if (rect.top < viewportHeight) {
           show(element, stagger);
           stagger += 1;
         } else {
@@ -91,8 +104,19 @@ export function SiteEffects() {
     };
 
     arm();
-    // 画像の読み込みなどでレイアウトがずれた場合の取りこぼし対策
+    // 画像の読み込みやアンカー移動でレイアウト・位置が飛んだ場合の取りこぼし対策
     timeoutIds.push(window.setTimeout(arm, 600), window.setTimeout(arm, 1500));
+    let sweepFrameId = 0;
+    const sweep = () => {
+      if (sweepFrameId === 0) {
+        sweepFrameId = window.requestAnimationFrame(() => {
+          sweepFrameId = 0;
+          arm();
+        });
+      }
+    };
+    window.addEventListener("scroll", sweep, { passive: true });
+    window.addEventListener("resize", sweep);
 
     const main = document.querySelector<HTMLElement>("main[data-site-main]");
     main?.classList.remove("page-leave");
@@ -100,6 +124,9 @@ export function SiteEffects() {
 
     return () => {
       observer.disconnect();
+      window.cancelAnimationFrame(sweepFrameId);
+      window.removeEventListener("scroll", sweep);
+      window.removeEventListener("resize", sweep);
       timeoutIds.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
   }, [pathname]);

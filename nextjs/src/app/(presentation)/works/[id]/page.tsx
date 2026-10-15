@@ -1,18 +1,17 @@
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 
 import { getSiteSettings, getWorks, getWorkDetail } from "@worker/lib/site-data";
-import { getMediumCategoryDefinition } from "@/domain/publicApi";
-import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
-import { Breadcrumb } from "@/presentation/components/Breadcrumb";
-import { CategoryChip } from "@/presentation/components/CategoryChip";
 import { ExternalLink } from "@/presentation/components/ExternalLink";
-import { PageHeader } from "@/presentation/components/PageHeader";
-import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
+import { NextPageLink } from "@/presentation/components/NextPageLink";
+import { SectionLabel } from "@/presentation/components/SectionLabel";
 import { SiteShell } from "@/presentation/components/SiteShell";
-import { TechTag } from "@/presentation/components/TechTag";
 import { WorkGalleryModal } from "@/presentation/components/work/WorkGalleryModal";
+import { WorkThumb } from "@/presentation/components/work/WorkThumb";
+import { getWorkMeta } from "@/presentation/lib/work-view";
+import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 
 interface WorkDetailPageProps {
   readonly params: Promise<{
@@ -20,7 +19,28 @@ interface WorkDetailPageProps {
   }>;
 }
 
+function DetailSection({ id, title, children }: { readonly id: string; readonly title: string; readonly children: ReactNode }) {
+  return (
+    <section data-reveal aria-labelledby={id}>
+      <h2 id={id} className="heading-display text-[22px] leading-[1.45] tracking-[0.04em]">
+        {title}
+      </h2>
+      <div className="mt-4 leading-[1.9] whitespace-pre-line text-ink-body">{children}</div>
+    </section>
+  );
+}
+
+const dtClassName = "border-t border-line-strong py-3.5 font-mono text-xs leading-[1.7] tracking-[0.06em] text-link";
+const ddClassName = "border-t border-line-strong py-3.5";
+
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: WorkDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const work = Number.isInteger(Number(id)) ? await getWorkDetail(Number(id)) : null;
+
+  return work ? { title: work.title, description: work.lead ?? undefined } : { title: "作品詳細" };
+}
 
 export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
   const { id } = await params;
@@ -30,175 +50,151 @@ export default async function WorkDetailPage({ params }: WorkDetailPageProps) {
     notFound();
   }
 
-  const [settings, workDetail, allWorks] = await Promise.all([getSiteSettings(), getWorkDetail(workId), getWorks()]);
+  const [settings, work, allWorks] = await Promise.all([getSiteSettings(), getWorkDetail(workId), getWorks()]);
 
-  if (!workDetail) {
+  if (!work) {
     notFound();
   }
 
   const sortedWorks = [...allWorks].sort((a, b) => a.sortOrder - b.sortOrder);
   const currentIndex = sortedWorks.findIndex((w) => w.id === workId);
   const prevWork = currentIndex > 0 ? sortedWorks[currentIndex - 1] : null;
-  const nextWork = currentIndex < sortedWorks.length - 1 ? sortedWorks[currentIndex + 1] : null;
-
-  const thumbnailUrl = resolveWorkAssetUrl(workDetail.thumbnail);
-  const videoId = workDetail.videoUrl ? extractYouTubeVideoId(workDetail.videoUrl) : null;
-  const techStack = workDetail.techStack
-    .split(",")
-    .map((tech) => tech.trim())
-    .filter((tech) => tech.length > 0);
-  const category = getMediumCategoryDefinition(workDetail.category);
+  const nextWork = currentIndex >= 0 && currentIndex < sortedWorks.length - 1 ? sortedWorks[currentIndex + 1] : null;
+  const meta = getWorkMeta(work);
+  const videoId = work.videoUrl ? extractYouTubeVideoId(work.videoUrl) : null;
+  const subtitle = [meta.mediumJa, work.contextCategoryNameJa, meta.year].filter(Boolean).join(" / ");
 
   return (
     <SiteShell settings={settings} currentPath={`/works/${workId}`}>
-      <section className="bg-surface-secondary px-6 py-10 sm:px-20 sm:py-16">
-        <div className="mx-auto max-w-6xl">
-          <Breadcrumb items={[{ label: "トップ", href: "/" }, { label: "作品一覧", href: "/works" }, { label: workDetail.title }]} />
-          <div className="mt-6 flex flex-wrap gap-2">
-            <CategoryChip labelJa={category.nameJa} labelEn={category.nameEn} />
-            {workDetail.contextCategoryNameJa && workDetail.contextCategoryNameEn ? (
-              <CategoryChip labelJa={workDetail.contextCategoryNameJa} labelEn={workDetail.contextCategoryNameEn} />
+      <article className="site-container pt-[clamp(32px,5vh,56px)] pb-[clamp(64px,10vh,120px)]">
+        <nav aria-label="パンくず" data-reveal className="text-[13px]">
+          <Link href="/works" className="inline-flex min-h-11 items-center gap-2 text-ink-muted hover:text-link">
+            <span aria-hidden="true">←</span>
+            <span>作品一覧</span>
+          </Link>
+        </nav>
+
+        <header className="mt-2 max-w-[820px]">
+          <SectionLabel prefix="$">
+            cat works/{workId} &nbsp;<span className="text-ink-muted">{subtitle}</span>
+          </SectionLabel>
+          <h1 data-reveal className="heading-display mt-4 text-[clamp(32px,4.5vw,56px)] leading-[1.3] tracking-[0.04em]">
+            {work.title}
+          </h1>
+          {work.lead ? (
+            <p data-reveal className="mt-5 text-[clamp(17px,1.6vw,20px)] leading-[1.8] text-ink-body">
+              {work.lead}
+            </p>
+          ) : null}
+        </header>
+
+        <WorkThumb
+          work={work}
+          className="mt-[clamp(32px,5vh,48px)] aspect-video"
+          sizes="(min-width: 1240px) 1128px, 100vw"
+          alt={`${work.title} のメインビジュアル`}
+          priority
+        />
+
+        <div className="mt-[clamp(40px,6vh,72px)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] items-start gap-[clamp(32px,5vw,72px)]">
+          <dl data-reveal className="grid grid-cols-[auto_1fr] gap-x-6 border-b border-line-strong text-[15px] leading-[1.7] md:sticky md:top-24">
+            {work.role ? (
+              <>
+                <dt className={dtClassName}>担当</dt>
+                <dd className={ddClassName}>{work.role}</dd>
+              </>
+            ) : null}
+            {work.publishedAt ? (
+              <>
+                <dt className={dtClassName}>公開</dt>
+                <dd className={ddClassName}>{work.publishedAt}</dd>
+              </>
+            ) : null}
+            {meta.stackFull ? (
+              <>
+                <dt className={dtClassName}>技術</dt>
+                <dd className={`${ddClassName} font-mono text-[13px] leading-[1.8]`}>{meta.stackFull}</dd>
+              </>
+            ) : null}
+            <dt className={dtClassName}>リンク</dt>
+            <dd className={`${ddClassName} flex flex-col items-start gap-2`}>
+              {work.url ? (
+                <a href={work.url} className="inline-flex items-center gap-2 font-medium text-link hover:text-link-hover">
+                  <span>サイトを開く</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              ) : null}
+              {work.githubUrl ? (
+                <ExternalLink href={work.githubUrl} className="inline-flex items-center font-medium text-link hover:text-link-hover">
+                  GitHub
+                </ExternalLink>
+              ) : null}
+              {!work.url && !work.githubUrl ? <span className="text-ink-muted">非公開</span> : null}
+            </dd>
+          </dl>
+
+          <div className="flex max-w-[680px] flex-col gap-[clamp(36px,5vh,56px)]">
+            <DetailSection id="d-overview" title="概要">
+              {work.description}
+            </DetailSection>
+            {work.techDescription ? (
+              <DetailSection id="d-tech" title="技術と設計">
+                {work.techDescription}
+              </DetailSection>
+            ) : null}
+            {work.background ? (
+              <DetailSection id="d-background" title="背景">
+                {work.background}
+              </DetailSection>
             ) : null}
           </div>
-          <div className="mt-6 max-w-3xl">
-            <PageHeader
-              titleJa={workDetail.title}
-              titleEn="Work Details"
-              lead={`作品「${workDetail.title}」の制作背景、使用技術、公開先をまとめています。`}
-            />
-            {workDetail.publishedAt ? <p className="mt-4 text-sm text-foreground-muted">{`公開日: ${workDetail.publishedAt}`}</p> : null}
-          </div>
         </div>
-      </section>
 
-      <section className="bg-surface-primary px-6 pb-4 pt-8 sm:px-20 sm:pt-12">
-        <div className="relative mx-auto flex aspect-16/7 max-w-6xl items-center justify-center overflow-hidden rounded-3xl border border-border-subtle bg-surface-card shadow-[0_24px_70px_-42px_rgba(12,74,110,0.32)]">
-          {thumbnailUrl ? (
-            <Image
-              src={thumbnailUrl}
-              alt={workDetail.title}
-              fill
-              className="object-contain"
-              sizes="(min-width: 1152px) 1152px, 100vw"
-              priority
-            />
+        {videoId ? (
+          <section aria-labelledby="d-video" className="mt-[clamp(48px,7vh,80px)]">
+            <h2 id="d-video" data-reveal className="heading-display text-[22px] leading-[1.45] tracking-[0.04em]">
+              映像
+            </h2>
+            <div data-reveal className="media-frame mt-5 aspect-video">
+              <iframe
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title={work.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          </section>
+        ) : null}
+
+        {work.images.length > 0 ? (
+          <section aria-labelledby="d-gallery" className="mt-[clamp(48px,7vh,80px)]">
+            <h2 id="d-gallery" data-reveal className="heading-display text-[22px] leading-[1.45] tracking-[0.04em]">
+              画面
+            </h2>
+            <WorkGalleryModal title={work.title} images={work.images} />
+          </section>
+        ) : null}
+
+        <nav aria-label="前後の作品" data-reveal className="mt-[clamp(48px,7vh,80px)] flex justify-between gap-6 border-t border-line-strong pt-6 text-[15px]">
+          {prevWork?.id != null ? (
+            <Link href={`/works/${prevWork.id}`} className="inline-flex min-h-11 items-center gap-2.5 text-ink hover:text-link">
+              <span aria-hidden="true">←</span>
+              <span>{prevWork.title}</span>
+            </Link>
           ) : (
-            <span className="text-sm text-foreground-muted">メインビジュアル準備中 / Hero image pending</span>
+            <span />
           )}
-        </div>
-      </section>
-
-      <section className="bg-surface-primary px-6 py-10 sm:px-20 sm:py-16">
-        <div className="mx-auto max-w-4xl">
-          <div className="mt-10">
-            <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
-              作品概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Overview</span>
-            </h2>
-            <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.description}</p>
-          </div>
-
-          {workDetail.techDescription ? (
-            <div className="mt-10">
-              <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
-                技術概要 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Technical Overview</span>
-              </h2>
-              <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.techDescription}</p>
-            </div>
+          {nextWork?.id != null ? (
+            <Link href={`/works/${nextWork.id}`} className="inline-flex min-h-11 items-center gap-2.5 text-right text-ink hover:text-link">
+              <span>{nextWork.title}</span>
+              <span aria-hidden="true">→</span>
+            </Link>
           ) : null}
+        </nav>
+      </article>
 
-          {workDetail.background ? (
-            <div className="mt-10">
-              <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
-                作成背景 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Background</span>
-              </h2>
-              <p className="whitespace-pre-wrap text-sm leading-8 text-foreground-secondary">{workDetail.background}</p>
-            </div>
-          ) : null}
-
-          <div className="mt-10">
-            <h2 className="mb-4 text-lg font-semibold text-foreground-primary">
-              使用技術 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Tech Stack</span>
-            </h2>
-            <ul className="flex flex-wrap gap-2" role="list" aria-label="使用技術">
-              {techStack.map((tech) => (
-                <TechTag key={tech}>
-                  {tech}
-                </TechTag>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-10 flex flex-wrap gap-4">
-            {workDetail.githubUrl ? (
-              <ExternalLink
-                href={workDetail.githubUrl}
-                className="rounded-full bg-foreground-primary px-6 py-3 text-sm font-medium text-surface-primary transition-colors hover:bg-foreground-secondary"
-              >
-                GitHub で見る / GitHub
-              </ExternalLink>
-            ) : null}
-            {workDetail.url ? (
-              <a
-                href={workDetail.url}
-                className="rounded-full border border-accent-primary px-6 py-3 text-sm font-medium text-accent-primary transition-colors hover:bg-accent-primary hover:text-surface-primary"
-              >
-                サイトを開く / Visit Site
-              </a>
-            ) : null}
-          </div>
-
-          {videoId ? (
-            <div className="mt-16">
-              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">
-                動画 <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Video</span>
-              </h2>
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-                <iframe
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  title={workDetail.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="h-full w-full"
-                />
-              </div>
-            </div>
-          ) : null}
-
-          {workDetail.images.length > 0 ? (
-            <div className="mt-16">
-              <h2 className="mb-6 text-lg font-semibold text-foreground-primary">
-                ギャラリー <span className="ml-2 text-xs uppercase tracking-[0.18em] text-foreground-muted" lang="en">Gallery</span>
-              </h2>
-              <WorkGalleryModal title={workDetail.title} images={workDetail.images} />
-            </div>
-          ) : null}
-
-          <nav className="mt-16 flex items-center justify-between border-t border-border-subtle pt-8">
-            {prevWork?.id != null ? (
-              <Link
-                href={`/works/${prevWork.id}`}
-                className="group flex items-center gap-2 text-sm text-foreground-secondary transition-colors hover:text-accent-primary"
-              >
-                <span className="transition-transform group-hover:-translate-x-1">{"<"}</span>
-                <span className="max-w-45 truncate">{prevWork.title}</span>
-              </Link>
-            ) : (
-              <span />
-            )}
-            {nextWork?.id != null ? (
-              <Link
-                href={`/works/${nextWork.id}`}
-                className="group flex items-center gap-2 text-sm text-foreground-secondary transition-colors hover:text-accent-primary"
-              >
-                <span className="max-w-45 truncate">{nextWork.title}</span>
-                <span className="transition-transform group-hover:translate-x-1">{">"}</span>
-              </Link>
-            ) : (
-              <span />
-            )}
-          </nav>
-        </div>
-      </section>
+      <NextPageLink href="/works" label="作品一覧に戻る" />
     </SiteShell>
   );
 }
