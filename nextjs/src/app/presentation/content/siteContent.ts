@@ -20,7 +20,7 @@ export const siteProfile = {
   portraitAlt: "野原拓人のポートレート",
   facts: [
     { label: "現在", value: "工学院大学 在学 / 株式会社 Zequt 創業初期エンジニア" },
-    { label: "得意", value: "TypeScript / React / Next.js / Cloudflare（Workers・D1・R2）" },
+    { label: "得意", value: "TypeScript / Angular / React / Cloudflare（Workers・D1・R2）" },
     { label: "ほかに", value: "映像編集（DaVinci Resolve）、紙面デザイン（Affinity）" },
     { label: "姿勢", value: "設計意図まで説明できる成果物をつくる" },
   ],
@@ -47,10 +47,28 @@ export const siteSections = {
 } as const;
 
 export const skills = [
-  { titleJa: "言語", items: ["TypeScript", "JavaScript", "PHP", "HTML・CSS", "Java", "C"] },
-  { titleJa: "フレームワーク", items: ["React", "Next.js", "Angular", "Laravel", "Hono", "Tailwind CSS", "Vite", "Vitest"] },
-  { titleJa: "基盤・運用", items: ["Cloudflare（Workers・D1・R2）", "Firebase", "Docker", "Stripe"] },
-  { titleJa: "ツール", items: ["Git・GitHub", "VS Code", "ESLint", "Figma", "Pencil", "DaVinci Resolve", "Affinity"] },
+  { titleJa: "言語", items: ["TypeScript", "JavaScript", "Python", "SQL", "PHP", "HTML・CSS", "Java", "C"] },
+  {
+    titleJa: "フレームワーク",
+    items: ["Angular", "React", "Next.js", "Hono", "Laravel", "Tailwind CSS", "Vite", "Drizzle ORM", "Three.js"],
+  },
+  {
+    titleJa: "基盤・運用",
+    items: [
+      "Cloudflare（Workers・D1・R2・Durable Objects・Workers AI）",
+      "Firebase",
+      "Google Cloud",
+      "Terraform",
+      "Docker",
+      "GitHub Actions",
+      "Stripe",
+    ],
+  },
+  { titleJa: "テスト・設計", items: ["Vitest", "Playwright", "ESLint", "CUE", "MCP", "OAuth 2.1"] },
+  {
+    titleJa: "ツール",
+    items: ["Git・GitHub", "VS Code", "Claude Code", "Codex", "Figma", "Pencil", "DaVinci Resolve", "Affinity"],
+  },
 ] as const;
 
 interface ExperienceItem {
@@ -63,12 +81,32 @@ interface ExperienceItem {
 
 export const experiences: readonly ExperienceItem[] = [
   {
+    date: "2026.09",
+    title: "新宿祭 運営管理システムを開発・運用開始",
+    description:
+      "スプレッドシート・LINE・Excel に分かれていた学園祭の運営業務を一つの PWA にまとめ、要件定義から運用まで一人で担当。同時期に模擬店ランキング投票システムも Cloudflare Workers・D1 へ全面的に作り直した。",
+  },
+  {
+    date: "2026.09",
+    title: "第77回 新宿祭 公式サイトを公開",
+    description:
+      "Angular（SSR・Service Worker）と Cloudflare Workers で、当日の混雑した回線でも見られる公式サイトを 3 人チームで開発。設計・デザイン実装・表示速度の改善・本番での検証を中心になって担当。",
+    href: "https://shinjuku.kute-fes.com/2026/",
+    label: "shinjuku.kute-fes.com",
+  },
+  {
     date: "2026.04",
     title: "学園祭実行委員会 紹介サイトを新設",
     description:
       "工学院大学・学園祭実行委員会の紹介サイトを設計・公開。Cloudflare D1 / R2 を組み合わせた疑似 CMS 構成で、独自ドメイン取得から保守・運用まで一人で担当。",
     href: "https://www.kute-fes.com/",
     label: "kute-fes.com",
+  },
+  {
+    date: "2026.03",
+    title: "Zequt で RoughTask・Shifora をリリース",
+    description:
+      "GitHub の Issue をそのままタスクとして扱う RoughTask と、AI と数理最適化でシフトを自動作成する Shifora を 3 人チームで公開。基盤部分の設計・実装と、Shifora ではプロジェクトの進行管理も担当。",
   },
   {
     date: "2025.12",
@@ -84,7 +122,8 @@ export const experiences: readonly ExperienceItem[] = [
   {
     date: "2025.08",
     title: "学園祭サイトを制作・公開（初の Web サイト）",
-    description: "学園祭情報をまとめるサイトを HTML / CSS / JavaScript で制作・公開。独学ながら初めて実際にリリースしたプロジェクト。",
+    description:
+      "学園祭情報をまとめるサイトを HTML / CSS / JavaScript で制作・公開。独学ながら初めて実際にリリースしたプロジェクト。あわせて模擬店ランキングの投票システムを Firebase で制作。",
     href: "https://www.ns.kogakuin.ac.jp/hachisai/2025/",
     label: "hachisai 2025",
   },
