@@ -58,6 +58,11 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
       return redirectWithStatus(request, "/admin/works", "deleted");
     }
 
+    if (intent === "toggle-featured") {
+      await services.useCases.updateWork.execute({ ...work, isFeatured: !work.isFeatured });
+      return redirectWithStatus(request, "/admin/works", work.isFeatured ? "unfeatured" : "featured");
+    }
+
     const title = getText(formData, "title");
     const categoryValue = getText(formData, "category");
     const description = getText(formData, "description");
