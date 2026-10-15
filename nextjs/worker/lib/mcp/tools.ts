@@ -5,6 +5,7 @@ import { RPC_ERROR, RpcError } from "./json-rpc";
 import { validateJson } from "./json-schema";
 import { fail, type McpTool, type ToolContext, type ToolResult } from "./tool";
 import { READ_TOOLS } from "./tools-read";
+import { SITE_TOOLS } from "./tools-site";
 import { WORK_TOOLS } from "./tools-works";
 
 /**
@@ -14,7 +15,7 @@ import { WORK_TOOLS } from "./tools-works";
  * （状態は get_settings で見られる）。プロフィール・スキル・経歴はコード内の固定値なので参照だけ。
  */
 
-const MCP_TOOLS: readonly McpTool[] = [...READ_TOOLS, ...WORK_TOOLS];
+const MCP_TOOLS: readonly McpTool[] = [...READ_TOOLS, ...WORK_TOOLS, ...SITE_TOOLS];
 
 const TOOLS_BY_NAME = new Map(MCP_TOOLS.map((tool) => [tool.name, tool]));
 
