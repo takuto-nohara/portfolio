@@ -48,8 +48,15 @@ export interface McpTool {
 
 /** 読むだけのツール */
 export const READ_ONLY = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
+/** 新しく作る（呼ぶたびに増える） */
+export const CREATE = { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false } as const;
+/** 何度送っても同じ結果になる変更 */
+export const IDEMPOTENT_WRITE = { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
+/** 取り消せない削除 */
+export const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false } as const;
 
 export const READ_SCOPE: readonly ApiScope[] = ["portfolio:read"];
+export const WRITE_SCOPE: readonly ApiScope[] = ["portfolio:write"];
 
 export function ok(value: Record<string, unknown>): ToolResult {
   return { content: [{ type: "text", text: JSON.stringify(value) }], structuredContent: value };
@@ -75,7 +82,22 @@ export function booleanArg(args: Record<string, unknown>, name: string): boolean
   return typeof value === "boolean" ? value : undefined;
 }
 
+/** 文字列か null を受ける引数。空文字は null とみなす。指定が無ければ undefined */
+export function nullableStringArg(args: Record<string, unknown>, name: string): string | null | undefined {
+  if (!(name in args)) {
+    return undefined;
+  }
+
+  const value = args[name];
+  return typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+}
+
 /** id 引数（1 以上の整数）のスキーマ */
 export function idSchema(description: string): JsonSchema {
   return { type: "integer", minimum: 1, description };
+}
+
+/** 文字列か null を受けるスキーマ */
+export function nullableString(description: string, maxLength = 5000): JsonSchema {
+  return { anyOf: [{ type: "string", maxLength }, { type: "null" }], description };
 }
