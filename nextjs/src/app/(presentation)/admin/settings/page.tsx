@@ -1,5 +1,9 @@
+import { headers } from "next/headers";
+
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
+import { getMcpAuthServices } from "@worker/lib/mcp-auth/services";
+import { AdminMcpPanel } from "@/presentation/components/admin/AdminMcpPanel";
 import { AdminPage, AdminPageHeader } from "@/presentation/components/admin/AdminPageHeader";
 import { AdminSettingsForm } from "@/presentation/components/admin/AdminSettingsForm";
 import { AdminToast } from "@/presentation/components/admin/AdminToast";
@@ -14,10 +18,17 @@ export const metadata = { title: "サイト設定" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage({ searchParams }: AdminSettingsPageProps) {
-  await requireAdminPageSession("/admin/settings");
+  const session = await requireAdminPageSession("/admin/settings");
   const services = await getAdminServices();
-  const { values, googleLinkedEmail } = await services.admin.settings.get();
+  const { apiTokens } = await getMcpAuthServices();
+  const [{ values, googleLinkedEmail }, tokens, requestHeaders] = await Promise.all([
+    services.admin.settings.get(),
+    apiTokens.list(session.userId),
+    headers(),
+  ]);
   const { status } = await searchParams;
+  const host = requestHeaders.get("host") ?? "localhost:3000";
+  const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
 
   return (
     <AdminPage width="narrow">
@@ -27,6 +38,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
           saved: { message: "設定を保存しました。" },
           "oauth-success": { message: "Google アカウントの連携が完了しました。" },
           "oauth-error": { message: "Google アカウントの連携に失敗しました。", tone: "error" },
+          "token-revoked": { message: "トークンを失効しました。" },
           error: { message: "保存に失敗しました。入力内容を確認してください。", tone: "error" },
         }}
       />
@@ -41,6 +53,7 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
           gmail_subject_prefix: values.gmail_subject_prefix ?? "",
         }}
       />
+      <AdminMcpPanel endpoint={`${protocol}://${host}/api/mcp`} tokens={tokens} />
     </AdminPage>
   );
 }
