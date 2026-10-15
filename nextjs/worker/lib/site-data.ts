@@ -1,6 +1,6 @@
 import type { Category, PublicSettings, Work, WorkContextCategory } from "@/domain/publicApi";
 
-import { getAppServices } from "@worker/lib/api/services";
+import { getReadServices } from "@worker/lib/api/services";
 
 const fallbackSettings: PublicSettings = {
   githubUrl: null,
@@ -9,7 +9,7 @@ const fallbackSettings: PublicSettings = {
 
 export async function getSiteSettings(): Promise<PublicSettings> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     return await services.useCases.getPublicSettings.execute();
   } catch {
     return fallbackSettings;
@@ -18,7 +18,7 @@ export async function getSiteSettings(): Promise<PublicSettings> {
 
 export async function getFeaturedWorks(): Promise<readonly Work[]> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     return await services.useCases.getFeaturedWorks.execute();
   } catch {
     return [];
@@ -27,7 +27,7 @@ export async function getFeaturedWorks(): Promise<readonly Work[]> {
 
 export async function getWorks(category?: Category | null): Promise<readonly Work[]> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     return await services.useCases.getWorkList.execute(category ?? null);
   } catch {
     return [];
@@ -36,7 +36,7 @@ export async function getWorks(category?: Category | null): Promise<readonly Wor
 
 export async function getWorkContextCategories(): Promise<readonly WorkContextCategory[]> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     return await services.useCases.getWorkContextCategoryList.execute();
   } catch {
     return [];
@@ -45,7 +45,7 @@ export async function getWorkContextCategories(): Promise<readonly WorkContextCa
 
 export async function getWorkDetail(id: number): Promise<Work | null> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     return await services.useCases.getWorkDetail.execute(id);
   } catch {
     return null;

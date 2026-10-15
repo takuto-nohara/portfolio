@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 
 import { internalServerError } from "@worker/lib/api/responses";
-import { getAppServices } from "@worker/lib/api/services";
+import { getReadServices } from "@worker/lib/api/services";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     const settings = await services.useCases.getPublicSettings.execute();
 
     return NextResponse.json({ data: settings });

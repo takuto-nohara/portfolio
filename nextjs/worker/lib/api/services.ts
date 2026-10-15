@@ -108,7 +108,11 @@ async function getBaseServices() {
   };
 }
 
-export async function getAdminServices() {
+/**
+ * OAuth / Gmail を含まないサービス群。
+ * 公開ページの読み取りはこちらを使い、Google OAuth の環境変数が未設定でも表示できるようにする。
+ */
+export async function getReadServices() {
   const baseServices = await getBaseServices();
 
   return {
@@ -116,6 +120,10 @@ export async function getAdminServices() {
     ports: baseServices.ports,
     useCases: baseServices.useCases,
   };
+}
+
+export function getAdminServices() {
+  return getReadServices();
 }
 
 export async function getAppServices(redirectUri?: string) {

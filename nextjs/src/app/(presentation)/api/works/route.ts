@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { categories } from "@/domain/publicApi";
 
 import { badRequest, internalServerError } from "@worker/lib/api/responses";
-import { getAppServices } from "@worker/lib/api/services";
+import { getReadServices } from "@worker/lib/api/services";
 
 function isCategory(value: string): value is (typeof categories)[number] {
   return categories.includes(value as (typeof categories)[number]);
@@ -11,7 +11,7 @@ function isCategory(value: string): value is (typeof categories)[number] {
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    const services = await getAppServices();
+    const services = await getReadServices();
     const featuredParam = request.nextUrl.searchParams.get("featured");
     const categoryParam = request.nextUrl.searchParams.get("category");
     const contextParam = request.nextUrl.searchParams.get("context");
