@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-import { extractWorkAssetKey } from "@/presentation/lib/work-assets";
 import { getText, redirectWithStatus } from "@/presentation/lib/api/form-helpers";
 
 export async function POST(
@@ -23,35 +22,18 @@ export async function POST(
     return redirectWithStatus(request, "/admin/works", "error");
   }
 
-  const services = await getAdminServices();
-  const work = await services.useCases.getWorkDetail.execute(workId);
-
-  if (!work) {
-    return redirectWithStatus(request, "/admin/works", "error");
-  }
-
-  const image = work.images.find((item) => item.id === targetImageId);
-
-  if (!image) {
-    return redirectWithStatus(request, `/admin/works/${workId}/edit`, "error");
-  }
-
   const formData = await request.formData();
   const intent = getText(formData, "intent");
 
   try {
+    const services = await getAdminServices();
+
     if (intent === "delete-image") {
-      await services.useCases.deleteWorkImage.execute(targetImageId);
-      const assetKey = extractWorkAssetKey(image.imagePath);
-
-      if (assetKey) {
-        await services.ports.storagePort.delete(assetKey);
-      }
-
+      await services.admin.works.deleteImage(workId, targetImageId);
       return redirectWithStatus(request, `/admin/works/${workId}/edit`, "image-deleted");
     }
 
-    await services.useCases.updateWorkImageCaption.execute(targetImageId, getText(formData, "caption"));
+    await services.admin.works.updateImageCaption(workId, targetImageId, getText(formData, "caption"));
     return redirectWithStatus(request, `/admin/works/${workId}/edit`, "caption-saved");
   } catch (error) {
     console.error(error);

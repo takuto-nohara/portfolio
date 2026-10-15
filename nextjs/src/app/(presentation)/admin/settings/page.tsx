@@ -16,9 +16,8 @@ export const dynamic = "force-dynamic";
 export default async function AdminSettingsPage({ searchParams }: AdminSettingsPageProps) {
   await requireAdminPageSession("/admin/settings");
   const services = await getAdminServices();
-  const [settings, token] = await Promise.all([services.useCases.getSettings.execute(), services.repositories.oAuthTokenRepository.findByProvider("google")]);
+  const { values, googleLinkedEmail } = await services.admin.settings.get();
   const { status } = await searchParams;
-  const value = (key: string) => settings.find((setting) => setting.key === key)?.value ?? "";
 
   return (
     <AdminPage width="narrow">
@@ -33,13 +32,13 @@ export default async function AdminSettingsPage({ searchParams }: AdminSettingsP
       />
       <AdminPageHeader command="config --site" title="サイト設定" description="フッターのリンクと、お問い合わせメールの送信方法を設定します。" />
       <AdminSettingsForm
-        connectedEmail={token?.email ?? null}
+        connectedEmail={googleLinkedEmail}
         values={{
-          github_url: value("github_url"),
-          contact_email: value("contact_email"),
-          gmail_from_email: value("gmail_from_email"),
-          gmail_sender_name: value("gmail_sender_name"),
-          gmail_subject_prefix: value("gmail_subject_prefix"),
+          github_url: values.github_url ?? "",
+          contact_email: values.contact_email ?? "",
+          gmail_from_email: values.gmail_from_email ?? "",
+          gmail_sender_name: values.gmail_sender_name ?? "",
+          gmail_subject_prefix: values.gmail_subject_prefix ?? "",
         }}
       />
     </AdminPage>

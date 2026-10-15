@@ -1,23 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { categories, toThumbnailFit, type Category } from "@/domain/publicApi";
 import { getAdminSessionFromRequest } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
-import { uploadFile } from "@worker/lib/api/upload";
-import { extractWorkAssetKey } from "@/presentation/lib/work-assets";
-import {
-  getCheckbox,
-  getFiles,
-  getOptionalNumber,
-  getOptionalText,
-  getText,
-  redirectWithStatus,
-} from "@/presentation/lib/api/form-helpers";
-import { extractYouTubeVideoId, getYouTubeThumbnailUrl } from "@/presentation/lib/youtube";
-
-function isCategory(value: string): value is Category {
-  return categories.includes(value as Category);
-}
+import { getText, redirectWithStatus } from "@/presentation/lib/api/form-helpers";
+import { readGalleryImages, readThumbnailInput, readWorkFields } from "@/presentation/lib/api/work-form";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }): Promise<NextResponse> {
   const session = await getAdminSessionFromRequest(request);
@@ -45,96 +31,25 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
 
   try {
     if (intent === "delete") {
-      const assetKeys = [extractWorkAssetKey(work.thumbnail), ...work.images.map((image) => extractWorkAssetKey(image.imagePath))].filter(
-        (value): value is string => Boolean(value),
-      );
-
-      await services.useCases.deleteWork.execute(workId);
-
-      for (const assetKey of assetKeys) {
-        await services.ports.storagePort.delete(assetKey);
-      }
-
+      await services.admin.works.delete(workId);
       return redirectWithStatus(request, "/admin/works", "deleted");
     }
 
     if (intent === "toggle-featured") {
-      await services.useCases.updateWork.execute({ ...work, isFeatured: !work.isFeatured });
+      await services.admin.works.update(workId, { isFeatured: !work.isFeatured });
       return redirectWithStatus(request, "/admin/works", work.isFeatured ? "unfeatured" : "featured");
     }
 
-    const title = getText(formData, "title");
-    const categoryValue = getText(formData, "category");
-    const description = getText(formData, "description");
-    const contextCategoryId = getOptionalNumber(formData, "context_category_id");
+    const fields = readWorkFields(formData, work.sortOrder);
 
-    if (!title || !categoryValue || !description || !isCategory(categoryValue)) {
+    if (!fields) {
       return redirectWithStatus(request, `/admin/works/${workId}/edit`, "error");
     }
 
-    if (contextCategoryId !== null) {
-      const contextCategory = await services.repositories.workContextCategoryRepository.findById(contextCategoryId);
-
-      if (!contextCategory) {
-        return redirectWithStatus(request, `/admin/works/${workId}/edit`, "error");
-      }
-    }
-
-    const thumbnailFile = getFiles(formData, "thumbnail")[0];
-    const galleryFiles = getFiles(formData, "images");
-    const thumbnailSource = getOptionalText(formData, "thumbnail_source") ?? "upload";
-    const videoUrl = categoryValue === "video" ? getOptionalText(formData, "video_url") : null;
-    let thumbnail = work.thumbnail;
-
-    if (thumbnailSource === "youtube" && videoUrl) {
-      const videoId = extractYouTubeVideoId(videoUrl);
-      const newThumbnail = videoId ? getYouTubeThumbnailUrl(videoId) : null;
-      if (newThumbnail && newThumbnail !== work.thumbnail) {
-        // 既存のR2サムネイルを削除（YouTubeサムネイルURLは削除しない）
-        if (work.thumbnail && !work.thumbnail.startsWith("https://img.youtube.com/")) {
-          const oldThumbnailKey = extractWorkAssetKey(work.thumbnail);
-          if (oldThumbnailKey) {
-            await services.ports.storagePort.delete(oldThumbnailKey);
-          }
-        }
-        thumbnail = newThumbnail;
-      }
-    } else if (thumbnailSource === "upload" && thumbnailFile) {
-      thumbnail = await uploadFile(services.ports.storagePort, thumbnailFile, "works/thumbnails");
-      // 既存のR2サムネイルを削除（YouTubeサムネイルURLは削除しない）
-      if (work.thumbnail && !work.thumbnail.startsWith("https://img.youtube.com/")) {
-        const oldThumbnailKey = extractWorkAssetKey(work.thumbnail);
-        if (oldThumbnailKey) {
-          await services.ports.storagePort.delete(oldThumbnailKey);
-        }
-      }
-    }
-
-    await services.useCases.updateWork.execute({
-      ...work,
-      title,
-      category: categoryValue,
-      contextCategoryId,
-      lead: getOptionalText(formData, "lead") ?? null,
-      role: getOptionalText(formData, "role") ?? null,
-      description,
-      techDescription: getOptionalText(formData, "tech_description") ?? null,
-      background: getOptionalText(formData, "background") ?? null,
-      techStack: getOptionalText(formData, "tech_stack") ?? "",
-      thumbnail,
-      thumbnailFit: toThumbnailFit(getOptionalText(formData, "thumbnail_fit")),
-      videoUrl,
-      url: getOptionalText(formData, "url"),
-      githubUrl: getOptionalText(formData, "github_url"),
-      publishedAt: getOptionalText(formData, "published_at"),
-      isFeatured: getCheckbox(formData, "is_featured"),
-      sortOrder: Number(getText(formData, "sort_order") ?? work.sortOrder),
+    await services.admin.works.update(workId, fields, {
+      thumbnail: await readThumbnailInput(formData, fields),
+      images: await readGalleryImages(formData),
     });
-
-    for (const file of galleryFiles) {
-      const path = await uploadFile(services.ports.storagePort, file, `works/${workId}/gallery`);
-      await services.useCases.addWorkImage.execute(workId, path, null);
-    }
 
     return redirectWithStatus(request, "/admin/works", "updated");
   } catch (error) {

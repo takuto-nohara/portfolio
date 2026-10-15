@@ -5,9 +5,8 @@
 import Link from "next/link";
 import { useEffect, useState, type KeyboardEvent } from "react";
 
-import { categories, getMediumCategoryDefinition, thumbnailFits, type ThumbnailFit, type Work, type WorkContextCategory } from "@/application/publicApi";
+import { categories, extractYouTubeVideoId, getMediumCategoryDefinition, thumbnailFits, type ThumbnailFit, type Work, type WorkContextCategory } from "@/application/publicApi";
 import { resolveWorkAssetUrl } from "@/presentation/lib/work-assets";
-import { extractYouTubeVideoId } from "@/presentation/lib/youtube";
 
 import { AdminIcon } from "../AdminIcon";
 import { adminInput, adminMonoInput, adminPill, adminTextarea } from "../adminStyles";

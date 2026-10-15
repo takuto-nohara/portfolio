@@ -3,23 +3,26 @@ export type { OAuthPort } from "./ports/OAuthPort";
 export type { StoragePort, StorageUploadInput } from "./ports/StoragePort";
 export type { ThumbnailFit, Work } from "../domain/publicApi";
 export type { Category, WorkContextCategory } from "../domain/publicApi";
-export { categories, getMediumCategoryDefinition, thumbnailFits } from "../domain/publicApi";
-export { AddWorkImageUseCase } from "./usecases/work/AddWorkImageUseCase";
-export { CreateWorkUseCase } from "./usecases/work/CreateWorkUseCase";
-export { DeleteWorkImageUseCase } from "./usecases/work/DeleteWorkImageUseCase";
-export { DeleteWorkUseCase } from "./usecases/work/DeleteWorkUseCase";
+export { categories, extractYouTubeVideoId, getMediumCategoryDefinition, thumbnailFits, toThumbnailFit } from "../domain/publicApi";
 export { GetFeaturedWorksUseCase } from "./usecases/work/GetFeaturedWorksUseCase";
 export { GetWorkDetailUseCase } from "./usecases/work/GetWorkDetailUseCase";
 export { GetWorkListUseCase } from "./usecases/work/GetWorkListUseCase";
-export { UpdateWorkImageCaptionUseCase } from "./usecases/work/UpdateWorkImageCaptionUseCase";
-export { UpdateWorkUseCase } from "./usecases/work/UpdateWorkUseCase";
-export { CreateWorkContextCategoryUseCase } from "./usecases/workContextCategory/CreateWorkContextCategoryUseCase";
-export { DeleteWorkContextCategoryUseCase } from "./usecases/workContextCategory/DeleteWorkContextCategoryUseCase";
 export { GetWorkContextCategoryListUseCase } from "./usecases/workContextCategory/GetWorkContextCategoryListUseCase";
-export { UpdateWorkContextCategoryUseCase } from "./usecases/workContextCategory/UpdateWorkContextCategoryUseCase";
 export { DeleteContactUseCase } from "./usecases/contact/DeleteContactUseCase";
 export { GetContactListUseCase } from "./usecases/contact/GetContactListUseCase";
 export { SendContactUseCase } from "./usecases/contact/SendContactUseCase";
 export { GetPublicSettingsUseCase } from "./usecases/setting/GetPublicSettingsUseCase";
-export { GetSettingsUseCase } from "./usecases/setting/GetSettingsUseCase";
-export { UpdateSettingsUseCase } from "./usecases/setting/UpdateSettingsUseCase";
+export { AdminOperationError } from "./usecases/admin/AdminOperationError";
+export type { AdminOperationErrorCode } from "./usecases/admin/AdminOperationError";
+export { WorkAdminService, isCategory } from "./usecases/admin/WorkAdminService";
+export type {
+  GalleryImageInput,
+  ThumbnailInput,
+  UploadFile,
+  WorkFields,
+  WorkMediaOptions,
+} from "./usecases/admin/WorkAdminService";
+export { ContextCategoryAdminService } from "./usecases/admin/ContextCategoryAdminService";
+export type { ContextCategoryFields } from "./usecases/admin/ContextCategoryAdminService";
+export { SettingsAdminService, settingKeys } from "./usecases/admin/SettingsAdminService";
+export type { AdminSettingsView, SettingKey, SettingsPatch } from "./usecases/admin/SettingsAdminService";
