@@ -1,3 +1,4 @@
+import type { Contact } from "@/domain/publicApi";
 import { requireAdminPageSession } from "@worker/lib/auth/admin";
 import { getAdminServices } from "@worker/lib/api/services";
 import { AdminPage } from "@/presentation/components/admin/AdminPageHeader";
@@ -31,18 +32,12 @@ function parseUtcTimestamp(value: string | null): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export const metadata = { title: "お問い合わせ" };
-export const dynamic = "force-dynamic";
-
-export default async function AdminContactsPage({ searchParams }: AdminContactsPageProps) {
-  await requireAdminPageSession("/admin/contacts");
-  const services = await getAdminServices();
-  const contacts = await services.useCases.getContactList.execute();
-  const { status } = await searchParams;
+/** 一覧表示用に整形する（受信から 7 日以内を「今週」とする） */
+function toContactItems(contacts: readonly Contact[]): AdminContactItem[] {
   const now = Date.now();
 
-  const items: AdminContactItem[] = contacts
-    .filter((contact): contact is typeof contact & { id: number } => contact.id !== null)
+  return contacts
+    .filter((contact): contact is Contact & { id: number } => contact.id !== null)
     .map((contact) => {
       const receivedAt = parseUtcTimestamp(contact.createdAt);
       return {
@@ -54,6 +49,17 @@ export default async function AdminContactsPage({ searchParams }: AdminContactsP
         group: receivedAt && now - receivedAt.getTime() < WEEK_MS ? "今週" : "それ以前",
       };
     });
+}
+
+export const metadata = { title: "お問い合わせ" };
+export const dynamic = "force-dynamic";
+
+export default async function AdminContactsPage({ searchParams }: AdminContactsPageProps) {
+  await requireAdminPageSession("/admin/contacts");
+  const services = await getAdminServices();
+  const contacts = await services.useCases.getContactList.execute();
+  const { status } = await searchParams;
+  const items = toContactItems(contacts);
 
   return (
     <AdminPage width="medium">
