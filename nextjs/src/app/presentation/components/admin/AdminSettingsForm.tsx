@@ -37,7 +37,10 @@ function LockedValue({ value }: { readonly value: string }) {
 export function AdminSettingsForm({ values, connectedEmail }: AdminSettingsFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [current, setCurrent] = useState(values);
-  const dirty = (Object.keys(values) as SettingKey[]).some((key) => current[key] !== values[key]);
+  // 連携直後・別アカウントでの再連携直後は、連携アドレスがまだ設定に保存されていない
+  const linkedEmailUnsaved = connectedEmail !== null && (values.contact_email !== connectedEmail || values.gmail_from_email !== connectedEmail);
+  const edited = (Object.keys(values) as SettingKey[]).some((key) => current[key] !== values[key]);
+  const dirty = edited || linkedEmailUnsaved;
 
   const bind = (key: SettingKey) => ({
     name: key,
@@ -142,9 +145,9 @@ export function AdminSettingsForm({ values, connectedEmail }: AdminSettingsFormP
       >
         <span className="mr-auto inline-flex items-center gap-2 text-[13px] text-ink-body">
           <span className={`h-[7px] w-[7px] rounded-full ${dirty ? "bg-amber-500" : "bg-emerald-500"}`} />
-          {dirty ? "保存していない変更があります" : "変更はありません"}
+          {edited ? "保存していない変更があります" : linkedEmailUnsaved ? "連携した Google アカウントがまだ保存されていません" : "変更はありません"}
         </span>
-        {dirty ? (
+        {edited ? (
           <button type="button" onClick={() => setCurrent(values)} className="min-h-11 cursor-pointer border-0 bg-transparent px-3 text-[13px] font-medium text-ink-body">
             元に戻す
           </button>
