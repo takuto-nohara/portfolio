@@ -50,6 +50,23 @@ function toClient(row: ClientRow): OauthClient {
   };
 }
 
+function toCode(row: CodeRow | null): OauthCode | null {
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    clientId: row.client_id,
+    userId: row.user_id,
+    redirectUri: row.redirect_uri,
+    codeChallenge: row.code_challenge,
+    scope: row.scope,
+    audience: row.audience,
+    expiresAt: row.expires_at,
+  };
+}
+
 function toRefresh(row: RefreshRow): OauthRefreshToken {
   return {
     id: row.id,
@@ -128,23 +145,12 @@ export class D1OauthCodeRepository implements OauthCodeRepository {
       .run();
   }
 
+  async find(id: string): Promise<OauthCode | null> {
+    return toCode(await this.database.prepare("SELECT * FROM oauth_codes WHERE id = ?").bind(id).first<CodeRow>());
+  }
+
   async consume(id: string): Promise<OauthCode | null> {
-    const row = await this.database.prepare("DELETE FROM oauth_codes WHERE id = ? RETURNING *").bind(id).first<CodeRow>();
-
-    if (!row) {
-      return null;
-    }
-
-    return {
-      id: row.id,
-      clientId: row.client_id,
-      userId: row.user_id,
-      redirectUri: row.redirect_uri,
-      codeChallenge: row.code_challenge,
-      scope: row.scope,
-      audience: row.audience,
-      expiresAt: row.expires_at,
-    };
+    return toCode(await this.database.prepare("DELETE FROM oauth_codes WHERE id = ? RETURNING *").bind(id).first<CodeRow>());
   }
 
   async deleteExpired(now: string): Promise<void> {

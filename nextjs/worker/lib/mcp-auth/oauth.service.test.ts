@@ -95,6 +95,22 @@ describe("OAuth 2.1 の認可サーバー", () => {
     expect(wrongVerifier).toMatchObject({ status: "error", body: { error: "invalid_grant" } });
   });
 
+  it("偽の code_verifier で送られても、認可コードは消えない", async () => {
+    const registered = await env.oauth.register({ redirect_uris: [REDIRECT] });
+    if (registered.status !== "ok") throw new Error("register failed");
+    const clientId = registered.client.client_id as string;
+    const { verifier, challenge } = pkcePair();
+    const prepared = await env.oauth.prepareAuthorization({ client_id: clientId, response_type: "code", code_challenge: challenge }, ORIGIN);
+    if (prepared.status !== "ok") throw new Error("prepare failed");
+    const code = await env.oauth.issueCode(ADMIN.id, prepared.request);
+
+    const attacker = await env.oauth.exchange({ grant_type: "authorization_code", code, client_id: clientId, code_verifier: pkcePair().verifier }, ORIGIN);
+    expect(attacker).toMatchObject({ status: "error", body: { error: "invalid_grant" } });
+
+    const legitimate = await env.oauth.exchange({ grant_type: "authorization_code", code, client_id: clientId, code_verifier: verifier }, ORIGIN);
+    expect(legitimate.status).toBe("ok");
+  });
+
   it("不正な要求は redirect_uri へ error を返すか、画面でエラーにする", async () => {
     expect(await env.oauth.prepareAuthorization({ client_id: "unknown" }, ORIGIN)).toMatchObject({ status: "invalid_client" });
 

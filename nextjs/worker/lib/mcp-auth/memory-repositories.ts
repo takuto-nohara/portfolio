@@ -76,6 +76,10 @@ export class MemoryOauthCodeRepository implements OauthCodeRepository {
     this.rows.set(code.id, code);
   }
 
+  async find(id: string): Promise<OauthCode | null> {
+    return this.rows.get(id) ?? null;
+  }
+
   async consume(id: string): Promise<OauthCode | null> {
     const row = this.rows.get(id) ?? null;
     this.rows.delete(id);

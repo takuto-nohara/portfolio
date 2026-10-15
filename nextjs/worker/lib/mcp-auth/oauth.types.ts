@@ -38,6 +38,8 @@ export interface OauthCode {
 
 export interface OauthCodeRepository {
   save(code: OauthCode): Promise<void>;
+  /** 消さずに読む（交換の前の検査用） */
+  find(id: string): Promise<OauthCode | null>;
   /** 取り出して消す（1 回限り）。無ければ null */
   consume(id: string): Promise<OauthCode | null>;
   deleteExpired(now: string): Promise<void>;

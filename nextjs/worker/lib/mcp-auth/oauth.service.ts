@@ -177,7 +177,8 @@ export function createOauthService(deps: OauthServiceDeps) {
   }
 
   async function exchangeCode(form: Form, origin: string): Promise<TokenResult> {
-    const code = form.code ? await deps.codes.consume(await hashToken(form.code)) : null;
+    // 検査が済むまでは消さない。横取りしたコードを偽の code_verifier で送られても、正しいクライアントの交換を潰させない
+    const code = form.code ? await deps.codes.find(await hashToken(form.code)) : null;
 
     if (code === null || Date.parse(code.expiresAt) < now().getTime()) {
       return invalidGrant("認可コードが無いか、期限切れか、使用済みです。");
@@ -201,6 +202,11 @@ export function createOauthService(deps: OauthServiceDeps) {
 
     if (client === null) {
       return invalidGrant("client_id が登録されていません。");
+    }
+
+    // 検査がすべて通った要求だけが、1 回限りの消費を行う（同時の交換は 1 つしか通らない）
+    if ((await deps.codes.consume(code.id)) === null) {
+      return invalidGrant("認可コードが無いか、期限切れか、使用済みです。");
     }
 
     // 認可のときに resource が無く、交換のときにあれば、そちらに結び付ける
