@@ -11,6 +11,49 @@ const workSelectSql = `SELECT works.id, works.title, works.category, works.conte
 FROM works
 LEFT JOIN work_context_categories ON work_context_categories.id = works.context_category_id`;
 
+// INSERT / UPDATE で書き込むカラム（toWritableValues と同じ順序）
+const writableColumns = [
+  "title",
+  "category",
+  "context_category_id",
+  "lead",
+  "role",
+  "description",
+  "tech_description",
+  "background",
+  "tech_stack",
+  "thumbnail",
+  "thumbnail_fit",
+  "video_url",
+  "url",
+  "github_url",
+  "published_at",
+  "is_featured",
+  "sort_order",
+] as const;
+
+function toWritableValues(work: Work): readonly (string | number | null)[] {
+  return [
+    work.title,
+    work.category,
+    work.contextCategoryId,
+    work.lead,
+    work.role,
+    work.description,
+    work.techDescription,
+    work.background,
+    work.techStack,
+    work.thumbnail,
+    work.thumbnailFit,
+    work.videoUrl,
+    work.url,
+    work.githubUrl,
+    work.publishedAt,
+    work.isFeatured ? 1 : 0,
+    work.sortOrder,
+  ];
+}
+
 export class D1WorkRepository implements WorkRepository {
   constructor(private readonly database: D1DatabaseLike) {}
 
@@ -64,32 +107,15 @@ export class D1WorkRepository implements WorkRepository {
   }
 
   async save(work: Work): Promise<Work> {
+    const values = toWritableValues(work);
+
     if (work.id === null) {
       await this.database
         .prepare(
-          `INSERT INTO works (
-             title, category, context_category_id, lead, role, description, tech_description, background, tech_stack, thumbnail, thumbnail_fit, video_url, url, github_url, published_at, is_featured, sort_order, created_at, updated_at
-           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+          `INSERT INTO works (${writableColumns.join(", ")}, created_at, updated_at)
+           VALUES (${writableColumns.map(() => "?").join(", ")}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
         )
-        .bind(
-          work.title,
-          work.category,
-          work.contextCategoryId,
-          work.lead,
-          work.role,
-          work.description,
-          work.techDescription,
-          work.background,
-          work.techStack,
-          work.thumbnail,
-          work.thumbnailFit,
-          work.videoUrl,
-          work.url,
-          work.githubUrl,
-          work.publishedAt,
-          work.isFeatured ? 1 : 0,
-          work.sortOrder,
-        )
+        .bind(...values)
         .run();
 
       const id = await getLastInsertId(this.database);
@@ -105,29 +131,10 @@ export class D1WorkRepository implements WorkRepository {
     await this.database
       .prepare(
         `UPDATE works
-         SET title = ?, category = ?, context_category_id = ?, lead = ?, role = ?, description = ?, tech_description = ?, background = ?, tech_stack = ?, thumbnail = ?, thumbnail_fit = ?, video_url = ?, url = ?, github_url = ?, published_at = ?, is_featured = ?, sort_order = ?, updated_at = CURRENT_TIMESTAMP
+         SET ${writableColumns.map((column) => `${column} = ?`).join(", ")}, updated_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
       )
-      .bind(
-        work.title,
-        work.category,
-        work.contextCategoryId,
-        work.lead,
-        work.role,
-        work.description,
-        work.techDescription,
-        work.background,
-        work.techStack,
-        work.thumbnail,
-        work.thumbnailFit,
-        work.videoUrl,
-        work.url,
-        work.githubUrl,
-        work.publishedAt,
-        work.isFeatured ? 1 : 0,
-        work.sortOrder,
-        work.id,
-      )
+      .bind(...values, work.id)
       .run();
 
     const saved = await this.findById(work.id);
