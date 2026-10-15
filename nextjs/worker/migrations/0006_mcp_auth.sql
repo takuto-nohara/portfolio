@@ -16,14 +16,14 @@ CREATE TABLE IF NOT EXISTS api_tokens (
 
 CREATE INDEX IF NOT EXISTS idx_api_tokens_user_id ON api_tokens(user_id);
 
--- 動的クライアント登録（RFC 7591）と Client ID Metadata Document で知ったクライアント
+-- 動的クライアント登録（RFC 7591）と Client ID Metadata Document で知ったクライアント。
+-- fetched_at は登録・文書の取得・認可の開始のたびに更新し、使われていないクライアントの片付けに使う
 CREATE TABLE IF NOT EXISTS oauth_clients (
   client_id          TEXT PRIMARY KEY NOT NULL,
   client_name        TEXT NOT NULL,
   redirect_uris_json TEXT NOT NULL,
   source             TEXT NOT NULL,
-  created_at         TEXT NOT NULL,
-  last_used_at       TEXT
+  fetched_at         TEXT NOT NULL
 );
 
 -- 認可コード。id はコード平文の SHA-256

@@ -9,16 +9,13 @@ import {
   getAdminSessionMaxAge,
   isAdminEmail,
 } from "@worker/lib/auth/session";
+import { isSafeRedirectTarget } from "@worker/lib/auth/redirect";
 
 interface LoginRequestBody {
   readonly email?: unknown;
   readonly password?: unknown;
   readonly remember?: unknown;
   readonly redirectTo?: unknown;
-}
-
-function isSafeRedirectTarget(value: unknown): value is string {
-  return typeof value === "string" && value.startsWith("/admin");
 }
 
 export async function POST(request: Request): Promise<NextResponse> {

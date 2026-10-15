@@ -8,7 +8,7 @@ import { API_SCOPES, type ApiScope, type ApiToken, type ApiTokenRepository, type
  * OAuth 2.1 で発行するアクセストークンも同じ表に入り、同じ `authenticate` で確かめる（oauth.service.ts）。
  */
 
-const TOKEN_PREFIX = "ptf_";
+export const TOKEN_PREFIX = "ptf_";
 /** 管理画面で発行できるトークンの数（AI ツールごとに 1 本あれば足りる） */
 const MAX_PERSONAL_TOKENS = 10;
 const MAX_LABEL_LENGTH = 60;
@@ -177,7 +177,7 @@ function bearerOf(authorization: string | null): string | null {
   return match?.[1] ?? null;
 }
 
-function prefixOf(plain: string): string {
+export function prefixOf(plain: string): string {
   return plain.slice(0, TOKEN_PREFIX.length + 4);
 }
 
