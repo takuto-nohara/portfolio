@@ -33,6 +33,7 @@ const requiredScripts = [
   "deploy",
   "upload",
   "cf-typegen",
+  "test:unit",
 ];
 
 const missingFiles = requiredFiles.filter(

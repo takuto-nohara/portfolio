@@ -15,6 +15,7 @@ const commands = [
   { name: "check:api", cmd: "npm", args: ["run", "check:api"] },
   { name: "check:sync", cmd: "npm", args: ["run", "check:sync"] },
   { name: "knip", cmd: "npm", args: ["run", "knip"] },
+  { name: "test:unit", cmd: "npm", args: ["run", "test:unit"] },
 ];
 
 const runCommand = ({ name, cmd, args }) =>
