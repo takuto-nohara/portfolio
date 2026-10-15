@@ -113,13 +113,14 @@ export const SITE_TOOLS: readonly McpTool[] = [
       }
 
       await services.useCases.deleteContact.execute(contactId);
-      return ok({ deleted: { id: contact.id, name: contact.name, createdAt: contact.createdAt } });
+      // 書き込みだけのトークンにお問い合わせの中身（個人情報）を返さない
+      return ok({ deleted: { id: contact.id } });
     },
   },
   {
     name: "update_settings",
     title: "サイト設定を更新",
-    description: "サイト設定を更新します。指定した項目だけが変わります（null で空にします）。Google 連携中は contact_email と gmail_from_email が連携アカウントで上書きされます。",
+    description: "サイト設定を更新します。指定した項目だけが変わります（null で空にします）。Google 連携中は contact_email と gmail_from_email が連携アカウントで上書きされます。結果は更新した項目名だけで、保存後の値は get_settings で確認してください。",
     inputSchema: {
       type: "object",
       properties: Object.fromEntries(settingKeys.map((key) => [key, nullableString(settingDescriptions[key], 500)])),
@@ -135,8 +136,9 @@ export const SITE_TOOLS: readonly McpTool[] = [
         if (value !== undefined) patch[key] = value;
       }
 
-      const { values, googleLinkedEmail } = await services.admin.settings.update(patch as SettingsPatch);
-      return ok({ settings: values, googleLinked: googleLinkedEmail !== null, googleLinkedEmail });
+      await services.admin.settings.update(patch as SettingsPatch);
+      // 書き込みだけのトークンに設定値（メールアドレスなど）を返さない。保存後の値は get_settings（portfolio:read）で見る
+      return ok({ updated: Object.keys(patch) });
     },
   },
 ];
